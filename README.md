@@ -392,6 +392,11 @@
                             <div><strong>Computation time:</strong> <span id="comp-time"></span></div>
                         </div>
                     </div>
+
+                    <div id="per-prime-breakdown" class="results" style="margin-top: 25px;">
+                        <h4 style="color: #ffd700; margin-bottom: 15px;">Per-Prime Computation Breakdown</h4>
+                        <div id="prime-calculations"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -511,19 +516,36 @@
                     const allPrimes = generatePrimes(pmax);
                     const oddPrimes = allPrimes.filter(p => p >= 3 && p <= pmax);
                     
-                    // Compute left side: R_mod
+                    // Track per-prime calculations
                     let leftSide = 0.25; // Start with 1/4
-                    for (const p of oddPrimes) {
-                        leftSide *= (p - 1) * (p - 2) / (p * p);
-                    }
-                    
-                    // Compute right side components
                     let c2Factor = 1;
                     let mno2Factor = 1;
+                    let perPrimeData = [];
                     
                     for (const p of oddPrimes) {
-                        c2Factor *= (1 - 1/((p - 1) * (p - 1)));
-                        mno2Factor *= (1 - 1/p);
+                        // Left side: (p-1)(p-2)/p²
+                        const leftFactor = (p - 1) * (p - 2) / (p * p);
+                        leftSide *= leftFactor;
+                        
+                        // Right side components
+                        const c2PrimeFactor = (1 - 1/((p - 1) * (p - 1)));
+                        const mno2PrimeFactor = (1 - 1/p);
+                        const rightFactor = c2PrimeFactor * Math.pow(mno2PrimeFactor, 3);
+                        
+                        c2Factor *= c2PrimeFactor;
+                        mno2Factor *= mno2PrimeFactor;
+                        
+                        // Store per-prime verification
+                        perPrimeData.push({
+                            prime: p,
+                            leftFactor: leftFactor,
+                            rightFactor: rightFactor,
+                            c2Factor: c2PrimeFactor,
+                            mno2Factor: mno2PrimeFactor,
+                            factorRatio: leftFactor / rightFactor,
+                            runningLeft: leftSide,
+                            runningRight: 0.25 * c2Factor * Math.pow(mno2Factor, 3)
+                        });
                     }
                     
                     const rightSide = 0.25 * c2Factor * Math.pow(mno2Factor, 3);
@@ -554,6 +576,9 @@
                     document.getElementById('largest-prime').textContent = Math.max(...oddPrimes);
                     document.getElementById('comp-time').textContent = `${(performance.now() - startTime).toFixed(2)} ms`;
                     
+                    // Generate per-prime breakdown
+                    generatePerPrimeBreakdown(perPrimeData, prec);
+                    
                     // Status update
                     const tolerance = 1e-12;
                     if (deviation < tolerance) {
@@ -573,6 +598,87 @@
                     document.getElementById('status').style.background = 'rgba(255, 0, 0, 0.2)';
                 }
             }, 50);
+        }
+
+        // Generate detailed per-prime breakdown
+        function generatePerPrimeBreakdown(perPrimeData, precision) {
+            const container = document.getElementById('prime-calculations');
+            
+            let html = `
+                <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>Starting with ¼ factor:</strong> 0.25000000<br>
+                    <em>This factor accounts for the modular structure and parity constraints.</em>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 60px 150px 150px 100px 200px; gap: 10px; padding: 10px; background: rgba(255, 215, 0, 0.2); border-radius: 8px; margin-bottom: 10px; font-weight: bold;">
+                    <div>Prime</div>
+                    <div>Left: (p-1)(p-2)/p²</div>
+                    <div>Right: C₂ × M³</div>
+                    <div>Per-Prime Ratio</div>
+                    <div>Running Products</div>
+                </div>
+            `;
+            
+            for (let i = 0; i < perPrimeData.length; i++) {
+                const data = perPrimeData[i];
+                const p = data.prime;
+                
+                // Calculate components for display
+                const leftDisplay = data.leftFactor.toPrecision(8);
+                const c2Display = data.c2Factor.toPrecision(8);
+                const mno2Display = data.mno2Factor.toPrecision(8);
+                const rightDisplay = data.rightFactor.toPrecision(8);
+                const ratioDisplay = data.factorRatio.toPrecision(10);
+                
+                const isExact = Math.abs(data.factorRatio - 1) < 1e-14;
+                const ratioColor = isExact ? '#90ee90' : '#ff9090';
+                
+                html += `
+                    <div style="display: grid; grid-template-columns: 60px 150px 150px 100px 200px; gap: 10px; padding: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; margin-bottom: 5px; font-family: 'Courier New', monospace; font-size: 0.9em;">
+                        <div style="font-weight: bold; color: #ffd700;">${p}</div>
+                        <div>${leftDisplay}</div>
+                        <div>${rightDisplay}</div>
+                        <div style="color: ${ratioColor}; font-weight: bold;">${ratioDisplay}</div>
+                        <div style="font-size: 0.8em;">
+                            L: ${data.runningLeft.toPrecision(8)}<br>
+                            R: ${data.runningRight.toPrecision(8)}
+                        </div>
+                    </div>
+                `;
+                
+                // Add detailed breakdown for first few primes
+                if (i < 3) {
+                    html += `
+                        <div style="margin: 10px 0 20px 20px; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 6px; font-size: 0.85em;">
+                            <strong>Prime p = ${p} breakdown:</strong><br>
+                            Left: (${p}-1)(${p}-2)/${p}² = ${p-1}×${p-2}/${p}² = ${(p-1)*(p-2)}/${p*p} = ${leftDisplay}<br>
+                            Right: [1 - 1/(${p}-1)²] × [1 - 1/${p}]³<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= [1 - 1/${(p-1)*(p-1)}] × [1 - 1/${p}]³<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${c2Display} × ${mno2Display}³<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${c2Display} × ${Math.pow(data.mno2Factor, 3).toPrecision(8)}<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= ${rightDisplay}<br>
+                            <strong>Verification:</strong> ${leftDisplay}/${rightDisplay} = ${ratioDisplay} ≈ 1.000000000
+                        </div>
+                    `;
+                }
+            }
+            
+            // Final verification
+            const finalLeft = perPrimeData[perPrimeData.length - 1].runningLeft;
+            const finalRight = perPrimeData[perPrimeData.length - 1].runningRight;
+            const finalRatio = finalLeft / finalRight;
+            
+            html += `
+                <div style="background: rgba(0, 255, 0, 0.1); padding: 15px; border-radius: 8px; margin-top: 20px; border: 2px solid rgba(0, 255, 0, 0.3);">
+                    <strong>Final Verification:</strong><br>
+                    Complete Left Side: ${finalLeft.toPrecision(precision)}<br>
+                    Complete Right Side: ${finalRight.toPrecision(precision)}<br>
+                    <strong>Final Ratio: ${finalRatio.toPrecision(precision)}</strong><br>
+                    Deviation from 1: ${Math.abs(finalRatio - 1).toExponential(6)}
+                </div>
+            `;
+            
+            container.innerHTML = html;
         }
         
         // Initialize with default computation
