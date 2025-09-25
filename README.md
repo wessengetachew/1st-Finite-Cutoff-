@@ -1,1097 +1,899 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twin Prime Theory: Complete Interactive Research Framework</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.24.1/plotly.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    <title>Three Pillars of Number Theory: An Algebraic Connection</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "Times New Roman", Times, serif;
             line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
             min-height: 100vh;
         }
         
-        .navbar {
-            background: rgba(0,0,0,0.9);
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-        
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-        
-        .nav-title {
-            color: white;
-            font-size: 1.5em;
-            font-weight: 300;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-        
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px);
-        }
-        
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-        
-        .section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #000;
             padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            display: none;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         
-        .section.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .hero {
+        .header {
             text-align: center;
+            border-bottom: 3px solid #1e3c72;
+            padding-bottom: 30px;
             margin-bottom: 40px;
         }
         
-        .main-title {
-            font-size: 2.5em;
-            color: #2c3e50;
+        .title {
+            font-size: 28px;
+            font-weight: bold;
             margin-bottom: 15px;
-            font-weight: 300;
+            color: #1e3c72;
+            line-height: 1.3;
         }
         
         .subtitle {
-            font-size: 1.3em;
-            color: #7f8c8d;
+            font-size: 20px;
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+        
+        .author {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .date {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .main-identity {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .identity-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .identity-formula {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .pillar {
+            margin: 40px 0;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border-left: 6px solid #1e3c72;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .pillar-header {
+            display: flex;
+            align-items: center;
             margin-bottom: 20px;
         }
         
-        .author-info {
-            font-size: 1.1em;
-            color: #95a5a6;
-        }
-        
-        .theorem-box {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border: 3px solid #2196f3;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            position: relative;
-        }
-        
-        .theorem-box::before {
-            content: attr(data-type);
-            position: absolute;
-            top: -15px;
-            left: 25px;
-            background: #2196f3;
+        .pillar-number {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 0.9em;
-            text-transform: uppercase;
-        }
-        
-        .interactive-panel {
-            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
-            border: 3px solid #9c27b0;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-        }
-        
-        .controls-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-            align-items: end;
-        }
-        
-        .control-group {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-right: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.95em;
+        .pillar-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 5px;
         }
         
-        input, select, button {
+        .pillar-year {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .pillar-content {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        
+        .formula-box {
+            background-color: #fff;
+            border: 2px solid #1e3c72;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+        
+        .connection {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .connection-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .historical-timeline {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-item {
+            text-align: center;
+            margin: 10px;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .timeline-year {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .timeline-name {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .significance {
+            background-color: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            border-left: 5px solid #007bff;
+        }
+        
+        .interactive-section {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .calculator-container {
+            background-color: rgba(255,255,255,0.95);
+            color: #000;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #1e3c72;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
         
-        input:focus, select:focus {
-            border-color: #9c27b0;
+        .input-group input:focus, .input-group select:focus {
+            border-color: #1e3c72;
             outline: none;
-            box-shadow: 0 0 15px rgba(156, 39, 176, 0.3);
+            box-shadow: 0 0 5px rgba(30, 60, 114, 0.3);
         }
         
-        button {
-            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        .calculate-btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             color: white;
             border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: 600;
+            width: 100%;
+            margin: 20px 0;
             transition: all 0.3s ease;
         }
         
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(156, 39, 176, 0.4);
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
-        .results-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .results-container {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
         }
         
-        .results-table th {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
+        .result-section {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            border-left: 4px solid #1e3c72;
+        }
+        
+        .step-by-step {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .left-side, .right-side {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .left-side {
+            border-left: 4px solid #28a745;
+        }
+        
+        .right-side {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .step {
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .verification-box {
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 15px;
+            border-radius: 8px;
             text-align: center;
-            font-weight: 600;
-        }
-        
-        .results-table td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #ecf0f1;
-        }
-        
-        .results-table tr:hover {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-        }
-        
-        .result-value {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .status-excellent {
-            color: #27ae60;
+            margin: 15px 0;
             font-weight: bold;
         }
         
-        .status-good {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        
-        .status-poor {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        
-        .plot-container {
-            margin: 30px 0;
-            padding: 25px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .formula-display {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1.2em;
-            margin: 25px 0;
-            border: 2px solid #f39c12;
-        }
-        
-        .highlight-box {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            border: 2px solid #28a745;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 25px 0;
-        }
-        
-        .section-header {
-            font-size: 1.8em;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #9c27b0;
-        }
-        
-        .subsection {
-            margin: 30px 0;
-        }
-        
-        .subsection-title {
-            font-size: 1.3em;
-            color: #34495e;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .computing {
-            opacity: 0.7;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-        
-        .export-panel {
-            background: #34495e;
+        .error-box {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
         }
         
-        .key-insight {
-            background: linear-gradient(135deg, #ff9a9e, #fecfef);
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid #e91e63;
-            margin: 20px 0;
+        @media (max-width: 768px) {
+            .pillar-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .pillar-number {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .historical-timeline {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-title">Twin Prime Research Framework</div>
-            <div class="nav-links">
-                <a href="#" class="nav-link active" onclick="showSection('overview')">Overview</a>
-                <a href="#" class="nav-link" onclick="showSection('finite')">Finite Identity</a>
-                <a href="#" class="nav-link" onclick="showSection('scaling')">Scaling Law</a>
-                <a href="#" class="nav-link" onclick="showSection('modular')">Modular Analysis</a>
-                <a href="#" class="nav-link" onclick="showSection('framework')">Two-Point Framework</a>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
-        <!-- Overview Section -->
-        <div id="overview" class="section active">
-            <div class="hero">
-                <h1 class="main-title">Twin Prime Conjecture: Complete Mathematical Framework</h1>
-                <div class="subtitle">Exact Finite-Cutoff Identities and Asymptotic Scaling Laws</div>
-                <div class="author-info">Research by Wessen Getachew</div>
+        <div class="header">
+            <div class="title">Three Pillars of Number Theory: An Algebraic Connection</div>
+            <div class="subtitle">Bridging 200 Years of Mathematical Development</div>
+            <div class="author">By Wessen Getachew</div>
+            <div class="date">September 2025</div>
+        </div>
+
+        <div class="main-identity">
+            <div class="identity-title">The Unifying Identity</div>
+            <div class="identity-formula">
+                (p-1)(p-2)/p² = [1 - 1/(p-1)²] × [1 - 1/p]³
             </div>
-            
-            <div class="highlight-box">
-                <h3>Key Mathematical Contributions</h3>
-                <ul>
-                    <li><strong>Exact Finite Identity:</strong> Proven relationship between modular sieve constants and Hardy-Littlewood factors</li>
-                    <li><strong>Rigorous Scaling Law:</strong> Precise asymptotic R_mod ~ 2e^(-3γ)C₂/(log p_max)³</li>
-                    <li><strong>Modular Origin:</strong> Demonstrates twin prime constant emerges from residue structure</li>
-                    <li><strong>Two-Point Reduction:</strong> Reduces twin prime conjecture to testable correlation hypotheses</li>
-                </ul>
-            </div>
-            
-            <div class="theorem-box" data-type="Main Result">
-                <div class="formula-display">
-                    $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} C_2(p_{\max}) \left[M_{\mathrm{no2}}(p_{\max})\right]^3$$
+            <p>A simple modular arithmetic expression reveals the hidden algebraic connection between three foundational results in number theory.</p>
+        </div>
+
+        <div class="pillar">
+            <div class="pillar-header">
+                <div class="pillar-number">1</div>
+                <div>
+                    <div class="pillar-title">Euler's Zeta Function Products</div>
+                    <div class="pillar-year">1737</div>
                 </div>
-                <p><strong>Significance:</strong> This exact identity holds at every finite prime cutoff, explaining the algebraic origin of both the factor 1/4 and exponent 3 in twin prime theory.</p>
             </div>
-            
-            <div class="key-insight">
-                <strong>Revolutionary Insight:</strong> The Hardy-Littlewood twin prime constant has a <em>modular origin</em> - it emerges naturally from the structure of residue classes rather than being an arbitrary analytical artifact.
+            <div class="pillar-content">
+                <p>Leonhard Euler discovered the fundamental connection between prime numbers and the Riemann zeta function through his famous product formula:</p>
+                
+                <div class="formula-box">
+                    ζ(s) = ∏(p prime) 1/(1 - p^(-s)) = ∏(p prime) 1/(1 - 1/p^s)
+                </div>
+                
+                <p>The factors <strong>[1 - 1/p]</strong> that appear in our identity are directly related to Euler's original work. When s = 1, the zeta function diverges, but these individual factors encode fundamental information about prime distribution.</p>
+                
+                <p>Euler's insight was revolutionary: he connected the discrete world of prime numbers to the continuous world of analysis, laying the foundation for all modern analytic number theory.</p>
+                
+                <p><strong>Connection to our identity:</strong> The factor [1 - 1/p]³ is the cube of Euler's fundamental building block.</p>
             </div>
         </div>
 
-        <!-- Finite Identity Section -->
-        <div id="finite" class="section">
-            <h2 class="section-header">Exact Finite-Cutoff Identity</h2>
-            
-            <div class="theorem-box" data-type="Theorem 1">
-                <h3>Exact Finite-Cutoff Equivalence</h3>
-                <div class="formula-display">
-                    $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \prod_{3 \leq p \leq p_{\max}} \frac{(p-1)(p-2)}{p^2}$$
-                    $$= \frac{1}{4} C_2(p_{\max}) \left[\prod_{3 \leq p \leq p_{\max}} \left(1-\frac{1}{p}\right)\right]^3$$
+        <div class="pillar">
+            <div class="pillar-header">
+                <div class="pillar-number">2</div>
+                <div>
+                    <div class="pillar-title">Mertens' Prime Density Theorem</div>
+                    <div class="pillar-year">1874</div>
                 </div>
             </div>
-            
-            <div class="interactive-panel">
-                <h3>Interactive Verification</h3>
-                <p>Test the exact identity for any prime cutoff:</p>
+            <div class="pillar-content">
+                <p>Franz Mertens proved a remarkable result about the density of primes, establishing that despite the infinite product diverging, a logarithmic scaling reveals a beautiful constant:</p>
                 
-                <div class="controls-grid">
-                    <div class="control-group">
-                        <label for="pmax-finite">Prime Cutoff p_max:</label>
-                        <input type="number" id="pmax-finite" value="13" min="3" max="100" step="2">
-                    </div>
-                    <button onclick="verifyFiniteIdentity()">Verify Identity</button>
+                <div class="formula-box">
+                    lim(n→∞) ln(n) × ∏(p≤n) [1 - 1/p] = e^(-γ)
                 </div>
                 
-                <div id="finite-results"></div>
-            </div>
-            
-            <div class="subsection">
-                <h3 class="subsection-title">Per-Prime Algebraic Structure</h3>
-                <p>The identity follows from the per-prime relationship:</p>
-                <div class="formula-display">
-                    $$\frac{(p-1)(p-2)}{p^2} = \left(1-\frac{1}{(p-1)^2}\right)\left(1-\frac{1}{p}\right)^3$$
-                </div>
-                <p><strong>Factor 1/4 Origin:</strong> Restricting to odd integers (1/2) × twin gap constraint (1/2) = 1/4</p>
-                <p><strong>Exponent 3 Origin:</strong> Emerges from the algebraic structure of each prime's contribution</p>
+                <p>where γ ≈ 0.5772156 is the Euler-Mascheroni constant.</p>
+                
+                <p>This theorem showed that the "sieving" effect of primes—removing multiples from the integers—follows a precise logarithmic law. The factors [1 - 1/p] represent the fraction of integers that survive each prime's sieve.</p>
+                
+                <p>Mertens' work was groundbreaking because it provided exact constants for prime distribution without requiring the sophisticated complex analysis that later proved the Prime Number Theorem.</p>
+                
+                <p><strong>Connection to our identity:</strong> Our factor [1 - 1/p]³ is exactly the cube of Mertens' fundamental factor.</p>
             </div>
         </div>
 
-        <!-- Scaling Law Section -->
-        <div id="scaling" class="section">
-            <h2 class="section-header">Asymptotic Scaling Law</h2>
-            
-            <div class="theorem-box" data-type="Theorem 2">
-                <h3>Precise Asymptotic Scaling</h3>
-                <div class="formula-display">
-                    $$R_{\mathrm{mod}}(p_{\max}) \sim \frac{2e^{-3\gamma}C_2}{(\log p_{\max})^3} \quad \text{as } p_{\max} \to \infty$$
-                </div>
-                <p>Where $2e^{-3\gamma} \approx 0.3539853276$ and $C_2 \approx 0.6601618158$ is the Hardy-Littlewood constant.</p>
-            </div>
-            
-            <div class="interactive-panel">
-                <h3>High-Precision Scaling Verification</h3>
-                <p>Test convergence to the theoretical asymptotic:</p>
-                
-                <div class="controls-grid">
-                    <div class="control-group">
-                        <label for="pmax-start">Start p_max:</label>
-                        <input type="number" id="pmax-start" value="5" min="3" step="2">
-                    </div>
-                    <div class="control-group">
-                        <label for="pmax-end">End p_max:</label>
-                        <input type="number" id="pmax-end" value="97" min="5" step="2">
-                    </div>
-                    <div class="control-group">
-                        <label for="precision">Decimal Places:</label>
-                        <input type="number" id="precision" value="12" min="8" max="16">
-                    </div>
-                    <button onclick="verifyScalingLaw()">Test Scaling Law</button>
-                    <button onclick="plotConvergence()">Plot Convergence</button>
-                </div>
-                
-                <div id="scaling-results"></div>
-                <div class="plot-container">
-                    <div id="scaling-plot"></div>
+        <div class="pillar">
+            <div class="pillar-header">
+                <div class="pillar-number">3</div>
+                <div>
+                    <div class="pillar-title">Hardy-Littlewood Twin Prime Constants</div>
+                    <div class="pillar-year">1923</div>
                 </div>
             </div>
-            
-            <div class="highlight-box">
-                <h3>Theoretical Foundation</h3>
-                <p>The scaling emerges from Mertens' theorem excluding p=2:</p>
-                <div class="formula-display">
-                    $$\prod_{3 \leq p \leq x} \left(1-\frac{1}{p}\right) \sim \frac{2e^{-\gamma}}{\log x}$$
+            <div class="pillar-content">
+                <p>G.H. Hardy and J.E. Littlewood conjectured a precise asymptotic formula for twin primes, introducing the famous twin prime constant:</p>
+                
+                <div class="formula-box">
+                    C₂ = ∏(p≥3) [1 - 1/(p-1)²] ≈ 0.6601618
                 </div>
-                <p>Cubing this and combining with the exact finite identity yields the proven asymptotic.</p>
+                
+                <p>This constant appears in their conjectured asymptotic formula for the number of twin primes up to x:</p>
+                
+                <div class="formula-box">
+                    π₂(x) ~ 2C₂ × x/(ln x)²
+                </div>
+                
+                <p>The factor [1 - 1/(p-1)²] accounts for the "collision probability" in twin prime formation—the chance that both n and n+2 avoid being divisible by prime p.</p>
+                
+                <p>Though still unproven, this conjecture has guided twin prime research for over a century and connects to the deepest problems in number theory.</p>
+                
+                <p><strong>Connection to our identity:</strong> The factor [1 - 1/(p-1)²] appears exactly as Hardy and Littlewood defined it.</p>
             </div>
         </div>
 
-        <!-- Modular Analysis Section -->
-        <div id="modular" class="section">
-            <h2 class="section-header">Twin-Admissible Residues Analysis</h2>
-            
-            <div class="theorem-box" data-type="Definition">
-                <h3>Twin-Admissible Residues</h3>
-                <div class="formula-display">
-                    $$T(M) = \#\{r \bmod M : \gcd(r,M) = \gcd(r+2,M) = 1\}$$
+        <div class="connection">
+            <div class="connection-title">The Algebraic Bridge</div>
+            <div class="historical-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">1737</div>
+                    <div class="timeline-name">Euler</div>
                 </div>
-                <p>For squarefree M:</p>
-                <div class="formula-display">
-                    $$T(M) = \prod_{\substack{p|M \\ p \geq 3}} (p-2), \quad \frac{T(M)}{\varphi(M)} = \prod_{\substack{p|M \\ p \geq 3}} \frac{p-2}{p-1}$$
+                <div class="timeline-item">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1874</div>
+                    <div class="timeline-name">Mertens</div>
+                </div>
+                <div class="timeline-item">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-year">1923</div>
+                    <div class="timeline-name">Hardy-Littlewood</div>
+                </div>
+                <div class="timeline-item">→</div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-name">Connection Revealed</div>
                 </div>
             </div>
             
-            <div class="interactive-panel">
-                <h3>Primorial Verification</h3>
-                <p>Verify the formula for primorial moduli:</p>
-                
-                <div class="controls-grid">
-                    <div class="control-group">
-                        <label for="max-prime">Maximum Prime:</label>
-                        <select id="max-prime">
-                            <option value="5">5 (M=30)</option>
-                            <option value="7">7 (M=210)</option>
-                            <option value="11">11 (M=2310)</option>
-                            <option value="13" selected>13 (M=30030)</option>
-                            <option value="17">17 (M=510510)</option>
-                        </select>
-                    </div>
-                    <button onclick="verifyPrimorialFormula()">Verify Formula</button>
-                    <button onclick="computeAllPrimorials()">Compute All</button>
-                </div>
-                
-                <div id="modular-results"></div>
-            </div>
+            <p>Our identity reveals that these three seemingly separate developments in number theory are algebraically connected through a simple modular expression. The factors discovered by each mathematician combine exactly to produce (p-1)(p-2)/p².</p>
             
-            <div class="key-insight">
-                <strong>Key Observation:</strong> The ratio T(M)/φ(M) decreases as more primes divide M, following the product ∏(p-2)/(p-1). This is distinct from the scaling law factor and represents pure modular arithmetic behavior.
+            <div class="identity-formula">
+                Modular Arithmetic = Hardy-Littlewood × (Mertens)³
             </div>
         </div>
 
-        <!-- Two-Point Framework Section -->
-        <div id="framework" class="section">
-            <h2 class="section-header">Two-Point Correlation Framework</h2>
+        <div class="interactive-section">
+            <div class="connection-title">Interactive Mathematical Calculator</div>
+            <p>Explore the identities with real calculations! Enter any prime or integer to see the step-by-step algebraic verification.</p>
             
-            <div class="theorem-box" data-type="Conjecture">
-                <h3>Two-Point Elliott-Halberstam Type</h3>
-                <p>The remaining ingredient for the twin prime asymptotic:</p>
-                <div class="formula-display">
-                    $$\mathcal{V}_2(N^\theta, N; 2) \ll N^{2-\delta}$$
-                </div>
-                <p>for some θ > 1/2 and δ > 0, where the variance measures two-point correlations over arithmetic progressions.</p>
-            </div>
-            
-            <div class="interactive-panel">
-                <h3>Two-Point Correlation Explorer</h3>
-                <p>Investigate Möbius two-point sums:</p>
-                <div class="formula-display">
-                    $$S_2(N,2;\alpha) = \sum_{n \leq N} \mu(n)\mu(n+2)e^{2\pi i n\alpha}$$
-                </div>
-                
-                <div class="controls-grid">
-                    <div class="control-group">
-                        <label for="n-limit">Sum Limit N:</label>
-                        <input type="number" id="n-limit" value="200" min="50" max="1000" step="50">
+            <div class="calculator-container">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <!-- Prime Identity Calculator -->
+                    <div>
+                        <h3 style="color: #1e3c72; margin-top: 0;">Prime Identity Verification</h3>
+                        <div class="input-group">
+                            <label for="primeInput">Enter a prime number (p > 2):</label>
+                            <input type="number" id="primeInput" value="7" min="3">
+                        </div>
+                        <button class="calculate-btn" onclick="calculatePrimeIdentity()">Verify Identity</button>
+                        <div id="primeResults" class="results-container" style="display: none;"></div>
                     </div>
-                    <div class="control-group">
-                        <label for="alpha-points">α Resolution:</label>
-                        <input type="number" id="alpha-points" value="100" min="50" max="200" step="25">
-                    </div>
-                    <button onclick="computeTwoPointSums()">Compute Correlations</button>
-                </div>
-                
-                <div class="plot-container">
-                    <div id="correlation-plot"></div>
-                </div>
-            </div>
-            
-            <div class="theorem-box" data-type="Bridge Theorem">
-                <h3>Conditional Resolution</h3>
-                <p>If the two-point Elliott-Halberstam hypothesis holds, then our exact finite identity implies:</p>
-                <div class="formula-display">
-                    $$\pi_2(X) \sim 2C_2 \frac{X}{(\log X)^2}$$
-                </div>
-                <p>with the classical Hardy-Littlewood twin prime constant.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="export-panel">
-        <h3>Export Research Data</h3>
-        <button onclick="exportAllResults()" style="margin: 10px;">Export All Computations</button>
-        <button onclick="generateReport()" style="margin: 10px;">Generate Summary Report</button>
-    </div>
-
-    <script>
-        // Mathematical constants
-        const C2_CONSTANT = 0.6601618158267969;
-        const EULER_GAMMA = 0.5772156649015329;
-        const THEORETICAL_TARGET = 2 * Math.exp(-3 * EULER_GAMMA);
-        
-        // Global storage
-        let allComputations = {
-            finite: [],
-            scaling: [],
-            modular: [],
-            correlations: []
-        };
-
-        // Configure MathJax
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: { fontCache: 'global' }
-        };
-
-        // Navigation
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            
-            document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Utility functions
-        function isPrime(n) {
-            if (n < 2) return false;
-            if (n === 2) return true;
-            if (n % 2 === 0) return false;
-            for (let i = 3; i * i <= n; i += 2) {
-                if (n % i === 0) return false;
-            }
-            return true;
-        }
-
-        function getPrimesUpTo(limit) {
-            const primes = [];
-            for (let i = 2; i <= limit; i++) {
-                if (isPrime(i)) primes.push(i);
-            }
-            return primes;
-        }
-
-        function gcd(a, b) {
-            while (b !== 0) {
-                [a, b] = [b, a % b];
-            }
-            return a;
-        }
-
-        function eulerPhi(n) {
-            let result = n;
-            let p = 2;
-            while (p * p <= n) {
-                if (n % p === 0) {
-                    while (n % p === 0) n /= p;
-                    result -= result / p;
-                }
-                p++;
-            }
-            if (n > 1) result -= result / n;
-            return Math.round(result);
-        }
-
-        function mobiusFunction(n) {
-            if (n === 1) return 1;
-            let factors = 0;
-            let temp = n;
-            
-            for (let p = 2; p * p <= temp; p++) {
-                if (temp % p === 0) {
-                    factors++;
-                    temp /= p;
-                    if (temp % p === 0) return 0; // squared factor
-                }
-            }
-            if (temp > 1) factors++;
-            return factors % 2 === 0 ? 1 : -1;
-        }
-
-        // Core computations
-        function computeRmod(pmax, precision = 12) {
-            const primes = getPrimesUpTo(pmax).filter(p => p >= 3);
-            let logSum = Math.log(0.25);
-            
-            for (const p of primes) {
-                logSum += Math.log((p - 1) * (p - 2) / (p * p));
-            }
-            
-            return parseFloat(Math.exp(logSum).toPrecision(precision));
-        }
-
-        function computeC2Truncated(pmax) {
-            const primes = getPrimesUpTo(pmax).filter(p => p >= 3);
-            let logSum = 0;
-            
-            for (const p of primes) {
-                logSum += Math.log(1 - 1/((p-1) * (p-1)));
-            }
-            
-            return Math.exp(logSum);
-        }
-
-        function computeMno2(pmax) {
-            const primes = getPrimesUpTo(pmax).filter(p => p >= 3);
-            let logSum = 0;
-            
-            for (const p of primes) {
-                logSum += Math.log(1 - 1/p);
-            }
-            
-            return Math.exp(logSum);
-        }
-
-        function verifyFiniteIdentity() {
-            const pmax = parseInt(document.getElementById('pmax-finite').value);
-            const precision = 14;
-            
-            // Left side: R_mod
-            const rmod = computeRmod(pmax, precision);
-            
-            // Right side components
-            const c2_trunc = computeC2Truncated(pmax);
-            const mno2 = computeMno2(pmax);
-            const rightSide = 0.25 * c2_trunc * Math.pow(mno2, 3);
-            
-            // Verification
-            const difference = Math.abs(rmod - rightSide);
-            const relativeError = difference / Math.max(rmod, rightSide);
-            const primes = getPrimesUpTo(pmax).filter(p => p >= 3);
-            
-            allComputations.finite.push({pmax, rmod, rightSide, relativeError, primes});
-            
-            const resultsHtml = `
-                <table class="results-table">
-                    <tr>
-                        <th>Component</th>
-                        <th>Value</th>
-                        <th>Details</th>
-                    </tr>
-                    <tr>
-                        <td>R_mod(${pmax})</td>
-                        <td class="result-value">${rmod.toExponential(8)}</td>
-                        <td>Modular sieve constant</td>
-                    </tr>
-                    <tr>
-                        <td>Right Side</td>
-                        <td class="result-value">${rightSide.toExponential(8)}</td>
-                        <td>(1/4) × C₂ × M_no2³</td>
-                    </tr>
-                    <tr>
-                        <td>Relative Error</td>
-                        <td class="result-value ${relativeError < 1e-12 ? 'status-excellent' : 'status-poor'}">
-                            ${relativeError.toExponential(3)}
-                        </td>
-                        <td>${relativeError < 1e-12 ? 'EXACT MATCH' : 'Numerical precision limit'}</td>
-                    </tr>
-                    <tr>
-                        <td>Components</td>
-                        <td class="result-value">
-                            C₂(${pmax}) = ${c2_trunc.toFixed(10)}<br>
-                            M_no2(${pmax}) = ${mno2.toFixed(10)}
-                        </td>
-                        <td>Primes: [${primes.join(', ')}]</td>
-                    </tr>
-                </table>
-            `;
-            
-            document.getElementById('finite-results').innerHTML = resultsHtml;
-        }
-
-        function verifyScalingLaw() {
-            const pmaxStart = parseInt(document.getElementById('pmax-start').value);
-            const pmaxEnd = parseInt(document.getElementById('pmax-end').value);
-            const precision = parseInt(document.getElementById('precision').value);
-            
-            const primes = getPrimesUpTo(pmaxEnd).filter(p => p >= pmaxStart && p >= 3);
-            const results = [];
-            
-            let tableHtml = `
-                <table class="results-table">
-                    <tr>
-                        <th>p_max</th>
-                        <th>R_mod(p_max)</th>
-                        <th>S(p_max)</th>
-                        <th>Target: 2e^(-3γ)</th>
-                        <th>Convergence</th>
-                    </tr>
-            `;
-            
-            for (const pmax of primes.slice(0, 15)) {
-                const rmod = computeRmod(pmax, precision);
-                const c2_trunc = computeC2Truncated(pmax);
-                const S_value = (rmod * Math.pow(Math.log(pmax), 3)) / c2_trunc;
-                const relativeError = Math.abs(S_value - THEORETICAL_TARGET) / THEORETICAL_TARGET;
-                
-                results.push({pmax, rmod, S_value, relativeError});
-                
-                const status = relativeError < 0.01 ? 'status-excellent' : 
-                              relativeError < 0.05 ? 'status-good' : 'status-poor';
-                const statusText = relativeError < 0.01 ? 'Excellent' : 
-                                  relativeError < 0.05 ? 'Good' : 'Poor';
-                
-                tableHtml += `
-                    <tr>
-                        <td>${pmax}</td>
-                        <td class="result-value">${rmod.toExponential(6)}</td>
-                        <td class="result-value">${S_value.toFixed(8)}</td>
-                        <td class="result-value">${THEORETICAL_TARGET.toFixed(8)}</td>
-                        <td class="${status}">${statusText} (${(relativeError*100).toFixed(2)}%)</td>
-                    </tr>
-                `;
-            }
-            
-            tableHtml += '</table>';
-            document.getElementById('scaling-results').innerHTML = tableHtml;
-            allComputations.scaling = results;
-        }
-
-        function plotConvergence() {
-            if (allComputations.scaling.length === 0) {
-                verifyScalingLaw();
-                setTimeout(plotConvergence, 500);
-                return;
-            }
-            
-            const results = allComputations.scaling;
-            
-            const trace1 = {
-                x: results.map(r => r.pmax),
-                y: results.map(r => r.S_value),
-                mode: 'markers+lines',
-                name: 'S(p_max) = R_mod·(log p_max)³/C₂',
-                line: {color: '#9c27b0', width: 3},
-                marker: {size: 10, color: '#9c27b0'}
-            };
-            
-            const trace2 = {
-                x: results.map(r => r.pmax),
-                y: results.map(r => THEORETICAL_TARGET),
-                mode: 'lines',
-                name: '2e^(-3γ) ≈ 0.3540',
-                line: {color: '#e74c3c', width: 3, dash: 'dash'}
-            };
-            
-            const layout = {
-                title: 'Convergence to Theoretical Asymptotic 2e^(-3γ)',
-                xaxis: {title: 'Prime Cutoff p_max', type: 'log'},
-                yaxis: {title: 'Normalized Value S(p_max)'},
-                showlegend: true,
-                plot_bgcolor: '#f8f9fa',
-                paper_bgcolor: 'rgba(0,0,0,0)'
-            };
-            
-            Plotly.newPlot('scaling-plot', [trace1, trace2], layout, {responsive: true});
-        }
-
-        function verifyPrimorialFormula() {
-            const maxPrime = parseInt(document.getElementById('max-prime').value);
-            const primes = getPrimesUpTo(maxPrime);
-            
-            // Compute primorial M
-            let M = 1;
-            for (const p of primes) {
-                M *= p;
-            }
-            
-            // Direct enumeration of T(M)
-            let directCount = 0;
-            for (let r = 1; r < M; r++) {
-                if (gcd(r, M) === 1 && gcd(r + 2, M) === 1) {
-                    directCount++;
-                }
-            }
-            
-            // Formula computation
-            let formulaResult = 1;
-            for (const p of primes) {
-                if (p >= 3) formulaResult *= (p - 2);
-            }
-            
-            const phi = eulerPhi(M);
-            const ratio = directCount / phi;
-            const match = Math.abs(directCount - formulaResult) < 1e-10;
-            
-            const resultData = {M, maxPrime, phi, directCount, formulaResult, ratio, match};
-            allComputations.modular.push(resultData);
-            
-            const resultsHtml = `
-                <table class="results-table">
-                    <tr>
-                        <th>Property</th>
-                        <th>Value</th>
-                        <th>Verification</th>
-                    </tr>
-                    <tr>
-                        <td>Modulus M (primorial)</td>
-                        <td class="result-value">${M.toLocaleString()}</td>
-                        <td>∏p for p ≤ ${maxPrime}</td>
-                    </tr>
-                    <tr>
-                        <td>φ(M)</td>
-                        <td class="result-value">${phi.toLocaleString()}</td>
-                        <td>Euler totient</td>
-                    </tr>
-                    <tr>
-                        <td>T(M) - Direct Count</td>
-                        <td class="result-value">${directCount}</td>
-                        <td>Enumeration of twin-admissible residues</td>
-                    </tr>
-                    <tr>
-                        <td>T(M) - Formula</td>
-                        <td class="result-value">${formulaResult}</td>
-                        <td>∏(p-2) for p≥3, p|M</td>
-                    </tr>
-                    <tr>
-                        <td>Formula Match</td>
-                        <td class="${match ? 'status-excellent' : 'status-poor'}">${match ? 'EXACT ✓' : 'FAIL ✗'}</td>
-                        <td>Direct vs Formula</td>
-                    </tr>
-                    <tr>
-                        <td>T(M)/φ(M)</td>
-                        <td class="result-value">${ratio.toFixed(8)}</td>
-                        <td>Twin-admissible density</td>
-                    </tr>
-                </table>
-            `;
-            
-            document.getElementById('modular-results').innerHTML = resultsHtml;
-        }
-
-        function computeAllPrimorials() {
-            const maxPrimes = [5, 7, 11, 13, 17];
-            const results = [];
-            
-            for (const maxP of maxPrimes) {
-                const primes = getPrimesUpTo(maxP);
-                let M = 1;
-                for (const p of primes) M *= p;
-                
-                let formulaResult = 1;
-                for (const p of primes) {
-                    if (p >= 3) formulaResult *= (p - 2);
-                }
-                
-                const phi = eulerPhi(M);
-                const ratio = formulaResult / phi;
-                
-                results.push({maxP, M, phi, T: formulaResult, ratio});
-            }
-            
-            let tableHtml = `
-                <table class="results-table">
-                    <tr>
-                        <th>Max Prime</th>
-                        <th>M (Primorial)</th>
-                        <th>φ(M)</th>
-                        <th>T(M)</th>
-                        <th>T(M)/φ(M)</th>
-                    </tr>
-            `;
-            
-            for (const r of results) {
-                tableHtml += `
-                    <tr>
-                        <td>${r.maxP}</td>
-                        <td class="result-value">${r.M.toLocaleString()}</td>
-                        <td class="result-value">${r.phi.toLocaleString()}</td>
-                        <td class="result-value">${r.T}</td>
-                        <td class="result-value">${r.ratio.toFixed(6)}</td>
-                    </tr>
-                `;
-            }
-            
-            tableHtml += '</table>';
-            document.getElementById('modular-results').innerHTML = tableHtml;
-            allComputations.modular = results;
-        }
-
-        function computeTwoPointSums() {
-            const N = parseInt(document.getElementById('n-limit').value);
-            const alphaPoints = parseInt(document.getElementById('alpha-points').value);
-            
-            const alphaValues = [];
-            const s2Values = [];
-            const s2MagnitudeValues = [];
-            
-            for (let k = 0; k <= alphaPoints; k++) {
-                const alpha = k / alphaPoints;
-                alphaValues.push(alpha);
-                
-                let realSum = 0;
-                let imagSum = 0;
-                
-                for (let n = 1; n <= N - 2; n++) {
-                    const mu_n = mobiusFunction(n);
-                    const mu_n2 = mobiusFunction(n + 2);
-                    const product = mu_n * mu_n2;
                     
-                    realSum += product * Math.cos(2 * Math.PI * n * alpha);
-                    imagSum += product * Math.sin(2 * Math.PI * n * alpha);
+                    <!-- Telescoping Product Calculator -->
+                    <div>
+                        <h3 style="color: #1e3c72; margin-top: 0;">Telescoping Product</h3>
+                        <div class="input-group">
+                            <label for="integerInput">Enter upper bound (n ≥ 4):</label>
+                            <input type="number" id="integerInput" value="10" min="4">
+                        </div>
+                        <button class="calculate-btn" onclick="calculateTelescopingProduct()">Calculate Product</button>
+                        <div id="telescopingResults" class="results-container" style="display: none;"></div>
+                    </div>
+                </div>
+                
+                <!-- Finite Prime Products Calculator -->
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #1e3c72;">Finite Prime Products</h3>
+                    <div class="input-group">
+                        <label for="maxPrimeInput">Enter maximum prime (p_max ≥ 5):</label>
+                        <input type="number" id="maxPrimeInput" value="23" min="5">
+                    </div>
+                    <button class="calculate-btn" onclick="calculateFinitePrimeProducts()">Calculate Finite Products</button>
+                    <div id="finiteResults" class="results-container" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Helper function to check if a number is prime
+            function isPrime(n) {
+                if (n < 2) return false;
+                if (n === 2) return true;
+                if (n % 2 === 0) return false;
+                for (let i = 3; i <= Math.sqrt(n); i += 2) {
+                    if (n % i === 0) return false;
+                }
+                return true;
+            }
+            
+            // Generate primes up to n
+            function generatePrimes(n) {
+                const primes = [];
+                for (let i = 2; i <= n; i++) {
+                    if (isPrime(i)) primes.push(i);
+                }
+                return primes;
+            }
+            
+            function calculatePrimeIdentity() {
+                const p = parseInt(document.getElementById('primeInput').value);
+                const resultsDiv = document.getElementById('primeResults');
+                
+                if (!isPrime(p) || p <= 2) {
+                    resultsDiv.innerHTML = '<div class="error-box">Please enter a prime number greater than 2!</div>';
+                    resultsDiv.style.display = 'block';
+                    return;
                 }
                 
-                const magnitude = Math.sqrt(realSum * realSum + imagSum * imagSum);
-                s2Values.push(realSum);
-                s2MagnitudeValues.push(magnitude);
+                // Calculate left side step by step
+                const leftNumerator = (p - 1) * (p - 2);
+                const leftDenominator = p * p;
+                const leftResult = leftNumerator / leftDenominator;
+                
+                // Calculate right side step by step
+                const factor1Numerator = p * p - 2 * p;
+                const factor1Denominator = (p - 1) * (p - 1);
+                const factor1 = factor1Numerator / factor1Denominator;
+                
+                const factor2Base = p - 1;
+                const factor2 = Math.pow(factor2Base / p, 3);
+                
+                const rightResult = factor1 * factor2;
+                const difference = Math.abs(leftResult - rightResult);
+                
+                resultsDiv.innerHTML = `
+                    <div class="result-section">
+                        <h4>Verification for prime p = ${p}</h4>
+                        
+                        <div class="step-by-step">
+                            <div class="left-side">
+                                <div class="step-title">Left Side: (p-1)(p-2)/p²</div>
+                                <div class="step">Step 1: (${p}-1)(${p}-2)/${p}²</div>
+                                <div class="step">Step 2: ${p-1} × ${p-2} / ${p*p}</div>
+                                <div class="step">Step 3: ${leftNumerator} / ${leftDenominator}</div>
+                                <div class="step">Result: ${leftResult.toFixed(10)}</div>
+                            </div>
+                            
+                            <div class="right-side">
+                                <div class="step-title">Right Side: [1-1/(p-1)²] × [1-1/p]³</div>
+                                <div class="step">Factor 1: [1 - 1/(${p}-1)²]</div>
+                                <div class="step">= [1 - 1/${(p-1)*(p-1)}]</div>
+                                <div class="step">= [${(p-1)*(p-1)} - 1] / ${(p-1)*(p-1)}</div>
+                                <div class="step">= ${factor1Numerator} / ${factor1Denominator} = ${factor1.toFixed(10)}</div>
+                                <div class="step">Factor 2: [1 - 1/${p}]³</div>
+                                <div class="step">= [${p-1}/${p}]³ = ${factor2.toFixed(10)}</div>
+                                <div class="step">Product: ${factor1.toFixed(6)} × ${factor2.toFixed(6)} = ${rightResult.toFixed(10)}</div>
+                            </div>
+                        </div>
+                        
+                        ${difference < 1e-14 ? 
+                            '<div class="verification-box">✓ VERIFIED: Both sides are identical!</div>' :
+                            '<div class="error-box">⚠ Error detected in calculation</div>'
+                        }
+                        
+                        <div style="text-align: center; margin-top: 15px;">
+                            <strong>Difference: ${difference.toExponential(2)}</strong>
+                        </div>
+                    </div>
+                `;
+                
+                resultsDiv.style.display = 'block';
             }
             
-            const sqrtN = Math.sqrt(N);
-            
-            const trace1 = {
-                x: alphaValues,
-                y: s2Values,
-                mode: 'lines',
-                name: 'Re[S₂(N,2;α)]',
-                line: {color: '#9c27b0', width: 2}
-            };
-            
-            const trace2 = {
-                x: alphaValues,
-                y: s2MagnitudeValues,
-                mode: 'lines',
-                name: '|S₂(N,2;α)|',
-                line: {color: '#e67e22', width: 2}
-            };
-            
-            const trace3 = {
-                x: alphaValues,
-                y: alphaValues.map(() => sqrtN),
-                mode: 'lines',
-                name: '√N benchmark',
-                line: {color: '#e74c3c', width: 2, dash: 'dash'}
-            };
-            
-            const trace4 = {
-                x: alphaValues,
-                y: alphaValues.map(() => -sqrtN),
-                mode: 'lines',
-                name: '-√N benchmark',
-                line: {color: '#e74c3c', width: 2, dash: 'dash'},
-                showlegend: false
-            };
-            
-            const layout = {
-                title: `Two-Point Möbius Correlations S₂(${N},2;α)`,
-                xaxis: {title: 'α parameter'},
-                yaxis: {title: 'Correlation Value'},
-                showlegend: true,
-                plot_bgcolor: '#f8f9fa',
-                paper_bgcolor: 'rgba(0,0,0,0)'
-            };
-            
-            Plotly.newPlot('correlation-plot', [trace1, trace2, trace3, trace4], layout, {responsive: true});
-            
-            allComputations.correlations.push({N, alphaPoints, maxMagnitude: Math.max(...s2MagnitudeValues), sqrtN});
-        }
-
-        function exportAllResults() {
-            const timestamp = new Date().toISOString().split('T')[0];
-            let csvContent = "# Twin Prime Research Verification Results\n";
-            csvContent += `# Generated: ${timestamp}\n\n`;
-            
-            // Finite identity results
-            csvContent += "# Finite Identity Verification\n";
-            csvContent += "p_max,R_mod,Right_Side,Relative_Error\n";
-            for (const result of allComputations.finite) {
-                csvContent += `${result.pmax},${result.rmod},${result.rightSide},${result.relativeError}\n`;
+            function calculateTelescopingProduct() {
+                const n = parseInt(document.getElementById('integerInput').value);
+                const resultsDiv = document.getElementById('telescopingResults');
+                
+                if (n < 4) {
+                    resultsDiv.innerHTML = '<div class="error-box">Please enter n ≥ 4!</div>';
+                    resultsDiv.style.display = 'block';
+                    return;
+                }
+                
+                // Calculate left side (product)
+                let product = 1;
+                let productSteps = [];
+                for (let k = 3; k <= n; k++) {
+                    const term = (k - 1) * (k - 2) / (k * k);
+                    product *= term;
+                    if (k <= 6 || k === n) { // Show first few and last steps
+                        productSteps.push(`k=${k}: (${k-1})(${k-2})/${k}² = ${term.toFixed(6)}`);
+                    } else if (k === 7) {
+                        productSteps.push(`...`);
+                    }
+                }
+                
+                // Calculate right side (formula)
+                const rightResult = 4 / (n * n * (n - 1));
+                
+                // Calculate telescoping factors
+                const telescoping1 = 2 / n;
+                const telescoping2 = 2 / (n * (n - 1));
+                
+                const difference = Math.abs(product - rightResult);
+                
+                resultsDiv.innerHTML = `
+                    <div class="result-section">
+                        <h4>Telescoping Product for n = ${n}</h4>
+                        
+                        <div class="step-by-step">
+                            <div class="left-side">
+                                <div class="step-title">Left Side: Product Calculation</div>
+                                <div class="step">∏(k=3 to ${n}) [(k-1)(k-2)/k²]</div>
+                                ${productSteps.map(step => `<div class="step">${step}</div>`).join('')}
+                                <div class="step"><strong>Final Product: ${product.toExponential(6)}</strong></div>
+                            </div>
+                            
+                            <div class="right-side">
+                                <div class="step-title">Right Side: Telescoping Analysis</div>
+                                <div class="step">Formula: 4/[n²(n-1)]</div>
+                                <div class="step">= 4/[${n}² × (${n}-1)]</div>
+                                <div class="step">= 4/[${n*n} × ${n-1}]</div>
+                                <div class="step">= 4/${n*n*(n-1)}</div>
+                                <div class="step"><strong>Result: ${rightResult.toExponential(6)}</strong></div>
+                                <div class="step" style="margin-top: 10px;">Telescoping verification:</div>
+                                <div class="step">∏[(k-1)/k] = 2/${n} = ${telescoping1.toFixed(6)}</div>
+                                <div class="step">∏[(k-2)/k] = 2/[n(n-1)] = ${telescoping2.toFixed(6)}</div>
+                                <div class="step">Product: ${telescoping1.toFixed(6)} × ${telescoping2.toFixed(6)} = ${(telescoping1 * telescoping2).toExponential(6)}</div>
+                            </div>
+                        </div>
+                        
+                        ${difference < 1e-12 ? 
+                            '<div class="verification-box">✓ VERIFIED: Telescoping identity confirmed!</div>' :
+                            '<div class="error-box">⚠ Error detected in calculation</div>'
+                        }
+                        
+                        <div style="text-align: center; margin-top: 15px;">
+                            <strong>Difference: ${difference.toExponential(2)}</strong>
+                        </div>
+                    </div>
+                `;
+                
+                resultsDiv.style.display = 'block';
             }
             
-            // Scaling law results
-            csvContent += "\n# Scaling Law Verification\n";
-            csvContent += "p_max,R_mod,S_value,Theoretical_Target,Relative_Error\n";
-            for (const result of allComputations.scaling) {
-                csvContent += `${result.pmax},${result.rmod},${result.S_value},${THEORETICAL_TARGET},${result.relativeError}\n`;
+            function calculateFinitePrimeProducts() {
+                const maxPrime = parseInt(document.getElementById('maxPrimeInput').value);
+                const resultsDiv = document.getElementById('finiteResults');
+                
+                if (maxPrime < 5) {
+                    resultsDiv.innerHTML = '<div class="error-box">Please enter a prime ≥ 5!</div>';
+                    resultsDiv.style.display = 'block';
+                    return;
+                }
+                
+                const primes = generatePrimes(maxPrime).filter(p => p >= 3);
+                
+                // Calculate left side product
+                let leftProduct = 1;
+                let leftSteps = [];
+                for (let p of primes) {
+                    const term = (p - 1) * (p - 2) / (p * p);
+                    leftProduct *= term;
+                    leftSteps.push(`p=${p}: ${term.toFixed(6)}`);
+                }
+                
+                // Calculate Hardy-Littlewood approximation C₂(p_max)
+                let c2Approx = 1;
+                let c2Steps = [];
+                for (let p of primes) {
+                    const factor = 1 - 1 / ((p - 1) * (p - 1));
+                    c2Approx *= factor;
+                    c2Steps.push(`p=${p}: ${factor.toFixed(6)}`);
+                }
+                
+                // Calculate Mertens approximation M(p_max)
+                let mApprox = 1;
+                let mSteps = [];
+                for (let p of primes) {
+                    const factor = 1 - 1 / p;
+                    mApprox *= factor;
+                    mSteps.push(`p=${p}: ${factor.toFixed(6)}`);
+                }
+                
+                const rightProduct = c2Approx * Math.pow(mApprox, 3);
+                const difference = Math.abs(leftProduct - rightProduct);
+                
+                // Known constants for comparison
+                const knownC2 = 0.6601618158468695;
+                const eulerGamma = 0.5772156649015329;
+                const expectedMertensLimit = Math.exp(-eulerGamma);
+                
+                resultsDiv.innerHTML = `
+                    <div class="result-section">
+                        <h4>Finite Prime Products up to ${maxPrime}</h4>
+                        <p><strong>Primes used:</strong> ${primes.join(', ')}</p>
+                        
+                        <div class="step-by-step">
+                            <div class="left-side">
+                                <div class="step-title">Left Side: Direct Product</div>
+                                <div class="step">∏(3≤p≤${maxPrime}) [(p-1)(p-2)/p²]</div>
+                                ${leftSteps.slice(0, 5).map(step => `<div class="step">${step}</div>`).join('')}
+                                ${primes.length > 5 ? '<div class="step">...</div>' : ''}
+                                <div class="step"><strong>Product: ${leftProduct.toFixed(8)}</strong></div>
+                            </div>
+                            
+                            <div class="right-side">
+                                <div class="step-title">Right Side: C₂(p_max) × [M(p_max)]³</div>
+                                <div class="step">C₂(${maxPrime}) = ∏[1-1/(p-1)²]</div>
+                                <div class="step">= ${c2Approx.toFixed(8)}</div>
+                                <div class="step">M(${maxPrime}) = ∏[1-1/p]</div>
+                                <div class="step">= ${mApprox.toFixed(8)}</div>
+                                <div class="step">[M(${maxPrime})]³ = ${Math.pow(mApprox, 3).toFixed(8)}</div>
+                                <div class="step"><strong>Product: ${rightProduct.toFixed(8)}</strong></div>
+                            </div>
+                        </div>
+                        
+                        ${difference < 1e-12 ? 
+                            '<div class="verification-box">✓ VERIFIED: Finite product identity confirmed!</div>' :
+                            '<div class="error-box">⚠ Error detected in calculation</div>'
+                        }
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 8px;">
+                            <h5 style="color: #007bff; margin-top: 0;">Convergence to Classical Constants</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px;">
+                                <div>
+                                    <strong>Hardy-Littlewood Constant:</strong><br>
+                                    C₂(${maxPrime}) = ${c2Approx.toFixed(6)}<br>
+                                    C₂ (exact) ≈ ${knownC2.toFixed(6)}<br>
+                                    Error: ${Math.abs(c2Approx - knownC2).toFixed(6)}
+                                </div>
+                                <div>
+                                    <strong>Mertens Connection:</strong><br>
+                                    ln(${maxPrime}) × M(${maxPrime}) = ${(Math.log(maxPrime) * mApprox).toFixed(6)}<br>
+                                    e^(-γ) ≈ ${expectedMertensLimit.toFixed(6)}<br>
+                                    Ratio: ${((Math.log(maxPrime) * mApprox) / expectedMertensLimit).toFixed(4)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px;">
+                            <strong>Identity Difference: ${difference.toExponential(2)}</strong>
+                        </div>
+                    </div>
+                `;
+                
+                resultsDiv.style.display = 'block';
             }
+        </script>
+
+        <div class="pillar">
+            <div class="pillar-header">
+                <div class="pillar-number">4</div>
+                <div>
+                    <div class="pillar-title">Extended Results: Telescoping and Finite Products</div>
+                    <div class="pillar-year">2025</div>
+                </div>
+            </div>
+            <div class="pillar-content">
+                <p>The primary identity leads to two additional remarkable results that further demonstrate the deep structure underlying these expressions.</p>
+                
+                <h3 style="color: #1e3c72; margin-top: 25px;">Telescoping Product Identity</h3>
+                <p>When we extend the identity to all integers (not just primes), we discover a beautiful telescoping product:</p>
+                
+                <div class="formula-box">
+                    ∏(k=3 to n) [(k-1)(k-2)/k²] = 4/[n²(n-1)]
+                </div>
+                
+                <p>This identity reveals that the infinite product of our modular expressions telescopes to a simple rational function. The proof elegantly separates into two independent telescoping products:</p>
+                
+                <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                        <strong>First Factor:</strong><br>
+                        ∏(k=3 to n) [(k-1)/k] = 2/n
+                    </div>
+                    <div style="flex: 1; min-width: 200px; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                        <strong>Second Factor:</strong><br>
+                        ∏(k=3 to n) [(k-2)/k] = 2/[n(n-1)]
+                    </div>
+                </div>
+                
+                <p>Multiplying these telescoping products gives our final result: (2/n) × (2/[n(n-1)]) = 4/[n²(n-1)].</p>
+                
+                <h3 style="color: #1e3c72; margin-top: 25px;">Finite Prime Products</h3>
+                <p>For products taken over finite sets of primes, our main identity factorizes beautifully:</p>
+                
+                <div class="formula-box">
+                    ∏(3≤p≤p_max) [(p-1)(p-2)/p²] = C₂(p_max) × [M(p_max)]³
+                </div>
+                
+                <p>Where:</p>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li><strong>C₂(p_max) = ∏(3≤p≤p_max) [1 - 1/(p-1)²]</strong> - Finite Hardy-Littlewood approximation</li>
+                    <li><strong>M(p_max) = ∏(3≤p≤p_max) [1 - 1/p]</strong> - Finite Mertens factor</li>
+                </ul>
+                
+                <p>As p_max → ∞, we have C₂(p_max) → C₂ ≈ 0.6601618 and M(p_max) → 0, but ln(p_max) × M(p_max) → e^(-γ) by Mertens' theorem.</p>
+                
+                <div style="background: #e8f4fd; border: 1px solid #bee5eb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #007bff; margin-top: 0;">Computational Verification</h4>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="border: 1px solid #dee2e6; padding: 8px;">Prime Cutoff</th>
+                                <th style="border: 1px solid #dee2e6; padding: 8px;">C₂(p_max)</th>
+                                <th style="border: 1px solid #dee2e6; padding: 8px;">M(p_max)</th>
+                                <th style="border: 1px solid #dee2e6; padding: 8px;">Identity Check</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">p ≤ 23</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.6660</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.3272</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">✓ Exact</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">p ≤ 47</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.6628</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.2774</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">✓ Exact</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">p ≤ 97</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.6609</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">0.2406</td>
+                                <td style="border: 1px solid #dee2e6; padding: 8px;">✓ Exact</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="connection">
+            <div class="connection-title">The Complete Mathematical Architecture</div>
             
-            // Modular results
-            csvContent += "\n# Modular Analysis\n";
-            csvContent += "Max_Prime,M,Phi_M,T_M,Ratio\n";
-            for (const result of allComputations.modular) {
-                csvContent += `${result.maxP},${result.M},${result.phi},${result.T},${result.ratio}\n`;
-            }
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #ffd700; margin-top: 0;">Individual Primes</h4>
+                    <p style="font-size: 14px; margin: 0;">(p-1)(p-2)/p² = [HL] × [M]³</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #ffd700; margin-top: 0;">All Integers</h4>
+                    <p style="font-size: 14px; margin: 0;">∏(k=3 to n) = 4/[n²(n-1)]</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #ffd700; margin-top: 0;">Finite Primes</h4>
+                    <p style="font-size: 14px; margin: 0;">∏(3≤p≤N) = C₂(N) × [M(N)]³</p>
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #ffd700; margin-top: 0;">Infinite Limit</h4>
+                    <p style="font-size: 14px; margin: 0;">Connects to C₂ and e^(-γ)</p>
+                </div>
+            </div>
             
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `twin_prime_verification_${timestamp}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
+            <p>These results form a complete mathematical architecture: exact factorizations for individual primes, telescoping products for all integers, finite approximations that converge to classical constants, and connections to the deepest results in analytic number theory.</p>
+        </div>
 
-        function generateReport() {
-            const timestamp = new Date().toISOString();
+        <div class="main-identity">
+            <div class="identity-title">The Complete Story</div>
+            <p>What began as a simple question about modular arithmetic has revealed a remarkable mathematical structure. The expression (p-1)(p-2)/p² is not just another formula—it's a bridge connecting three centuries of number theory development.</p>
             
-            let report = `Twin Prime Theory Verification Report
-Generated: ${timestamp}
-
-SUMMARY OF RESULTS
-==================
-
-1. FINITE IDENTITY VERIFICATION
-Last test: p_max = ${allComputations.finite.slice(-1)[0]?.pmax || 'N/A'}
-Relative error: ${allComputations.finite.slice(-1)[0]?.relativeError?.toExponential(3) || 'N/A'}
-Status: ${allComputations.finite.slice(-1)[0]?.relativeError < 1e-12 ? 'EXACT MATCH' : 'Within precision'}
-
-2. SCALING LAW CONVERGENCE
-Tests performed: ${allComputations.scaling.length}
-Best convergence: ${allComputations.scaling.length > 0 ? 
-    Math.min(...allComputations.scaling.map(r => r.relativeError)).toFixed(4) : 'N/A'}%
-Target: 2e^(-3γ) ≈ ${THEORETICAL_TARGET.toFixed(10)}
-
-3. MODULAR FORMULA VERIFICATION
-Primorial tests: ${allComputations.modular.length}
-All formula matches: ${allComputations.modular.every(r => r.match !== false) ? 'CONFIRMED' : 'ERRORS DETECTED'}
-
-THEORETICAL STATUS
-==================
-✓ Exact finite-cutoff identity: PROVEN
-✓ Asymptotic scaling law: THEORETICALLY DERIVED
-✓ Modular residue formula: COMPUTATIONALLY VERIFIED
-◯ Two-point correlations: FRAMEWORK ESTABLISHED (requires further investigation)
-
-The mathematical framework successfully bridges finite sieve methods 
-with classical Hardy-Littlewood theory through exact identities and 
-rigorous asymptotic analysis.
-            `;
+            <p>From Euler's foundational work on infinite products, through Mertens' precise constants, to Hardy-Littlewood's twin prime conjectures, these discoveries are revealed to be facets of a single underlying algebraic truth. The telescoping identities and finite product formulas further demonstrate that this connection extends beyond individual results to encompass entire mathematical frameworks.</p>
             
-            const blob = new Blob([report], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `twin_prime_research_report_${timestamp.split('T')[0]}.txt`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
-        // Initialize with default computations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait for MathJax to load
-            setTimeout(() => {
-                verifyFiniteIdentity();
-                computeAllPrimorials();
-            }, 1000);
-        });
-    </script>
+            <p>This reminds us that mathematics is deeply interconnected, and that the most profound insights often come from recognizing that seemingly separate discoveries are actually different expressions of the same fundamental structure.</p>
+        </div>
+    </div>
 </body>
 </html>
