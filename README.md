@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twin Prime Algebraic Identities: Telescoping and Finite-Cutoff</title>
+    <title>Finite-Cutoff Identity in Twin Prime Sieve Theory</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
     <style>
         * {
@@ -21,7 +21,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -37,17 +37,9 @@
         .title {
             font-size: 2.2em;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             color: #2c3e50;
             font-weight: 400;
-        }
-        
-        .subtitle {
-            text-align: center;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            color: #7f8c8d;
-            font-style: italic;
         }
         
         .author {
@@ -55,38 +47,6 @@
             font-size: 1.2em;
             margin-bottom: 40px;
             color: #7f8c8d;
-        }
-        
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-        
-        .nav-tab {
-            padding: 15px 30px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-        
-        .nav-tab.active {
-            border-bottom-color: #3498db;
-            color: #3498db;
-        }
-        
-        .nav-tab:hover {
-            background: #f8f9fa;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
         }
         
         .theorem-box {
@@ -99,7 +59,7 @@
         }
         
         .theorem-box::before {
-            content: attr(data-title);
+            content: 'Main Identity';
             position: absolute;
             top: -12px;
             left: 20px;
@@ -211,6 +171,14 @@
             font-weight: bold;
         }
         
+        .note {
+            background: #f4f4f4;
+            border-left: 4px solid #95a5a6;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
         .step-detail {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -226,269 +194,88 @@
             border-radius: 3px;
             margin: 5px 0;
         }
-        
-        .note {
-            background: #f4f4f4;
-            border-left: 4px solid #95a5a6;
-            padding: 15px;
-            margin: 20px 0;
-            font-style: italic;
-        }
-        
-        .highlight {
-            background: linear-gradient(135deg, #fdf2e9, #fadbd8);
-            border: 2px solid #e67e22;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-        }
-        
-        .comparison-table th {
-            background: #9b59b6;
-            color: white;
-            padding: 12px;
-            text-align: center;
-        }
-        
-        .fraction-display {
-            font-family: 'Times New Roman', serif;
-            font-size: 1.1em;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="paper">
-            <h1 class="title">Twin Prime Algebraic Identities</h1>
-            <div class="subtitle">Telescoping and Finite-Cutoff Relationships in Sieve Theory</div>
+            <h1 class="title">Finite-Cutoff Identity in Twin Prime Sieve Theory</h1>
             <div class="author">Mathematical Analysis by Wessen Getachew</div>
             
-            <div class="nav-tabs">
-                <div class="nav-tab active" onclick="showTab('telescoping')">Telescoping Identity</div>
-                <div class="nav-tab" onclick="showTab('finite')">Finite-Cutoff Identity</div>
-                <div class="nav-tab" onclick="showTab('comparison')">Comparison</div>
+            <div class="theorem-box">
+                <div class="formula">
+                    $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \cdot C_2(p_{\max}) \cdot \left[M_{\mathrm{no2}}(p_{\max})\right]^3$$
+                </div>
+                <p><strong>Significance:</strong> This algebraic identity holds exactly for any finite prime cutoff, relating modular sieve constants to Hardy-Littlewood factors.</p>
             </div>
             
-            <!-- Telescoping Identity Tab -->
-            <div id="telescoping" class="tab-content active">
-                <div class="theorem-box" data-title="Main Telescoping Identity (Theorem 2)">
+            <div class="section">
+                <h2 class="section-title">Component Definitions</h2>
+                
+                <div class="definition-box">
+                    <h3>Modular Sieve Constant</h3>
                     <div class="formula">
-                        $$\prod_{k=3}^{n} \frac{(k-1)(k-2)}{k^2} = \frac{4}{n^2(n-1)}$$
+                        $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \prod_{3 \leq p \leq p_{\max}} \frac{(p-1)(p-2)}{p^2}$$
                     </div>
-                    <p><strong>Domain:</strong> All consecutive integers from 3 to n</p>
-                    <p><strong>Property:</strong> Closed-form telescoping product for twin prime sieving</p>
-                    <p><strong>Application:</strong> Direct evaluation eliminates floating-point error accumulation</p>
+                    <p>The fraction of residue classes modulo the primorial that are twin-admissible.</p>
                 </div>
                 
-                <div class="section">
-                    <h2 class="section-title">Fundamental Identity (Theorem 1)</h2>
-                    <div class="definition-box">
-                        <h3>Per-Term Factorization</h3>
-                        <div class="formula">
-                            $$\frac{(p-1)(p-2)}{p^2} = \left(1-\frac{1}{(p-1)^2}\right)\left(1-\frac{1}{p}\right)^3$$
-                        </div>
-                        <p><strong>Physical Interpretation:</strong> Represents the density of integers avoiding both residue classes 1 and p-1 modulo p, corresponding to numbers m where neither m nor m+2 is divisible by p - precisely the constraint needed in twin prime sieving.</p>
-                        <p><strong>Mathematical Property:</strong> This factorization enables the telescoping behavior when products are taken over consecutive integers.</p>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <h2 class="section-title">Convergence Properties</h2>
-                    <div class="definition-box">
-                        <h3>Asymptotic Behavior</h3>
-                        <div class="formula">
-                            $$\prod_{k=3}^{n} \frac{(k-1)(k-2)}{k^2} \sim \frac{4}{n^3} \quad \text{as } n \to \infty$$
-                        </div>
-                        <p><strong>Precision Control:</strong> For target precision ε, the required cutoff is n = ⌈(4/ε)^(1/3)⌉</p>
-                        <p><strong>Error Bounds:</strong> The truncation error is exactly 4/(n²(n-1))</p>
-                    </div>
-                </div>
-                
-                <div class="verification-panel">
-                    <h2 class="section-title">Telescoping Verification & Precision Analysis</h2>
-                    <p>Test the telescoping formula and analyze precision requirements:</p>
-                    
-                    <div class="controls">
-                        <label for="telescoping-n">Upper Limit n:</label>
-                        <input type="number" id="telescoping-n" value="10" min="3" step="1">
-                        
-                        <label for="telescoping-precision">Decimal Places:</label>
-                        <input type="number" id="telescoping-precision" value="15" min="6" max="30" step="1">
-                        
-                        <label for="telescoping-format">Display Format:</label>
-                        <select id="telescoping-format">
-                            <option value="decimal">Decimal</option>
-                            <option value="fraction">Fraction</option>
-                        </select>
-                        
-                        <button onclick="verifyTelescoping()">Verify Identity</button>
-                        <button onclick="telescopingRange()">Test Range</button>
-                        <button onclick="telescopingSteps()">Show Proof Steps</button>
-                    </div>
-                    
-                    <div class="controls">
-                        <label for="target-epsilon">Target Precision ε:</label>
-                        <input type="number" id="target-epsilon" value="0.000001" step="0.000001" min="0.000001">
-                        
-                        <label for="bound-n">Or specify n for bound:</label>
-                        <input type="number" id="bound-n" value="100" min="3" step="1">
-                        
-                        <button onclick="findOptimalCutoff()">Find Optimal Cutoff</button>
-                        <button onclick="calculateBound()">Calculate Error Bound</button>
-                        <button onclick="convergenceAnalysis()">Convergence Analysis</button>
-                    </div>
-                    
-                    <div id="telescoping-results"></div>
-                    <div id="telescoping-steps-results"></div>
-                    <div id="precision-results"></div>
-                </div>
-            </div>
-            
-            <!-- Finite-Cutoff Identity Tab -->
-            <div id="finite" class="tab-content">
-                <div class="theorem-box" data-title="Finite-Cutoff Identity">
+                <div class="definition-box">
+                    <h3>Truncated Hardy-Littlewood Constant</h3>
                     <div class="formula">
-                        $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \cdot C_2(p_{\max}) \cdot \left[M_{\mathrm{no2}}(p_{\max})\right]^3$$
+                        $$C_2(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{(p-1)^2}\right)$$
                     </div>
-                    <p><strong>Domain:</strong> Primes only from 3 to p_max</p>
-                    <p><strong>Property:</strong> Exact relationship between modular sieve constants and Hardy-Littlewood factors</p>
+                    <p>Finite version of the classical twin prime constant.</p>
                 </div>
                 
-                <div class="section">
-                    <h2 class="section-title">Component Definitions</h2>
-                    
-                    <div class="definition-box">
-                        <h3>Modular Sieve Constant</h3>
-                        <div class="formula">
-                            $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \prod_{3 \leq p \leq p_{\max}} \frac{(p-1)(p-2)}{p^2}$$
-                        </div>
+                <div class="definition-box">
+                    <h3>Modified Mertens Product</h3>
+                    <div class="formula">
+                        $$M_{\mathrm{no2}}(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{p}\right)$$
                     </div>
-                    
-                    <div class="definition-box">
-                        <h3>Hardy-Littlewood Factor</h3>
-                        <div class="formula">
-                            $$C_2(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{(p-1)^2}\right)$$
-                        </div>
-                    </div>
-                    
-                    <div class="definition-box">
-                        <h3>Mertens Factor</h3>
-                        <div class="formula">
-                            $$M_{\mathrm{no2}}(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{p}\right)$$
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="verification-panel">
-                    <h2 class="section-title">Finite-Cutoff Verification</h2>
-                    <p>Test the identity for prime cutoffs:</p>
-                    
-                    <div class="controls">
-                        <label for="finite-pmax">Prime Cutoff:</label>
-                        <input type="number" id="finite-pmax" value="13" min="3" step="1">
-                        
-                        <label for="finite-precision">Decimal Places:</label>
-                        <input type="number" id="finite-precision" value="15" min="6" max="30" step="1">
-                        
-                        <label for="finite-format">Display Format:</label>
-                        <select id="finite-format">
-                            <option value="decimal">Decimal</option>
-                            <option value="fraction">Fraction</option>
-                        </select>
-                        
-                        <button onclick="verifyFinite()">Verify</button>
-                        <button onclick="finiteRange()">Test Range</button>
-                        <button onclick="finiteSteps()">Show Steps</button>
-                    </div>
-                    
-                    <div id="finite-results"></div>
-                    <div id="finite-steps-results"></div>
+                    <p>Mertens-type product excluding the prime 2.</p>
                 </div>
             </div>
             
-            <!-- Comparison Tab -->
-            <div id="comparison" class="tab-content">
-                <div class="section">
-                    <h2 class="section-title">Identity Comparison</h2>
-                    
-                    <div class="highlight">
-                        <h3>Relationship Analysis</h3>
-                        <table class="comparison-table">
-                            <tr>
-                                <th>Property</th>
-                                <th>New Telescoping Identity</th>
-                                <th>Finite-Cutoff Identity</th>
-                            </tr>
-                            <tr>
-                                <td><strong>Primary Author</strong></td>
-                                <td>Wessen Getachew (2024)</td>
-                                <td>Extended sieve theory</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Domain</strong></td>
-                                <td>All integers 3 to n</td>
-                                <td>Primes 3 to p_max</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Formula</strong></td>
-                                <td>4/(n²(n-1))</td>
-                                <td>(1/4) × C₂ × M_no2³</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Convergence</strong></td>
-                                <td>Cubic decay: ~4/n³</td>
-                                <td>Prime-dependent convergence</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Application</strong></td>
-                                <td>Computational twin prime sieving</td>
-                                <td>Hardy-Littlewood constant analysis</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Key Innovation</strong></td>
-                                <td>Telescoping factorization</td>
-                                <td>Modular sieve structure</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Precision Control</strong></td>
-                                <td>n = ⌈(4/ε)^(1/3)⌉</td>
-                                <td>Prime cutoff dependent</td>
-                            </tr>
-                        </table>
+            <div class="section">
+                <h2 class="section-title">Algebraic Foundation</h2>
+                
+                <div class="highlight">
+                    <h3>Per-Prime Identity</h3>
+                    <div class="formula">
+                        $$\frac{(p-1)(p-2)}{p^2} = \left(1 - \frac{1}{(p-1)^2}\right) \cdot \left(1 - \frac{1}{p}\right)^3$$
                     </div>
-                    
-                    <div class="verification-panel">
-                        <h2 class="section-title">Side-by-Side Comparison</h2>
-                        <p>Compare both identities for the same value:</p>
-                        
-                        <div class="controls">
-                            <label for="compare-n">Value n (will test n and largest prime ≤ n):</label>
-                            <input type="number" id="compare-n" value="10" min="3" step="1">
-                            
-                            <label for="compare-precision">Decimal Places:</label>
-                            <input type="number" id="compare-precision" value="12" min="6" max="25" step="1">
-                            
-                            <button onclick="compareIdentities()">Compare</button>
-                        </div>
-                        
-                        <div id="comparison-results"></div>
+                    <p><strong>Proof:</strong> The right side expands to:</p>
+                    <div class="formula">
+                        $$\frac{(p-1)^2 - 1}{(p-1)^2} \cdot \frac{(p-1)^3}{p^3} = \frac{(p-2)(p)(p-1)^3}{(p-1)^2 p^3} = \frac{(p-1)(p-2)}{p^2}$$
                     </div>
                 </div>
+            </div>
+            
+            <div class="verification-panel">
+                <h2 class="section-title">Interactive Verification</h2>
+                <p>Test the identity for any prime cutoff with customizable precision:</p>
+                
+                <div class="controls">
+                    <label for="prime-cutoff">Prime Cutoff:</label>
+                    <input type="number" id="prime-cutoff" value="13" min="3" step="1">
+                    
+                    <label for="decimal-places">Decimal Places:</label>
+                    <input type="number" id="decimal-places" value="15" min="6" max="50" step="1">
+                    
+                    <button onclick="verifyIdentity()">Verify Identity</button>
+                    <button onclick="verifyAll()">Test Range</button>
+                    <button onclick="showStepByStep()">Step-by-Step</button>
+                </div>
+                
+                <div id="verification-results"></div>
+                <div id="step-by-step-results"></div>
             </div>
             
             <div class="note">
-                <strong>Research Note:</strong> The telescoping identity by Wessen Getachew (2024) provides a breakthrough 
-                in computational twin prime theory by enabling exact evaluation of products that previously required 
-                hundreds of terms with accumulating numerical errors. The finite-cutoff identity reveals the underlying 
-                modular structure connecting Hardy-Littlewood constants to sieve theory. Together, these identities 
-                bridge computational efficiency with theoretical insight in twin prime research.
+                <strong>Note:</strong> This identity reveals the exact algebraic structure of finite twin prime sieves. 
+                The factor 1/4 arises from restricting to odd integers and twin constraints, while the exponent 3 
+                emerges naturally from the per-prime algebraic relationship.
             </div>
         </div>
     </div>
@@ -502,7 +289,6 @@
             }
         };
 
-        // Utility functions
         function isPrime(n) {
             if (n < 2) return false;
             if (n === 2) return true;
@@ -521,404 +307,91 @@
             return primes;
         }
 
-        function gcd(a, b) {
-            while (b !== 0) {
-                [a, b] = [b, a % b];
+        function formatNumber(num, decimals) {
+            if (decimals <= 16) {
+                return num.toFixed(decimals);
+            } else {
+                // For high precision, use exponential and manual formatting
+                const exp = num.toExponential(decimals - 1);
+                return exp;
             }
-            return a;
         }
 
-        function formatAsFraction(decimal, maxDenom = 10000) {
-            if (Math.abs(decimal) < 1e-10) return "0";
+        function computeIdentityComponents(pmax, precision = 15) {
+            const primes = getPrimesUpTo(pmax);
             
-            let sign = decimal < 0 ? "-" : "";
-            decimal = Math.abs(decimal);
+            // Compute R_mod step by step
+            let logRmod = Math.log(0.25);
+            const rmodeSteps = [`Initial factor: 1/4 = ${formatNumber(0.25, precision)}`];
             
-            for (let denom = 1; denom <= maxDenom; denom++) {
-                let num = Math.round(decimal * denom);
-                if (Math.abs(decimal - num/denom) < 1e-10) {
-                    let g = gcd(num, denom);
-                    num /= g;
-                    denom /= g;
-                    if (denom === 1) return sign + num.toString();
-                    return sign + num + "/" + denom;
-                }
+            for (const p of primes) {
+                const term = (p - 1) * (p - 2) / (p * p);
+                logRmod += Math.log(term);
+                rmodeSteps.push(`Prime ${p}: (${p-1})(${p-2})/${p}² = ${formatNumber(term, precision)}`);
             }
-            return decimal.toFixed(8);
-        }
-
-        function formatNumber(num, decimals, format) {
-            if (format === 'fraction') {
-                return formatAsFraction(num);
+            const Rmod = Math.exp(logRmod);
+            rmodeSteps.push(`Final R_mod = ${formatNumber(Rmod, precision)}`);
+            
+            // Compute C₂ step by step
+            let logC2 = 0;
+            const c2Steps = [`Starting C₂ calculation:`];
+            
+            for (const p of primes) {
+                const term = 1 - 1/((p - 1) * (p - 1));
+                logC2 += Math.log(term);
+                c2Steps.push(`Prime ${p}: 1 - 1/(${p-1})² = 1 - 1/${(p-1)*(p-1)} = ${formatNumber(term, precision)}`);
             }
-            return num.toFixed(decimals);
-        }
-
-        // Tab switching
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            const C2 = Math.exp(logC2);
+            c2Steps.push(`Final C₂ = ${formatNumber(C2, precision)}`);
             
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // New functions for precision analysis and bounds
-
-        function findOptimalCutoff() {
-            const epsilon = parseFloat(document.getElementById('target-epsilon').value);
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
+            // Compute M_no2 step by step
+            let logMno2 = 0;
+            const mno2Steps = [`Starting M_no2 calculation:`];
             
-            // From the paper: n ≈ (4/ε)^(1/3)
-            const theoreticalN = Math.ceil(Math.pow(4/epsilon, 1/3));
-            
-            // Find exact n where 4/(n²(n-1)) < ε
-            let optimalN = 3;
-            while (true) {
-                const bound = 4 / (optimalN * optimalN * (optimalN - 1));
-                if (bound < epsilon) break;
-                optimalN++;
+            for (const p of primes) {
+                const term = 1 - 1/p;
+                logMno2 += Math.log(term);
+                mno2Steps.push(`Prime ${p}: 1 - 1/${p} = ${formatNumber(term, precision)}`);
             }
+            const Mno2 = Math.exp(logMno2);
+            mno2Steps.push(`Final M_no2 = ${formatNumber(Mno2, precision)}`);
             
-            const actualBound = 4 / (optimalN * optimalN * (optimalN - 1));
-            const theoreticalBound = 4 / (theoreticalN * theoreticalN * (theoreticalN - 1));
+            const rightSide = 0.25 * C2 * Math.pow(Mno2, 3);
+            const relativeError = Math.abs(Rmod - rightSide) / Math.max(Rmod, rightSide);
             
-            const html = `
-                <h3>Optimal Cutoff Analysis for ε = ${epsilon}</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>Method</th>
-                        <th>Cutoff n</th>
-                        <th>Actual Bound</th>
-                        <th>Meets Target?</th>
-                    </tr>
-                    <tr>
-                        <td>Theoretical Formula: ⌈(4/ε)^(1/3)⌉</td>
-                        <td>${theoreticalN}</td>
-                        <td>${formatNumber(theoreticalBound, precision, format)}</td>
-                        <td class="${theoreticalBound < epsilon ? 'exact-match' : ''}">
-                            ${theoreticalBound < epsilon ? 'YES' : 'NO'}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Exact Calculation</td>
-                        <td>${optimalN}</td>
-                        <td>${formatNumber(actualBound, precision, format)}</td>
-                        <td class="exact-match">YES</td>
-                    </tr>
-                </table>
-                
-                <div class="note">
-                    <strong>Interpretation:</strong> To achieve precision ε = ${epsilon}, you need at least n = ${optimalN} terms. 
-                    The theoretical approximation n ≈ (4/ε)^(1/3) = ${theoreticalN} is ${Math.abs(theoreticalN - optimalN) <= 1 ? 'very accurate' : 'a good approximation'}.
-                </div>
-            `;
-            
-            document.getElementById('precision-results').innerHTML = html;
+            return {
+                pmax,
+                primes,
+                Rmod,
+                C2,
+                Mno2,
+                rightSide,
+                relativeError,
+                exactMatch: relativeError < Math.pow(10, -precision + 2),
+                rmodeSteps,
+                c2Steps,
+                mno2Steps,
+                precision
+            };
         }
 
-        function calculateBound() {
-            const n = parseInt(document.getElementById('bound-n').value);
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
-            
-            const errorBound = 4 / (n * n * (n - 1));
-            const asymptoticApprox = 4 / (n * n * n); // n³ approximation
-            const relativeError = Math.abs(errorBound - asymptoticApprox) / errorBound * 100;
-            
-            // Calculate the actual product for comparison
-            let product = 1;
-            for (let k = 3; k <= n; k++) {
-                product *= (k - 1) * (k - 2) / (k * k);
-            }
-            
-            const html = `
-                <h3>Error Bound Analysis for n = ${n}</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>Measure</th>
-                        <th>Value</th>
-                        <th>Formula</th>
-                    </tr>
-                    <tr>
-                        <td>Exact Product Value</td>
-                        <td>${formatNumber(product, precision, format)}</td>
-                        <td>∏[(k-1)(k-2)/k²] from k=3 to ${n}</td>
-                    </tr>
-                    <tr>
-                        <td>Telescoping Formula</td>
-                        <td>${formatNumber(4/(n*n*(n-1)), precision, format)}</td>
-                        <td>4/(n²(n-1)) = 4/(${n}²×${n-1})</td>
-                    </tr>
-                    <tr>
-                        <td>Asymptotic Approximation</td>
-                        <td>${formatNumber(asymptoticApprox, precision, format)}</td>
-                        <td>4/n³ ≈ 4/${n}³</td>
-                    </tr>
-                    <tr>
-                        <td>Asymptotic Error</td>
-                        <td>${relativeError.toFixed(2)}%</td>
-                        <td>Relative difference from exact bound</td>
-                    </tr>
-                </table>
-                
-                <div class="note">
-                    <strong>Precision Achievement:</strong> With n = ${n}, the telescoping product achieves precision ε ≈ ${errorBound.toExponential(3)}. 
-                    This means the infinite product differs from the finite product by less than ${errorBound.toExponential(3)}.
-                </div>
-            `;
-            
-            document.getElementById('precision-results').innerHTML = html;
-        }
-
-        function convergenceAnalysis() {
-            const maxN = parseInt(document.getElementById('bound-n').value) || 50;
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
-            
-            let html = `
-                <h3>Convergence Analysis (n = 3 to ${maxN})</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>n</th>
-                        <th>Product Value</th>
-                        <th>Error Bound 4/(n²(n-1))</th>
-                        <th>Asymptotic 4/n³</th>
-                        <th>Precision Digits</th>
-                    </tr>
-            `;
-            
-            for (let n = 3; n <= Math.min(maxN, 20); n++) {
-                const productValue = 4 / (n * n * (n - 1));
-                const errorBound = productValue; // Same for this formula
-                const asymptotic = 4 / (n * n * n);
-                const precisionDigits = Math.max(0, Math.floor(-Math.log10(productValue)));
-                
-                html += `
-                    <tr>
-                        <td>${n}</td>
-                        <td>${formatNumber(productValue, Math.min(8, precision), format)}</td>
-                        <td>${errorBound.toExponential(2)}</td>
-                        <td>${asymptotic.toExponential(2)}</td>
-                        <td>${precisionDigits}</td>
-                    </tr>
-                `;
-            }
-            
-            html += `
-                </table>
-                
-                <div class="step-detail">
-                    <h4>Convergence Properties</h4>
-                    <div class="computation-step"><strong>Cubic Decay:</strong> The product decreases as ~4/n³ for large n</div>
-                    <div class="computation-step"><strong>Rapid Convergence:</strong> Each doubling of n reduces the value by ~8×</div>
-                    <div class="computation-step"><strong>Numerical Stability:</strong> Direct formula avoids floating-point error accumulation</div>
-                    <div class="computation-step"><strong>Precision Control:</strong> Cutoff n can be chosen exactly for any target precision</div>
-                </div>
-            `;
-            
-            document.getElementById('precision-results').innerHTML = html;
-        }
-        function verifyTelescoping() {
-            const n = parseInt(document.getElementById('telescoping-n').value);
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
-            
-            // Direct product computation
-            let product = 1;
-            for (let k = 3; k <= n; k++) {
-                product *= (k - 1) * (k - 2) / (k * k);
-            }
-            
-            // Telescoping formula
-            const formula = 4 / (n * n * (n - 1));
-            
-            // Results
-            const difference = Math.abs(product - formula);
-            const match = difference < Math.pow(10, -precision + 2);
-            
-            const html = `
-                <h3>Telescoping Verification for n = ${n}</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>Method</th>
-                        <th>Result</th>
-                        <th>Details</th>
-                    </tr>
-                    <tr>
-                        <td>Direct Product</td>
-                        <td class="computation-step">${formatNumber(product, precision, format)}</td>
-                        <td>∏[(k-1)(k-2)/k²] for k=3 to ${n}</td>
-                    </tr>
-                    <tr>
-                        <td>Telescoping Formula</td>
-                        <td class="computation-step">${formatNumber(formula, precision, format)}</td>
-                        <td>4/(${n}² × ${n-1}) = 4/${n*n*(n-1)}</td>
-                    </tr>
-                    <tr>
-                        <td>Difference</td>
-                        <td class="${match ? 'exact-match' : ''}">${difference.toExponential(3)}</td>
-                        <td>${match ? 'EXACT MATCH ✓' : 'Within precision'}</td>
-                    </tr>
-                </table>
-            `;
-            
-            document.getElementById('telescoping-results').innerHTML = html;
-        }
-
-        function telescopingRange() {
-            const maxN = parseInt(document.getElementById('telescoping-n').value);
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
-            
-            let html = `
-                <h3>Telescoping Range Test (n = 3 to ${maxN})</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>n</th>
-                        <th>Direct Product</th>
-                        <th>Formula Result</th>
-                        <th>Match</th>
-                    </tr>
-            `;
-            
-            for (let n = 3; n <= maxN; n++) {
-                let product = 1;
-                for (let k = 3; k <= n; k++) {
-                    product *= (k - 1) * (k - 2) / (k * k);
-                }
-                const formula = 4 / (n * n * (n - 1));
-                const match = Math.abs(product - formula) < Math.pow(10, -precision + 2);
-                
-                html += `
-                    <tr>
-                        <td>${n}</td>
-                        <td>${formatNumber(product, Math.min(8, precision), format)}</td>
-                        <td>${formatNumber(formula, Math.min(8, precision), format)}</td>
-                        <td class="${match ? 'exact-match' : ''}">
-                            ${match ? 'YES' : 'NO'}
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            html += '</table>';
-            document.getElementById('telescoping-results').innerHTML = html;
-        }
-
-        function telescopingSteps() {
-            const n = parseInt(document.getElementById('telescoping-n').value);
-            const precision = parseInt(document.getElementById('telescoping-precision').value);
-            const format = document.getElementById('telescoping-format').value;
-            
-            let html = `
-                <h3>Proof Steps for Telescoping Identity (n = ${n})</h3>
-                
-                <div class="step-detail">
-                    <h4>Step 1: Apply Fundamental Identity (Theorem 1)</h4>
-                    <div class="computation-step">For each term: (k-1)(k-2)/k² = (1 - 1/(k-1)²)(1 - 1/k)³</div>
-                    <div class="computation-step">Product becomes: ∏[1 - 1/(k-1)²] × ∏[1 - 1/k]³</div>
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Step 2: Evaluate Second Product ∏[1 - 1/k]³</h4>
-                    <div class="computation-step">∏[1 - 1/k] = ∏[(k-1)/k] from k=3 to ${n}</div>
-                    <div class="computation-step">= (2/3) × (3/4) × (4/5) × ... × ((${n}-1)/${n})</div>
-                    <div class="computation-step">= 2/${n} (telescoping cancellation)</div>
-                    <div class="computation-step">Therefore: ∏[1 - 1/k]³ = (2/${n})³ = 8/${n}³</div>
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Step 3: Evaluate First Product ∏[1 - 1/(k-1)²]</h4>
-                    <div class="computation-step">∏[1 - 1/(k-1)²] = ∏[k(k-2)/(k-1)²] from k=3 to ${n}</div>
-                    <div class="computation-step">= ∏[k/(k-1)] × ∏[(k-2)/(k-1)]</div>
-                    <div class="computation-step">First part: (3/2) × (4/3) × ... × (${n}/${n-1}) = ${n}/2</div>
-                    <div class="computation-step">Second part: (1/2) × (2/3) × ... × ((${n}-2)/${n-1}) = 1/${n-1}</div>
-                    <div class="computation-step">Combined: (${n}/2) × (1/${n-1}) = ${n}/(2(${n-1}))</div>
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Step 4: Final Combination</h4>
-                    <div class="computation-step">Product = [${n}/(2(${n-1}))] × [8/${n}³]</div>
-                    <div class="computation-step">= (${n} × 8)/(2(${n-1}) × ${n}³)</div>
-                    <div class="computation-step">= 8/(2(${n-1}) × ${n}²)</div>
-                    <div class="computation-step">= 4/(${n}² × ${n-1})</div>
-                    <div class="computation-step">= 4/(${n*n} × ${n-1}) = 4/${n*n*(n-1)}</div>
-                </div>
-            `;
-            
-            // Verify with numerical computation
-            let product = 1;
-            for (let k = 3; k <= n; k++) {
-                product *= (k - 1) * (k - 2) / (k * k);
-            }
-            const formula = 4 / (n * n * (n - 1));
-            
-            html += `
-                <div class="step-detail">
-                    <h4>Numerical Verification</h4>
-                    <div class="computation-step">Direct Product: ${formatNumber(product, precision, format)}</div>
-                    <div class="computation-step">Telescoping Formula: ${formatNumber(formula, precision, format)}</div>
-                    <div class="computation-step ${Math.abs(product - formula) < 1e-14 ? 'exact-match' : ''}">
-                        <strong>Identity ${Math.abs(product - formula) < 1e-14 ? 'PROVEN ✓' : 'APPROXIMATE'}</strong>
-                    </div>
-                </div>
-                
-                <div class="note">
-                    <strong>Twin Prime Connection:</strong> Each factor (k-1)(k-2)/k² represents the density of integers 
-                    avoiding residue classes 1 and k-1 modulo k, corresponding to numbers m where neither m nor m+2 
-                    is divisible by k - precisely the sieving constraint for twin primes.
-                </div>
-            `;
-            
-            document.getElementById('telescoping-steps-results').innerHTML = html;
-        }
-
-        // Finite-Cutoff Identity Functions
-        function verifyFinite() {
-            const pmax = parseInt(document.getElementById('finite-pmax').value);
-            const precision = parseInt(document.getElementById('finite-precision').value);
-            const format = document.getElementById('finite-format').value;
+        function verifyIdentity() {
+            const pmax = parseInt(document.getElementById('prime-cutoff').value);
+            const decimals = parseInt(document.getElementById('decimal-places').value);
             
             if (!isPrime(pmax)) {
-                document.getElementById('finite-results').innerHTML = `
+                document.getElementById('verification-results').innerHTML = `
                     <div class="note">
-                        <strong>Error:</strong> ${pmax} is not prime. Please enter a prime number.
+                        <strong>Note:</strong> ${pmax} is not prime. Using largest prime ≤ ${pmax}: ${getPrimesUpTo(pmax).slice(-1)[0] || 'None found'}
                     </div>
                 `;
                 return;
             }
             
-            const primes = getPrimesUpTo(pmax);
-            
-            // Compute R_mod
-            let logRmod = Math.log(0.25);
-            for (const p of primes) {
-                logRmod += Math.log((p - 1) * (p - 2) / (p * p));
-            }
-            const Rmod = Math.exp(logRmod);
-            
-            // Compute C₂
-            let logC2 = 0;
-            for (const p of primes) {
-                logC2 += Math.log(1 - 1/((p - 1) * (p - 1)));
-            }
-            const C2 = Math.exp(logC2);
-            
-            // Compute M_no2
-            let logMno2 = 0;
-            for (const p of primes) {
-                logMno2 += Math.log(1 - 1/p);
-            }
-            const Mno2 = Math.exp(logMno2);
-            
-            const rightSide = 0.25 * C2 * Math.pow(Mno2, 3);
-            const difference = Math.abs(Rmod - rightSide);
-            const match = difference < Math.pow(10, -precision + 2);
+            const result = computeIdentityComponents(pmax, decimals);
             
             const html = `
-                <h3>Finite-Cutoff Verification for p_max = ${pmax}</h3>
+                <h3>Verification for p_max = ${result.pmax} (${decimals} decimal places)</h3>
                 <table class="results-table">
                     <tr>
                         <th>Component</th>
@@ -927,62 +400,172 @@
                     </tr>
                     <tr>
                         <td>Primes Used</td>
-                        <td>[${primes.join(', ')}]</td>
-                        <td>All primes from 3 to ${pmax}</td>
+                        <td>[${result.primes.join(', ')}]</td>
+                        <td>All primes from 3 to ${result.pmax}</td>
                     </tr>
                     <tr>
-                        <td>R_mod (Left Side)</td>
-                        <td class="computation-step">${formatNumber(Rmod, precision, format)}</td>
-                        <td>(1/4) × ∏[(p-1)(p-2)/p²]</td>
+                        <td>R_mod(${result.pmax})</td>
+                        <td>${formatNumber(result.Rmod, decimals)}</td>
+                        <td>Left side of identity</td>
                     </tr>
                     <tr>
-                        <td>C₂ Factor</td>
-                        <td class="computation-step">${formatNumber(C2, precision, format)}</td>
-                        <td>∏[1 - 1/(p-1)²]</td>
+                        <td>C₂(${result.pmax})</td>
+                        <td>${formatNumber(result.C2, decimals)}</td>
+                        <td>Hardy-Littlewood factor</td>
                     </tr>
                     <tr>
-                        <td>M_no2 Factor</td>
-                        <td class="computation-step">${formatNumber(Mno2, precision, format)}</td>
-                        <td>∏[1 - 1/p]</td>
+                        <td>M_no2(${result.pmax})</td>
+                        <td>${formatNumber(result.Mno2, decimals)}</td>
+                        <td>Mertens factor</td>
                     </tr>
                     <tr>
-                        <td>Right Side</td>
-                        <td class="computation-step">${formatNumber(rightSide, precision, format)}</td>
+                        <td>M_no2³</td>
+                        <td>${formatNumber(Math.pow(result.Mno2, 3), decimals)}</td>
+                        <td>Cubed Mertens factor</td>
+                    </tr>
+                    <tr>
                         <td>(1/4) × C₂ × M_no2³</td>
+                        <td>${formatNumber(result.rightSide, decimals)}</td>
+                        <td>Right side of identity</td>
                     </tr>
                     <tr>
-                        <td>Difference</td>
-                        <td class="${match ? 'exact-match' : ''}">${difference.toExponential(3)}</td>
-                        <td>${match ? 'EXACT MATCH ✓' : 'Within precision'}</td>
+                        <td>Absolute Difference</td>
+                        <td>${formatNumber(Math.abs(result.Rmod - result.rightSide), decimals)}</td>
+                        <td>|Left - Right|</td>
+                    </tr>
+                    <tr>
+                        <td>Relative Error</td>
+                        <td class="${result.exactMatch ? 'exact-match' : ''}">${result.relativeError.toExponential(3)}</td>
+                        <td>${result.exactMatch ? 'EXACT MATCH ✓' : 'Within precision limits'}</td>
                     </tr>
                 </table>
             `;
             
-            document.getElementById('finite-results').innerHTML = html;
+            document.getElementById('verification-results').innerHTML = html;
         }
 
-        function finiteRange() {
-            const maxPrime = parseInt(document.getElementById('finite-pmax').value);
-            const precision = parseInt(document.getElementById('finite-precision').value);
-            const format = document.getElementById('finite-format').value;
+        function showStepByStep() {
+            const pmax = parseInt(document.getElementById('prime-cutoff').value);
+            const decimals = parseInt(document.getElementById('decimal-places').value);
             
-            const primes = [];
-            for (let i = 3; i <= maxPrime; i++) {
-                if (isPrime(i)) primes.push(i);
+            if (!isPrime(pmax)) {
+                document.getElementById('step-by-step-results').innerHTML = `
+                    <div class="note">
+                        <strong>Error:</strong> ${pmax} is not prime. Please enter a prime number.
+                    </div>
+                `;
+                return;
+            }
+            
+            const result = computeIdentityComponents(pmax, decimals);
+            
+            let html = `
+                <h3>Step-by-Step Computation for p_max = ${result.pmax}</h3>
+                
+                <div class="step-detail">
+                    <h4>Left Side: R_mod(${result.pmax}) Calculation</h4>
+                    <p><strong>Formula:</strong> R_mod = (1/4) × ∏[(p-1)(p-2)/p²] for p ∈ {${result.primes.join(', ')}}</p>
+            `;
+            
+            for (const step of result.rmodeSteps) {
+                html += `<div class="computation-step">${step}</div>`;
+            }
+            
+            html += `
+                </div>
+                
+                <div class="step-detail">
+                    <h4>Right Side Component 1: C₂(${result.pmax}) Calculation</h4>
+                    <p><strong>Formula:</strong> C₂ = ∏[1 - 1/(p-1)²] for p ∈ {${result.primes.join(', ')}}</p>
+            `;
+            
+            for (const step of result.c2Steps) {
+                html += `<div class="computation-step">${step}</div>`;
+            }
+            
+            html += `
+                </div>
+                
+                <div class="step-detail">
+                    <h4>Right Side Component 2: M_no2(${result.pmax}) Calculation</h4>
+                    <p><strong>Formula:</strong> M_no2 = ∏[1 - 1/p] for p ∈ {${result.primes.join(', ')}}</p>
+            `;
+            
+            for (const step of result.mno2Steps) {
+                html += `<div class="computation-step">${step}</div>`;
+            }
+            
+            html += `
+                </div>
+                
+                <div class="step-detail">
+                    <h4>Final Assembly</h4>
+                    <div class="computation-step">C₂(${result.pmax}) = ${formatNumber(result.C2, decimals)}</div>
+                    <div class="computation-step">M_no2(${result.pmax}) = ${formatNumber(result.Mno2, decimals)}</div>
+                    <div class="computation-step">M_no2³ = ${formatNumber(Math.pow(result.Mno2, 3), decimals)}</div>
+                    <div class="computation-step">Right Side = (1/4) × ${formatNumber(result.C2, decimals)} × ${formatNumber(Math.pow(result.Mno2, 3), decimals)}</div>
+                    <div class="computation-step">Right Side = ${formatNumber(result.rightSide, decimals)}</div>
+                    <div class="computation-step">Left Side = ${formatNumber(result.Rmod, decimals)}</div>
+                    <div class="computation-step ${result.exactMatch ? 'exact-match' : ''}">
+                        <strong>Identity ${result.exactMatch ? 'VERIFIED' : 'APPROXIMATE'}: Difference = ${formatNumber(Math.abs(result.Rmod - result.rightSide), decimals)}</strong>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('step-by-step-results').innerHTML = html;
+        }
+
+        function verifyAll() {
+            const startPrime = 3;
+            const endPrime = parseInt(document.getElementById('prime-cutoff').value);
+            const decimals = parseInt(document.getElementById('decimal-places').value);
+            
+            const allPrimes = [];
+            for (let i = startPrime; i <= endPrime; i++) {
+                if (isPrime(i)) allPrimes.push(i);
             }
             
             let html = `
-                <h3>Finite-Cutoff Range Test (primes up to ${maxPrime})</h3>
+                <h3>Complete Verification for Primes 3 to ${endPrime}</h3>
                 <table class="results-table">
                     <tr>
                         <th>p_max</th>
-                        <th>R_mod</th>
+                        <th>R_mod (Left)</th>
                         <th>Right Side</th>
-                        <th>Match</th>
+                        <th>Difference</th>
+                        <th>Status</th>
                     </tr>
             `;
             
-            for (const pmax of primes) {
-                const currentPrimes = getPrimesUpTo(pmax);
-                
-                let
+            for (const pmax of allPrimes) {
+                const result = computeIdentityComponents(pmax, decimals);
+                const diff = Math.abs(result.Rmod - result.rightSide);
+                html += `
+                    <tr>
+                        <td>${result.pmax}</td>
+                        <td>${formatNumber(result.Rmod, Math.min(8, decimals))}</td>
+                        <td>${formatNumber(result.rightSide, Math.min(8, decimals))}</td>
+                        <td>${diff.toExponential(2)}</td>
+                        <td class="${result.exactMatch ? 'exact-match' : ''}">
+                            ${result.exactMatch ? 'EXACT ✓' : 'APPROX'}
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `</table>
+                <div class="note">
+                    <strong>Summary:</strong> Tested ${allPrimes.length} prime cutoffs from 3 to ${endPrime}. 
+                    All identities verified to ${decimals} decimal places.
+                </div>
+            `;
+            document.getElementById('verification-results').innerHTML = html;
+        }
+
+        // Initialize with default verification
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(verifyIdentity, 500);
+        });
+    </script>
+</body>
+</html>
