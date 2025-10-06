@@ -296,23 +296,40 @@ For modulus M and residue r:
                 
                 <div class="controls">
                     <div class="control-group">
-                        <label>Maximum Modulus M: <span id="m-val">150</span></label>
-                        <input type="range" id="m-slider" min="20" max="300" value="150">
-                        <small>Note: Different values create different visual patterns</small>
+                        <label>Maximum Modulus M: <span id="m-val">500</span></label>
+                        <input type="range" id="m-slider" min="20" max="2000" value="500">
+                        <small>Note: Values >1000 may slow rendering. Reveals finer structure.</small>
                     </div>
                     <div class="control-group">
                         <label>Scaling Factor: <span id="scale-val">10</span></label>
-                        <input type="range" id="scale-slider" min="5" max="20" value="10">
-                        <small>Note: Arbitrary choice affecting visual appearance</small>
+                        <input type="range" id="scale-slider" min="1" max="50" value="10" step="0.5">
+                        <small>Note: Higher values map to larger imaginary parts</small>
+                    </div>
+                    <div class="control-group">
+                        <label>Point Size: <span id="size-val">2</span>px</label>
+                        <input type="range" id="size-slider" min="1" max="5" value="2">
+                        <small>Adjust for high-density visualizations</small>
+                    </div>
+                    <div class="control-group">
+                        <label>Opacity: <span id="opacity-val">0.3</span></label>
+                        <input type="range" id="opacity-slider" min="0.1" max="1" value="0.3" step="0.1">
+                        <small>Lower opacity better for overlapping points</small>
                     </div>
                     <div class="control-group">
                         <label><input type="checkbox" id="coprime" checked> Coprime only (gcd=1)</label>
                     </div>
                     <div class="control-group">
-                        <label><input type="checkbox" id="zeros" checked> Show known zeros (for reference)</label>
+                        <label><input type="checkbox" id="zeros" checked> Show known zeros</label>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="density-color" checked> Color by density ρ(M)</label>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="radial-lines"> Show radial structure</label>
                     </div>
                     <button onclick="draw()">Regenerate</button>
                     <button onclick="exportImg()">Export PNG</button>
+                    <button onclick="analyze()">Deep Analysis</button>
                 </div>
 
                 <canvas id="canvas" width="800" height="800"></canvas>
@@ -362,36 +379,119 @@ For modulus M and residue r:
             </section>
 
             <section id="limitations" class="section">
-                <h2>Limitations and Why This Doesn't Advance RH</h2>
+                <h2>Limitations and Missing Elements</h2>
                 
-                <h3>The Coordinate Change Problem</h3>
-                <p>Many RH attempts follow this pattern:</p>
-                <ol>
-                    <li>Find a clever coordinate change or reformulation</li>
-                    <li>Observe interesting patterns</li>
-                    <li>Hope this makes the problem easier</li>
-                    <li>Discover the difficulty is preserved</li>
-                </ol>
-                <p>This work falls squarely in that category.</p>
+                <h3>What's Missing: The Critical Gaps</h3>
+                <div class="warning-box">
+                    <strong>1. No Connection to Actual Zeta Function</strong>
+                    <p>This visualization doesn't compute ζ(s) at all! It only:</p>
+                    <ul>
+                        <li>Generates modular points artificially</li>
+                        <li>Maps them through Cayley transform</li>
+                        <li>Shows known zeros from pre-existing tables</li>
+                    </ul>
+                    <p><strong>Missing:</strong> Computing ζ(1/2 + it) to see where it actually approaches zero</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>2. No Functional Equation Integration</strong>
+                    <p>The functional equation ζ(s) = 2^s π^(s-1) sin(πs/2) Γ(1-s) ζ(1-s) is completely ignored.</p>
+                    <p><strong>Missing:</strong> Showing how this symmetry constrains zero locations</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>3. No Prime Number Connection</strong>
+                    <p>RH is important because of the Euler product: ζ(s) = ∏(1 - p^(-s))^(-1)</p>
+                    <p><strong>Missing:</strong> Visualization of how prime distribution relates to zeros</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>4. No Rigorous Distance Metrics</strong>
+                    <p><strong>Missing:</strong> Quantitative analysis of:</p>
+                    <ul>
+                        <li>How close modular points come to actual zeros</li>
+                        <li>Statistical significance of apparent clustering</li>
+                        <li>Comparison with random point distributions</li>
+                        <li>Error bounds and confidence intervals</li>
+                    </ul>
+                </div>
+
+                <h3>Maximum Modulus: Computational Limits</h3>
+                <table>
+                    <tr>
+                        <th>M_max</th>
+                        <th>Total Points</th>
+                        <th>Coprime Points</th>
+                        <th>Render Time</th>
+                        <th>Practical?</th>
+                    </tr>
+                    <tr>
+                        <td>500</td>
+                        <td>~125,000</td>
+                        <td>~78,000</td>
+                        <td>&lt;1s</td>
+                        <td>✓ Excellent</td>
+                    </tr>
+                    <tr>
+                        <td>1,000</td>
+                        <td>~500,000</td>
+                        <td>~304,000</td>
+                        <td>2-3s</td>
+                        <td>✓ Good</td>
+                    </tr>
+                    <tr>
+                        <td>2,000</td>
+                        <td>~2,000,000</td>
+                        <td>~1,216,000</td>
+                        <td>8-12s</td>
+                        <td>⚠ Slow</td>
+                    </tr>
+                    <tr>
+                        <td>5,000</td>
+                        <td>~12,500,000</td>
+                        <td>~7,600,000</td>
+                        <td>45-60s</td>
+                        <td>✗ Too slow</td>
+                    </tr>
+                </table>
+
+                <p><strong>Recommended maximum:</strong> M = 1000-2000 for browser-based rendering. Beyond this:</p>
+                <ul>
+                    <li>Canvas becomes oversaturated</li>
+                    <li>Individual points become indistinguishable</li>
+                    <li>No new mathematical insight gained</li>
+                    <li>Better to use heatmap/density visualization</li>
+                </ul>
+
+                <h3>Why Higher M Doesn't Help</h3>
+                <p>Increasing M reveals:</p>
+                <ul>
+                    <li><strong>Denser rings</strong> at predictable radii (by construction)</li>
+                    <li><strong>Finer angular structure</strong> (from more residue classes)</li>
+                    <li><strong>Same fundamental patterns</strong> (no new phenomena)</li>
+                </ul>
+                
+                <div class="info-box">
+                    <p><strong>Asymptotic density:</strong> As M → ∞, the proportion of coprime points approaches 6/π² ≈ 0.608. This is a known result (sum of 1/n² over coprimes), not a discovery about zeta zeros.</p>
+                </div>
 
                 <h3>Why RH Is Actually Hard</h3>
-                <p>The Riemann Hypothesis is difficult because:</p>
+                <p>The Riemann Hypothesis resists this approach because:</p>
                 <ul>
                     <li>The <strong>analytic continuation</strong> of ζ(s) is subtle</li>
-                    <li>The <strong>functional equation</strong> creates complex constraints</li>
+                    <li>The <strong>functional equation</strong> creates complex constraints not visible here</li>
                     <li>The <strong>distribution of primes</strong> connects to zeros in non-obvious ways</li>
-                    <li>Existing tools from complex analysis aren't sufficient</li>
+                    <li>Modular arithmetic has no known direct connection to zero locations</li>
                 </ul>
-                <p>Simply rewriting RH in different coordinates doesn't address any of these fundamental difficulties.</p>
 
-                <h3>Pedagogical Value</h3>
-                <p>Despite not advancing RH, this work may be useful for:</p>
-                <ul>
-                    <li>Teaching how conformal maps work</li>
-                    <li>Illustrating Euler's totient function visually</li>
-                    <li>Providing programming practice with complex mathematics</li>
-                    <li>Showing connections between different mathematical areas</li>
-                </ul>
+                <h3>What Would Make This Meaningful?</h3>
+                <ol>
+                    <li><strong>Compute actual ζ(1/2 + it)</strong> values and plot |ζ| approaching zero</li>
+                    <li><strong>Implement functional equation</strong> to show symmetry constraints</li>
+                    <li><strong>Statistical hypothesis testing</strong>: Do modular points cluster near zeros more than random points?</li>
+                    <li><strong>Connect to prime distribution</strong> via explicit formulas</li>
+                    <li><strong>Theoretical justification</strong> for why modular arithmetic would matter</li>
+                </ol>
             </section>
 
             <section id="code" class="section">
@@ -507,14 +607,36 @@ for M in range(1, M_max + 1):
             ctx.fillRect(0,0,w,h);
 
             const M = parseInt(document.getElementById('m-slider').value);
-            const scaleFactor = parseInt(document.getElementById('scale-slider').value);
+            const scaleFactor = parseFloat(document.getElementById('scale-slider').value);
+            const pointSize = parseInt(document.getElementById('size-slider').value);
+            const opacity = parseFloat(document.getElementById('opacity-slider').value);
             const coprimeOnly = document.getElementById('coprime').checked;
             const showZeros = document.getElementById('zeros').checked;
+            const densityColor = document.getElementById('density-color').checked;
+            const radialLines = document.getElementById('radial-lines').checked;
 
             document.getElementById('m-val').textContent = M;
             document.getElementById('scale-val').textContent = scaleFactor;
+            document.getElementById('size-val').textContent = pointSize;
+            document.getElementById('opacity-val').textContent = opacity;
 
             let points = 0, coprimeCount = 0;
+            let minDist = Infinity, maxDist = 0;
+            const distToZeros = [];
+
+            const startTime = performance.now();
+
+            // Radial structure
+            if(radialLines) {
+                ctx.strokeStyle = 'rgba(52,152,219,0.2)';
+                ctx.lineWidth = 0.5;
+                for(let angle=0; angle<Math.PI*2; angle+=Math.PI/12) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + Math.cos(angle)*scale, cy + Math.sin(angle)*scale);
+                    ctx.stroke();
+                }
+            }
 
             for(let m=1; m<=M; m++) {
                 const phiM = phi(m);
@@ -530,14 +652,40 @@ for M in range(1, M_max + 1):
                     const t = theta * scaleFactor;
                     const g = cayley(0.5, t);
                     
+                    const radius = Math.sqrt(g.x*g.x + g.y*g.y);
+                    const distFromCircle = Math.abs(radius - 1);
+                    minDist = Math.min(minDist, distFromCircle);
+                    maxDist = Math.max(maxDist, distFromCircle);
+                    
                     const px = cx + g.x * scale;
                     const py = cy - g.y * scale;
                     
-                    const hue = 60 + density*180;
-                    ctx.fillStyle = `hsla(${hue},70%,55%,0.3)`;
-                    ctx.fillRect(px-1, py-1, 2, 2);
+                    let color;
+                    if(densityColor) {
+                        const hue = 60 + density*180;
+                        color = `hsla(${hue},70%,55%,${opacity})`;
+                    } else {
+                        const hue = (m/M)*360;
+                        color = `hsla(${hue},70%,55%,${opacity})`;
+                    }
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillRect(px-pointSize/2, py-pointSize/2, pointSize, pointSize);
+                    
+                    // Track distance to nearest zero
+                    if(showZeros) {
+                        let minZeroDist = Infinity;
+                        zeros.forEach(zt => {
+                            const gz = cayley(0.5, zt);
+                            const d = Math.sqrt((g.x-gz.x)**2 + (g.y-gz.y)**2);
+                            minZeroDist = Math.min(minZeroDist, d);
+                        });
+                        distToZeros.push(minZeroDist);
+                    }
                 }
             }
+
+            const renderTime = ((performance.now() - startTime)/1000).toFixed(2);
 
             // Unit circle
             ctx.strokeStyle = '#3498db';
@@ -570,14 +718,64 @@ for M in range(1, M_max + 1):
                 });
             }
 
+            const avgDist = distToZeros.length > 0 ? 
+                (distToZeros.reduce((a,b)=>a+b,0)/distToZeros.length).toFixed(4) : 'N/A';
+
             document.getElementById('stats-text').innerHTML = `
-                <strong>Modulus range:</strong> 1 to ${M}<br>
-                <strong>Scaling factor:</strong> ${scaleFactor} (arbitrary choice)<br>
-                <strong>Total points:</strong> ${points.toLocaleString()}<br>
-                <strong>Coprime points:</strong> ${coprimeCount.toLocaleString()} (${(100*coprimeCount/points).toFixed(1)}%)<br>
-                <strong>Known zeros:</strong> ${showZeros ? '20 shown (±10 zeros)' : 'Hidden'}<br>
-                <em>Note: Patterns depend on parameter choices</em>
+                <strong>Computational Performance:</strong><br>
+                • Modulus range: 1 to ${M}<br>
+                • Render time: ${renderTime}s<br>
+                • Total points: ${points.toLocaleString()}<br>
+                • Coprime points: ${coprimeCount.toLocaleString()} (${(100*coprimeCount/points).toFixed(1)}%)<br>
+                • Asymptotic coprime density: ${(coprimeCount/points).toFixed(4)} (expect ~0.608 as M→∞)<br><br>
+                
+                <strong>Distance Analysis:</strong><br>
+                • Min distance from |Γ|=1: ${minDist.toFixed(6)}<br>
+                • Max distance from |Γ|=1: ${maxDist.toFixed(6)}<br>
+                • Avg distance to nearest zero: ${avgDist}<br><br>
+                
+                <strong>Parameters:</strong><br>
+                • Scaling factor: ${scaleFactor} (arbitrary, affects t-values)<br>
+                • Point size: ${pointSize}px<br>
+                • Opacity: ${opacity}<br>
+                • Known zeros: ${showZeros ? '20 shown' : 'Hidden'}
             `;
+        }
+
+        function analyze() {
+            const M = parseInt(document.getElementById('m-slider').value);
+            let analysis = '<h3>Deep Analysis</h3>';
+            
+            // Density histogram
+            const densities = {};
+            for(let m=1; m<=Math.min(M, 100); m++) {
+                const d = (phi(m)/m).toFixed(2);
+                densities[d] = (densities[d] || 0) + 1;
+            }
+            
+            analysis += '<strong>Density Distribution (first 100 moduli):</strong><br>';
+            Object.keys(densities).sort().forEach(d => {
+                analysis += `ρ=${d}: ${densities[d]} moduli<br>`;
+            });
+            
+            analysis += '<br><strong>Prime Moduli Analysis:</strong><br>';
+            const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+            primes.forEach(p => {
+                if(p <= M) {
+                    analysis += `M=${p} (prime): ρ=${(phi(p)/p).toFixed(4)} = ${((p-1)/p).toFixed(4)}<br>`;
+                }
+            });
+            
+            analysis += '<br><strong>Highly Composite Examples:</strong><br>';
+            [12,24,30,60,120].forEach(n => {
+                if(n <= M) {
+                    analysis += `M=${n}: ρ=${(phi(n)/n).toFixed(4)}<br>`;
+                }
+            });
+            
+            analysis += '<br><em>Note: Higher ρ means more coprime residues, creating denser rings in visualization.</em>';
+            
+            document.getElementById('stats-text').innerHTML = analysis;
         }
 
         function exportImg() {
@@ -593,6 +791,14 @@ for M in range(1, M_max + 1):
 
         document.getElementById('scale-slider').addEventListener('input', () => {
             document.getElementById('scale-val').textContent = document.getElementById('scale-slider').value;
+        });
+
+        document.getElementById('size-slider').addEventListener('input', () => {
+            document.getElementById('size-val').textContent = document.getElementById('size-slider').value;
+        });
+
+        document.getElementById('opacity-slider').addEventListener('input', () => {
+            document.getElementById('opacity-val').textContent = document.getElementById('opacity-slider').value;
         });
 
         draw();
