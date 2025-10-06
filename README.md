@@ -3,569 +3,599 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finite-Cutoff Identity in Twin Prime Sieve Theory</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    <title>Visualizing the Riemann Zeta Function - Wessen Getachew</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Times New Roman', serif;
-            line-height: 1.6;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            color: #2c3e50;
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
         }
-        
+
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
-        }
-        
-        .paper {
             background: white;
-            border-radius: 12px;
-            padding: 50px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        
-        .title {
-            font-size: 2.2em;
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 40px;
             text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 15px;
             font-weight: 400;
         }
-        
-        .author {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 40px;
-            color: #7f8c8d;
+
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 40px;
+            font-size: 0.95em;
         }
-        
-        .theorem-box {
-            background: linear-gradient(135deg, #e8f4fd, #d6eaf8);
-            border: 2px solid #3498db;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 30px 0;
-            position: relative;
+
+        .disclaimer strong {
+            color: #856404;
         }
-        
-        .theorem-box::before {
-            content: 'Main Identity';
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #3498db;
+
+        .nav {
+            background: #34495e;
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nav a {
             color: white;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.9em;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background 0.3s;
         }
-        
-        .formula {
-            text-align: center;
-            font-size: 1.3em;
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        
+
+        .nav a:hover { background: #2c3e50; }
+
+        .content { padding: 40px; }
+
         .section {
-            margin: 40px 0;
+            margin-bottom: 40px;
         }
-        
-        .section-title {
-            font-size: 1.5em;
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
             margin-bottom: 20px;
-            color: #34495e;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
         }
-        
-        .definition-box {
-            background: linear-gradient(135deg, #fef9e7, #fcf3cf);
-            border: 2px solid #f39c12;
-            border-radius: 8px;
+
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
             padding: 20px;
             margin: 20px 0;
+            border-radius: 4px;
         }
-        
-        .verification-panel {
-            background: linear-gradient(135deg, #e8f8f5, #d5f4e6);
-            border: 2px solid #27ae60;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 25px 0;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 20px;
-            align-items: center;
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 20px;
             margin: 20px 0;
-            flex-wrap: wrap;
+            border-radius: 4px;
         }
-        
-        label {
-            font-weight: bold;
-            color: #2c3e50;
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
         }
-        
-        input, select {
-            padding: 8px 12px;
-            border: 2px solid #bdc3c7;
+
+        canvas {
+            border: 2px solid #3498db;
             border-radius: 5px;
-            font-size: 14px;
+            background: #000;
+            display: block;
+            margin: 20px auto;
         }
-        
+
+        .controls {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .control-group { 
+            margin: 15px 0;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #bdc3c7;
+            border-radius: 3px;
+        }
+
         button {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: #3498db;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 10px 24px;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s;
+            font-size: 1em;
+            margin: 8px 4px;
         }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .results-table {
+
+        button:hover { background: #2980b9; }
+
+        table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
-        
-        .results-table th {
+
+        th {
             background: #34495e;
             color: white;
             padding: 12px;
-            text-align: center;
+            text-align: left;
         }
-        
-        .results-table td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ecf0f1;
+
+        td { 
+            padding: 10px; 
+            border-bottom: 1px solid #ecf0f1;
         }
-        
-        .results-table tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-        
-        .exact-match {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        
-        .note {
-            background: #f4f4f4;
-            border-left: 4px solid #95a5a6;
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
             padding: 15px;
-            margin: 20px 0;
-            font-style: italic;
-        }
-        
-        .step-detail {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
             border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
-        }
-        
-        .computation-step {
             font-family: 'Courier New', monospace;
-            background: #f4f4f4;
-            padding: 8px;
-            border-radius: 3px;
-            margin: 5px 0;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="paper">
-            <h1 class="title">Finite-Cutoff Identity in Twin Prime Sieve Theory</h1>
-            <div class="author">Mathematical Analysis by Wessen Getachew</div>
-            
-            <div class="theorem-box">
-                <div class="formula">
-                    $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \cdot C_2(p_{\max}) \cdot \left[M_{\mathrm{no2}}(p_{\max})\right]^3$$
-                </div>
-                <p><strong>Significance:</strong> This algebraic identity holds exactly for any finite prime cutoff, relating modular sieve constants to Hardy-Littlewood factors.</p>
-            </div>
-            
-            <div class="section">
-                <h2 class="section-title">Component Definitions</h2>
+        <div class="header">
+            <h1>Visualizing the Riemann Zeta Function:<br>A Modular-Cayley Coordinate Exploration</h1>
+            <div style="margin-top: 10px;">Wessen Getachew • October 2025</div>
+            <div style="margin-top: 5px; font-size: 0.9em; opacity: 0.9;">Exploratory Visualization Study</div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Important Disclaimer:</strong> This is a visualization and computational study only. It makes <strong>no claims</strong> about proving the Riemann Hypothesis or discovering new mathematical structure. The patterns observed are artifacts of the chosen construction and have pedagogical value but do not constitute mathematical insight into the distribution of zeta zeros.
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li><a href="#scope">Scope</a></li>
+                <li><a href="#framework">Framework</a></li>
+                <li><a href="#viz">Visualization</a></li>
+                <li><a href="#observations">Observations</a></li>
+                <li><a href="#limitations">Limitations</a></li>
+                <li><a href="#code">Code</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section id="scope" class="section">
+                <h2>Scope and Purpose</h2>
                 
-                <div class="definition-box">
-                    <h3>Modular Sieve Constant</h3>
-                    <div class="formula">
-                        $$R_{\mathrm{mod}}(p_{\max}) = \frac{1}{4} \prod_{3 \leq p \leq p_{\max}} \frac{(p-1)(p-2)}{p^2}$$
-                    </div>
-                    <p>The fraction of residue classes modulo the primorial that are twin-admissible.</p>
+                <div class="success-box">
+                    <h3>What This Work IS:</h3>
+                    <ul>
+                        <li>A visualization study combining known mathematical concepts</li>
+                        <li>An exploration of the Cayley transform applied to the critical line</li>
+                        <li>A pedagogical tool for understanding modular arithmetic patterns</li>
+                        <li>A computational implementation exercise</li>
+                    </ul>
                 </div>
+
+                <div class="warning-box">
+                    <h3>What This Work IS NOT:</h3>
+                    <ul>
+                        <li>A proof attempt of the Riemann Hypothesis</li>
+                        <li>A claim of discovering new mathematical structure</li>
+                        <li>A proposal for a viable RH proof strategy</li>
+                        <li>Evidence that modular arithmetic determines zeta zero locations</li>
+                    </ul>
+                </div>
+
+                <p>The Cayley transform Γ(s) = (s - 1/2)/(s + 1/2) is simply a <strong>coordinate change</strong>. Saying "RH is true iff all zeros satisfy |Γ(ρ)| = 1" is a tautology—it's true by construction but doesn't reduce the problem's difficulty.</p>
+            </section>
+
+            <section id="framework" class="section">
+                <h2>Mathematical Framework</h2>
                 
-                <div class="definition-box">
-                    <h3>Truncated Hardy-Littlewood Constant</h3>
-                    <div class="formula">
-                        $$C_2(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{(p-1)^2}\right)$$
-                    </div>
-                    <p>Finite version of the classical twin prime constant.</p>
+                <h3>The Cayley Transform</h3>
+                <p>For s ∈ ℂ, we define Γ(s) = (s - 1/2)/(s + 1/2). This Möbius transformation maps:</p>
+                <ul>
+                    <li>The critical line Re(s) = 1/2 → unit circle |Γ| = 1</li>
+                    <li>Right half-plane Re(s) > 1/2 → disk interior |Γ| < 1</li>
+                    <li>Left half-plane Re(s) < 1/2 → exterior |Γ| > 1</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>Connection to Smith Chart:</strong> RF engineers use an identical transform for impedance matching. This is a mathematical coincidence—both contexts use the same Möbius transformation, but there's no known physical connection between impedance and zeta zeros.
                 </div>
-                
-                <div class="definition-box">
-                    <h3>Modified Mertens Product</h3>
-                    <div class="formula">
-                        $$M_{\mathrm{no2}}(p_{\max}) = \prod_{3 \leq p \leq p_{\max}} \left(1 - \frac{1}{p}\right)$$
-                    </div>
-                    <p>Mertens-type product excluding the prime 2.</p>
+
+                <h3>Modular Arithmetic Overlay</h3>
+                <p>For visualization purposes, we overlay modular structure:</p>
+                <div class="code-block">
+For modulus M and residue r:
+    θ = 2πr/M           (angular position)
+    t = c·θ              (scaling by arbitrary constant c)
+    s = 1/2 + it        (on critical line)
+    Γ = it/(1 + it)     (Cayley coordinate)
+</div>
+
+                <p>We filter for coprime residues where gcd(r,M) = 1 and compute density ρ(M) = φ(M)/M.</p>
+
+                <div class="warning-box">
+                    <strong>Critical Disclaimer:</strong> This overlay is chosen for <em>visualization</em>. There is <strong>no established mathematical connection</strong> between residue classes mod M and zeta zero locations. Patterns we observe come from our construction choices, not from intrinsic properties of ζ(s).
                 </div>
-            </div>
-            
-            <div class="section">
-                <h2 class="section-title">Algebraic Foundation</h2>
-                
-                <div class="highlight">
-                    <h3>Per-Prime Identity</h3>
-                    <div class="formula">
-                        $$\frac{(p-1)(p-2)}{p^2} = \left(1 - \frac{1}{(p-1)^2}\right) \cdot \left(1 - \frac{1}{p}\right)^3$$
-                    </div>
-                    <p><strong>Proof:</strong> The right side expands to:</p>
-                    <div class="formula">
-                        $$\frac{(p-1)^2 - 1}{(p-1)^2} \cdot \frac{(p-1)^3}{p^3} = \frac{(p-2)(p)(p-1)^3}{(p-1)^2 p^3} = \frac{(p-1)(p-2)}{p^2}$$
-                    </div>
-                </div>
-            </div>
-            
-            <div class="verification-panel">
-                <h2 class="section-title">Interactive Verification</h2>
-                <p>Test the identity for any prime cutoff with customizable precision:</p>
+            </section>
+
+            <section id="viz" class="section">
+                <h2>Interactive Visualization</h2>
                 
                 <div class="controls">
-                    <label for="prime-cutoff">Prime Cutoff:</label>
-                    <input type="number" id="prime-cutoff" value="13" min="3" step="1">
-                    
-                    <label for="decimal-places">Decimal Places:</label>
-                    <input type="number" id="decimal-places" value="15" min="6" max="50" step="1">
-                    
-                    <button onclick="verifyIdentity()">Verify Identity</button>
-                    <button onclick="verifyAll()">Test Range</button>
-                    <button onclick="showStepByStep()">Step-by-Step</button>
+                    <div class="control-group">
+                        <label>Maximum Modulus M: <span id="m-val">150</span></label>
+                        <input type="range" id="m-slider" min="20" max="300" value="150">
+                        <small>Note: Different values create different visual patterns</small>
+                    </div>
+                    <div class="control-group">
+                        <label>Scaling Factor: <span id="scale-val">10</span></label>
+                        <input type="range" id="scale-slider" min="5" max="20" value="10">
+                        <small>Note: Arbitrary choice affecting visual appearance</small>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="coprime" checked> Coprime only (gcd=1)</label>
+                    </div>
+                    <div class="control-group">
+                        <label><input type="checkbox" id="zeros" checked> Show known zeros (for reference)</label>
+                    </div>
+                    <button onclick="draw()">Regenerate</button>
+                    <button onclick="exportImg()">Export PNG</button>
                 </div>
+
+                <canvas id="canvas" width="800" height="800"></canvas>
                 
-                <div id="verification-results"></div>
-                <div id="step-by-step-results"></div>
-            </div>
-            
-            <div class="note">
-                <strong>Note:</strong> This identity reveals the exact algebraic structure of finite twin prime sieves. 
-                The factor 1/4 arises from restricting to odd integers and twin constraints, while the exponent 3 
-                emerges naturally from the per-prime algebraic relationship.
-            </div>
+                <div id="stats" style="background:#ecf0f1; padding:15px; border-radius:5px; margin-top:15px;">
+                    <h3>Visualization Statistics</h3>
+                    <p id="stats-text">Click Regenerate to compute...</p>
+                </div>
+            </section>
+
+            <section id="observations" class="section">
+                <h2>Observations and Interpretation</h2>
+                
+                <h3>What We See</h3>
+                <p>The visualization shows:</p>
+                <ul>
+                    <li>Concentration of points near |Γ| = 1 (the unit circle)</li>
+                    <li>Density variation: ρ(M) ranges from ~0.2 to ~1.0</li>
+                    <li>Rotational symmetry (expected from angular mapping)</li>
+                    <li>Prime moduli create denser rings than composite moduli</li>
+                </ul>
+
+                <h3>What These Patterns Mean</h3>
+                <div class="success-box">
+                    <strong>Legitimate observations:</strong>
+                    <ul>
+                        <li>The Cayley transform successfully maps the critical line to a circle</li>
+                        <li>Coprime residues mod M create predictable density patterns</li>
+                        <li>Prime moduli have higher ρ(M) than highly composite moduli</li>
+                        <li>The visualization has aesthetic and pedagogical value</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>What we CANNOT claim:</strong>
+                    <ul>
+                        <li>These patterns "explain" why zeros lie on the critical line</li>
+                        <li>Modular arithmetic "constrains" zero locations</li>
+                        <li>This reveals "emergent structure" relevant to RH</li>
+                        <li>This suggests a proof strategy</li>
+                    </ul>
+                    <p style="margin-top:10px;">The concentration near |Γ| = 1 is largely an artifact of our scaling choices and the Cayley transform's properties.</p>
+                </div>
+
+                <h3>Known Zeros</h3>
+                <p>The red points show known zeta zeros from established tables. They lie exactly on |Γ| = 1 because they lie on Re(s) = 1/2. This confirms our implementation is correct but provides zero new information about the zeros themselves.</p>
+            </section>
+
+            <section id="limitations" class="section">
+                <h2>Limitations and Why This Doesn't Advance RH</h2>
+                
+                <h3>The Coordinate Change Problem</h3>
+                <p>Many RH attempts follow this pattern:</p>
+                <ol>
+                    <li>Find a clever coordinate change or reformulation</li>
+                    <li>Observe interesting patterns</li>
+                    <li>Hope this makes the problem easier</li>
+                    <li>Discover the difficulty is preserved</li>
+                </ol>
+                <p>This work falls squarely in that category.</p>
+
+                <h3>Why RH Is Actually Hard</h3>
+                <p>The Riemann Hypothesis is difficult because:</p>
+                <ul>
+                    <li>The <strong>analytic continuation</strong> of ζ(s) is subtle</li>
+                    <li>The <strong>functional equation</strong> creates complex constraints</li>
+                    <li>The <strong>distribution of primes</strong> connects to zeros in non-obvious ways</li>
+                    <li>Existing tools from complex analysis aren't sufficient</li>
+                </ul>
+                <p>Simply rewriting RH in different coordinates doesn't address any of these fundamental difficulties.</p>
+
+                <h3>Pedagogical Value</h3>
+                <p>Despite not advancing RH, this work may be useful for:</p>
+                <ul>
+                    <li>Teaching how conformal maps work</li>
+                    <li>Illustrating Euler's totient function visually</li>
+                    <li>Providing programming practice with complex mathematics</li>
+                    <li>Showing connections between different mathematical areas</li>
+                </ul>
+            </section>
+
+            <section id="code" class="section">
+                <h2>Implementation Code</h2>
+                
+                <div class="code-block">
+def euler_totient(n):
+    result = n
+    p = 2
+    while p * p <= n:
+        if n % p == 0:
+            while n % p == 0:
+                n //= p
+            result -= result // p
+        p += 1
+    if n > 1:
+        result -= result // n
+    return result
+
+def cayley_transform(sigma, t):
+    """Γ(s) = (s - 1/2)/(s + 1/2)"""
+    num_real = sigma - 0.5
+    num_imag = t
+    den_real = sigma + 0.5
+    den_imag = t
+    mag_sq = den_real**2 + den_imag**2
+    return (
+        (num_real * den_real + num_imag * den_imag) / mag_sq,
+        (num_imag * den_real - num_real * den_imag) / mag_sq
+    )
+
+# Generate points
+for M in range(1, M_max + 1):
+    phi_M = euler_totient(M)
+    density = phi_M / M
+    for r in range(M):
+        if gcd(r, M) != 1: continue
+        theta = 2 * pi * r / M
+        t = theta * scaling_factor  # Arbitrary choice
+        gamma = cayley_transform(0.5, t)
+        # Plot (gamma, density, M)
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Conclusions</h2>
+                
+                <p>We have presented a visualization technique combining the Cayley transform with modular arithmetic patterns. The resulting visualizations are aesthetically interesting and may have pedagogical value, but they <strong>do not constitute progress</strong> on the Riemann Hypothesis.</p>
+
+                <p>This work is best understood as:</p>
+                <ul>
+                    <li>An exercise in mathematical visualization</li>
+                    <li>A programming project connecting multiple concepts</li>
+                    <li>A reminder that pattern recognition ≠ mathematical insight</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>For anyone interested in actually working on RH:</strong>
+                    <ul>
+                        <li>Study existing literature deeply (Edwards, Titchmarsh, Ivić)</li>
+                        <li>Get formal training in complex analysis and analytic number theory</li>
+                        <li>Work with experienced mentors</li>
+                        <li>Build rigorous theoretical foundations</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <div class="footer">
+            <h3>Wessen Getachew • 2025</h3>
+            <p>Exploratory Visualization Study</p>
+            <p style="margin-top:10px; font-size:0.9em;">This work makes no claims about advancing the Riemann Hypothesis</p>
         </div>
     </div>
 
     <script>
-        // Configure MathJax
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            }
-        };
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        const cx = w/2, cy = h/2;
+        const scale = 160;
 
-        function isPrime(n) {
-            if (n < 2) return false;
-            if (n === 2) return true;
-            if (n % 2 === 0) return false;
-            for (let i = 3; i * i <= n; i += 2) {
-                if (n % i === 0) return false;
+        const zeros = [14.134725,21.022040,25.010858,30.424876,32.935062,
+                       37.586178,40.918719,43.327073,48.005151,49.773832];
+
+        function gcd(a,b) { return b===0 ? a : gcd(b, a%b); }
+
+        function phi(n) {
+            let res = n, temp = n;
+            for(let p=2; p*p<=temp; p++) {
+                if(temp%p===0) {
+                    while(temp%p===0) temp/=p;
+                    res -= res/p;
+                }
             }
-            return true;
+            if(temp>1) res -= res/temp;
+            return Math.floor(res);
         }
 
-        function getPrimesUpTo(limit) {
-            const primes = [];
-            for (let i = 3; i <= limit; i++) {
-                if (isPrime(i)) primes.push(i);
-            }
-            return primes;
-        }
-
-        function formatNumber(num, decimals) {
-            if (decimals <= 16) {
-                return num.toFixed(decimals);
-            } else {
-                // For high precision, use exponential and manual formatting
-                const exp = num.toExponential(decimals - 1);
-                return exp;
-            }
-        }
-
-        function computeIdentityComponents(pmax, precision = 15) {
-            const primes = getPrimesUpTo(pmax);
-            
-            // Compute R_mod step by step
-            let logRmod = Math.log(0.25);
-            const rmodeSteps = [`Initial factor: 1/4 = ${formatNumber(0.25, precision)}`];
-            
-            for (const p of primes) {
-                const term = (p - 1) * (p - 2) / (p * p);
-                logRmod += Math.log(term);
-                rmodeSteps.push(`Prime ${p}: (${p-1})(${p-2})/${p}² = ${formatNumber(term, precision)}`);
-            }
-            const Rmod = Math.exp(logRmod);
-            rmodeSteps.push(`Final R_mod = ${formatNumber(Rmod, precision)}`);
-            
-            // Compute C₂ step by step
-            let logC2 = 0;
-            const c2Steps = [`Starting C₂ calculation:`];
-            
-            for (const p of primes) {
-                const term = 1 - 1/((p - 1) * (p - 1));
-                logC2 += Math.log(term);
-                c2Steps.push(`Prime ${p}: 1 - 1/(${p-1})² = 1 - 1/${(p-1)*(p-1)} = ${formatNumber(term, precision)}`);
-            }
-            const C2 = Math.exp(logC2);
-            c2Steps.push(`Final C₂ = ${formatNumber(C2, precision)}`);
-            
-            // Compute M_no2 step by step
-            let logMno2 = 0;
-            const mno2Steps = [`Starting M_no2 calculation:`];
-            
-            for (const p of primes) {
-                const term = 1 - 1/p;
-                logMno2 += Math.log(term);
-                mno2Steps.push(`Prime ${p}: 1 - 1/${p} = ${formatNumber(term, precision)}`);
-            }
-            const Mno2 = Math.exp(logMno2);
-            mno2Steps.push(`Final M_no2 = ${formatNumber(Mno2, precision)}`);
-            
-            const rightSide = 0.25 * C2 * Math.pow(Mno2, 3);
-            const relativeError = Math.abs(Rmod - rightSide) / Math.max(Rmod, rightSide);
-            
+        function cayley(sigma, t) {
+            const nr = sigma - 0.5, ni = t;
+            const dr = sigma + 0.5, di = t;
+            const mag = dr*dr + di*di;
             return {
-                pmax,
-                primes,
-                Rmod,
-                C2,
-                Mno2,
-                rightSide,
-                relativeError,
-                exactMatch: relativeError < Math.pow(10, -precision + 2),
-                rmodeSteps,
-                c2Steps,
-                mno2Steps,
-                precision
+                x: (nr*dr + ni*di)/mag,
+                y: (ni*dr - nr*di)/mag
             };
         }
 
-        function verifyIdentity() {
-            const pmax = parseInt(document.getElementById('prime-cutoff').value);
-            const decimals = parseInt(document.getElementById('decimal-places').value);
-            
-            if (!isPrime(pmax)) {
-                document.getElementById('verification-results').innerHTML = `
-                    <div class="note">
-                        <strong>Note:</strong> ${pmax} is not prime. Using largest prime ≤ ${pmax}: ${getPrimesUpTo(pmax).slice(-1)[0] || 'None found'}
-                    </div>
-                `;
-                return;
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0,0,w,h);
+
+            const M = parseInt(document.getElementById('m-slider').value);
+            const scaleFactor = parseInt(document.getElementById('scale-slider').value);
+            const coprimeOnly = document.getElementById('coprime').checked;
+            const showZeros = document.getElementById('zeros').checked;
+
+            document.getElementById('m-val').textContent = M;
+            document.getElementById('scale-val').textContent = scaleFactor;
+
+            let points = 0, coprimeCount = 0;
+
+            for(let m=1; m<=M; m++) {
+                const phiM = phi(m);
+                const density = phiM/m;
+                
+                for(let r=0; r<m; r++) {
+                    if(coprimeOnly && gcd(r,m)!==1) continue;
+                    
+                    points++;
+                    if(gcd(r,m)===1) coprimeCount++;
+                    
+                    const theta = 2*Math.PI*r/m;
+                    const t = theta * scaleFactor;
+                    const g = cayley(0.5, t);
+                    
+                    const px = cx + g.x * scale;
+                    const py = cy - g.y * scale;
+                    
+                    const hue = 60 + density*180;
+                    ctx.fillStyle = `hsla(${hue},70%,55%,0.3)`;
+                    ctx.fillRect(px-1, py-1, 2, 2);
+                }
             }
-            
-            const result = computeIdentityComponents(pmax, decimals);
-            
-            const html = `
-                <h3>Verification for p_max = ${result.pmax} (${decimals} decimal places)</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>Component</th>
-                        <th>Value</th>
-                        <th>Details</th>
-                    </tr>
-                    <tr>
-                        <td>Primes Used</td>
-                        <td>[${result.primes.join(', ')}]</td>
-                        <td>All primes from 3 to ${result.pmax}</td>
-                    </tr>
-                    <tr>
-                        <td>R_mod(${result.pmax})</td>
-                        <td>${formatNumber(result.Rmod, decimals)}</td>
-                        <td>Left side of identity</td>
-                    </tr>
-                    <tr>
-                        <td>C₂(${result.pmax})</td>
-                        <td>${formatNumber(result.C2, decimals)}</td>
-                        <td>Hardy-Littlewood factor</td>
-                    </tr>
-                    <tr>
-                        <td>M_no2(${result.pmax})</td>
-                        <td>${formatNumber(result.Mno2, decimals)}</td>
-                        <td>Mertens factor</td>
-                    </tr>
-                    <tr>
-                        <td>M_no2³</td>
-                        <td>${formatNumber(Math.pow(result.Mno2, 3), decimals)}</td>
-                        <td>Cubed Mertens factor</td>
-                    </tr>
-                    <tr>
-                        <td>(1/4) × C₂ × M_no2³</td>
-                        <td>${formatNumber(result.rightSide, decimals)}</td>
-                        <td>Right side of identity</td>
-                    </tr>
-                    <tr>
-                        <td>Absolute Difference</td>
-                        <td>${formatNumber(Math.abs(result.Rmod - result.rightSide), decimals)}</td>
-                        <td>|Left - Right|</td>
-                    </tr>
-                    <tr>
-                        <td>Relative Error</td>
-                        <td class="${result.exactMatch ? 'exact-match' : ''}">${result.relativeError.toExponential(3)}</td>
-                        <td>${result.exactMatch ? 'EXACT MATCH ✓' : 'Within precision limits'}</td>
-                    </tr>
-                </table>
+
+            // Unit circle
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, scale, 0, 2*Math.PI);
+            ctx.stroke();
+
+            // Zeros
+            if(showZeros) {
+                ctx.fillStyle = '#e74c3c';
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                zeros.forEach(t => {
+                    const g = cayley(0.5, t);
+                    const px = cx + g.x*scale;
+                    const py = cy - g.y*scale;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 4, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    const g2 = cayley(0.5, -t);
+                    const px2 = cx + g2.x*scale;
+                    const py2 = cy - g2.y*scale;
+                    ctx.beginPath();
+                    ctx.arc(px2, py2, 4, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                });
+            }
+
+            document.getElementById('stats-text').innerHTML = `
+                <strong>Modulus range:</strong> 1 to ${M}<br>
+                <strong>Scaling factor:</strong> ${scaleFactor} (arbitrary choice)<br>
+                <strong>Total points:</strong> ${points.toLocaleString()}<br>
+                <strong>Coprime points:</strong> ${coprimeCount.toLocaleString()} (${(100*coprimeCount/points).toFixed(1)}%)<br>
+                <strong>Known zeros:</strong> ${showZeros ? '20 shown (±10 zeros)' : 'Hidden'}<br>
+                <em>Note: Patterns depend on parameter choices</em>
             `;
-            
-            document.getElementById('verification-results').innerHTML = html;
         }
 
-        function showStepByStep() {
-            const pmax = parseInt(document.getElementById('prime-cutoff').value);
-            const decimals = parseInt(document.getElementById('decimal-places').value);
-            
-            if (!isPrime(pmax)) {
-                document.getElementById('step-by-step-results').innerHTML = `
-                    <div class="note">
-                        <strong>Error:</strong> ${pmax} is not prime. Please enter a prime number.
-                    </div>
-                `;
-                return;
-            }
-            
-            const result = computeIdentityComponents(pmax, decimals);
-            
-            let html = `
-                <h3>Step-by-Step Computation for p_max = ${result.pmax}</h3>
-                
-                <div class="step-detail">
-                    <h4>Left Side: R_mod(${result.pmax}) Calculation</h4>
-                    <p><strong>Formula:</strong> R_mod = (1/4) × ∏[(p-1)(p-2)/p²] for p ∈ {${result.primes.join(', ')}}</p>
-            `;
-            
-            for (const step of result.rmodeSteps) {
-                html += `<div class="computation-step">${step}</div>`;
-            }
-            
-            html += `
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Right Side Component 1: C₂(${result.pmax}) Calculation</h4>
-                    <p><strong>Formula:</strong> C₂ = ∏[1 - 1/(p-1)²] for p ∈ {${result.primes.join(', ')}}</p>
-            `;
-            
-            for (const step of result.c2Steps) {
-                html += `<div class="computation-step">${step}</div>`;
-            }
-            
-            html += `
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Right Side Component 2: M_no2(${result.pmax}) Calculation</h4>
-                    <p><strong>Formula:</strong> M_no2 = ∏[1 - 1/p] for p ∈ {${result.primes.join(', ')}}</p>
-            `;
-            
-            for (const step of result.mno2Steps) {
-                html += `<div class="computation-step">${step}</div>`;
-            }
-            
-            html += `
-                </div>
-                
-                <div class="step-detail">
-                    <h4>Final Assembly</h4>
-                    <div class="computation-step">C₂(${result.pmax}) = ${formatNumber(result.C2, decimals)}</div>
-                    <div class="computation-step">M_no2(${result.pmax}) = ${formatNumber(result.Mno2, decimals)}</div>
-                    <div class="computation-step">M_no2³ = ${formatNumber(Math.pow(result.Mno2, 3), decimals)}</div>
-                    <div class="computation-step">Right Side = (1/4) × ${formatNumber(result.C2, decimals)} × ${formatNumber(Math.pow(result.Mno2, 3), decimals)}</div>
-                    <div class="computation-step">Right Side = ${formatNumber(result.rightSide, decimals)}</div>
-                    <div class="computation-step">Left Side = ${formatNumber(result.Rmod, decimals)}</div>
-                    <div class="computation-step ${result.exactMatch ? 'exact-match' : ''}">
-                        <strong>Identity ${result.exactMatch ? 'VERIFIED' : 'APPROXIMATE'}: Difference = ${formatNumber(Math.abs(result.Rmod - result.rightSide), decimals)}</strong>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('step-by-step-results').innerHTML = html;
+        function exportImg() {
+            const link = document.createElement('a');
+            link.download = 'cayley-modular-visualization.png';
+            link.href = canvas.toDataURL();
+            link.click();
         }
 
-        function verifyAll() {
-            const startPrime = 3;
-            const endPrime = parseInt(document.getElementById('prime-cutoff').value);
-            const decimals = parseInt(document.getElementById('decimal-places').value);
-            
-            const allPrimes = [];
-            for (let i = startPrime; i <= endPrime; i++) {
-                if (isPrime(i)) allPrimes.push(i);
-            }
-            
-            let html = `
-                <h3>Complete Verification for Primes 3 to ${endPrime}</h3>
-                <table class="results-table">
-                    <tr>
-                        <th>p_max</th>
-                        <th>R_mod (Left)</th>
-                        <th>Right Side</th>
-                        <th>Difference</th>
-                        <th>Status</th>
-                    </tr>
-            `;
-            
-            for (const pmax of allPrimes) {
-                const result = computeIdentityComponents(pmax, decimals);
-                const diff = Math.abs(result.Rmod - result.rightSide);
-                html += `
-                    <tr>
-                        <td>${result.pmax}</td>
-                        <td>${formatNumber(result.Rmod, Math.min(8, decimals))}</td>
-                        <td>${formatNumber(result.rightSide, Math.min(8, decimals))}</td>
-                        <td>${diff.toExponential(2)}</td>
-                        <td class="${result.exactMatch ? 'exact-match' : ''}">
-                            ${result.exactMatch ? 'EXACT ✓' : 'APPROX'}
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            html += `</table>
-                <div class="note">
-                    <strong>Summary:</strong> Tested ${allPrimes.length} prime cutoffs from 3 to ${endPrime}. 
-                    All identities verified to ${decimals} decimal places.
-                </div>
-            `;
-            document.getElementById('verification-results').innerHTML = html;
-        }
-
-        // Initialize with default verification
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(verifyIdentity, 500);
+        document.getElementById('m-slider').addEventListener('input', () => {
+            document.getElementById('m-val').textContent = document.getElementById('m-slider').value;
         });
+
+        document.getElementById('scale-slider').addEventListener('input', () => {
+            document.getElementById('scale-val').textContent = document.getElementById('scale-slider').value;
+        });
+
+        draw();
     </script>
 </body>
 </html>
