@@ -1,807 +1,555 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizing the Riemann Zeta Function - Wessen Getachew</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Georgia', serif;
-            line-height: 1.8;
-            color: #333;
-            background: #f5f5f5;
-            padding: 20px;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modular Rings — Interactive Visualizer</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#7dd3fc;
+      --muted:#94a3b8;
+      --good:#34d399;
+      --danger:#fb7185;
+      --glass: rgba(255,255,255,0.03);
+      --panel-w: 340px;
+      --ui-pad: 14px;
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: #e6eef8;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(180deg,var(--bg),#061226 120%);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow:hidden;
+    }
+    .app {
+      display:flex;
+      height:100vh;
+      gap:18px;
+      padding:18px;
+      box-sizing:border-box;
+    }
+    .panel {
+      width:var(--panel-w);
+      min-width:240px;
+      background:linear-gradient(180deg,var(--card), rgba(255,255,255,0.02));
+      border-radius:12px;
+      padding:var(--ui-pad);
+      box-shadow: 0 6px 22px rgba(2,6,23,0.6);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .panel h2 {
+      margin:0;
+      font-size:18px;
+      color:var(--accent);
+    }
+    label { font-size:13px; color:var(--muted); }
+    input[type="number"], input[type="range"], select {
+      width:100%;
+      padding:8px 10px;
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      color:inherit;
+      border-radius:8px;
+      box-sizing:border-box;
+      margin-top:6px;
+    }
+    .row { display:flex; gap:8px; align-items:center; }
+    .btn {
+      background:linear-gradient(180deg,var(--accent), #3fc5ff);
+      border:none;
+      padding:8px 12px;
+      border-radius:10px;
+      color:#06202a;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 4px 10px rgba(125,211,252,0.08);
+    }
+    .btn.secondary {
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-weight:600;
+    }
+    .controls { display:flex; flex-direction:column; gap:10px; }
+    .footer {
+      margin-top:auto;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+    /* Canvas / viewport */
+    .viewport {
+      flex:1;
+      border-radius:12px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:stretch;
+      justify-content:center;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(125,211,252,0.03), transparent 6%),
+        linear-gradient(180deg, rgba(255,255,255,0.01), transparent 40%);
+      padding:14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    canvas {
+      background:transparent;
+      width:100%;
+      height:100%;
+      border-radius:8px;
+      display:block;
+    }
+    .legend {
+      position:absolute;
+      left:28px;
+      top:18px;
+      background:rgba(2,6,23,0.6);
+      padding:8px 12px;
+      border-radius:10px;
+      font-size:13px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .legend .item {display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .swatch { width:12px;height:12px;border-radius:3px;flex:0 0 12px; }
+    .sw-accent{background:var(--accent);}
+    .sw-gcd1{background:var(--good);}
+    .sw-pt{background:rgba(255,255,255,0.08);}
 
-        .header {
-            background: #2c3e50;
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
+    .tooltip {
+      pointer-events:none;
+      position:absolute;
+      background:rgba(2,6,23,0.9);
+      color:var(--accent);
+      padding:8px 10px;
+      font-size:13px;
+      border-radius:8px;
+      border:1px solid rgba(125,211,252,0.08);
+      transform:translate(-50%,-120%);
+      white-space:nowrap;
+      display:none;
+      z-index:50;
+    }
 
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 15px;
-            font-weight: 400;
-        }
-
-        .disclaimer {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 20px;
-            margin: 20px 40px;
-            font-size: 0.95em;
-        }
-
-        .disclaimer strong {
-            color: #856404;
-        }
-
-        .nav {
-            background: #34495e;
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .nav a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        .nav a:hover { background: #2c3e50; }
-
-        .content { padding: 40px; }
-
-        .section {
-            margin-bottom: 40px;
-        }
-
-        .section h2 {
-            color: #2c3e50;
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            border-left: 4px solid #3498db;
-            padding-left: 15px;
-        }
-
-        .section h3 {
-            color: #34495e;
-            font-size: 1.3em;
-            margin: 25px 0 15px 0;
-        }
-
-        .warning-box {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        .info-box {
-            background: #d1ecf1;
-            border-left: 4px solid #17a2b8;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        .success-box {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        canvas {
-            border: 2px solid #3498db;
-            border-radius: 5px;
-            background: #000;
-            display: block;
-            margin: 20px auto;
-        }
-
-        .controls {
-            background: #ecf0f1;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .control-group { 
-            margin: 15px 0;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            background: #bdc3c7;
-            border-radius: 3px;
-        }
-
-        button {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            margin: 8px 4px;
-        }
-
-        button:hover { background: #2980b9; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-
-        th {
-            background: #34495e;
-            color: white;
-            padding: 12px;
-            text-align: left;
-        }
-
-        td { 
-            padding: 10px; 
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .code-block {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            margin: 15px 0;
-            overflow-x: auto;
-            font-size: 0.9em;
-        }
-
-        .footer {
-            background: #2c3e50;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        ul {
-            margin: 15px 0 15px 30px;
-        }
-
-        li {
-            margin: 8px 0;
-        }
-    </style>
+    /* responsive */
+    @media (max-width:900px){
+      .app{flex-direction:column;padding:12px}
+      .panel{width:100%;min-width:unset;order:2}
+      .viewport{order:1;height:60vh}
+    }
+    footer.note{
+      position:absolute;
+      right:18px;
+      bottom:16px;
+      color:rgba(255,255,255,0.06);
+      font-size:12px;
+    }
+    .small { font-size:12px; color:var(--muted); }
+    .control-row { display:flex; gap:8px; align-items:center; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Visualizing the Riemann Zeta Function:<br>A Modular-Cayley Coordinate Exploration</h1>
-            <div style="margin-top: 10px;">Wessen Getachew • October 2025</div>
-            <div style="margin-top: 5px; font-size: 0.9em; opacity: 0.9;">Exploratory Visualization Study</div>
+  <div class="app" role="application" aria-label="Modular Rings Visualizer">
+    <div class="panel" aria-hidden="false">
+      <h2>Modular Rings — Visualizer</h2>
+      <div class="controls" role="region" aria-label="controls">
+        <div>
+          <label for="baseMod">Base modulus M</label>
+          <input id="baseMod" type="number" min="1" step="1" value="30" />
         </div>
 
-        <div class="disclaimer">
-            <strong>Important Disclaimer:</strong> This is a visualization and computational study only. It makes <strong>no claims</strong> about proving the Riemann Hypothesis or discovering new mathematical structure. The patterns observed are artifacts of the chosen construction and have pedagogical value but do not constitute mathematical insight into the distribution of zeta zeros.
+        <div>
+          <label for="rings">Number of rings</label>
+          <input id="rings" type="number" min="1" max="10" step="1" value="5" />
         </div>
 
-        <nav class="nav">
-            <ul>
-                <li><a href="#scope">Scope</a></li>
-                <li><a href="#framework">Framework</a></li>
-                <li><a href="#viz">Visualization</a></li>
-                <li><a href="#observations">Observations</a></li>
-                <li><a href="#limitations">Limitations</a></li>
-                <li><a href="#code">Code</a></li>
-            </ul>
-        </nav>
-
-        <div class="content">
-            <section id="scope" class="section">
-                <h2>Scope and Purpose</h2>
-                
-                <div class="success-box">
-                    <h3>What This Work IS:</h3>
-                    <ul>
-                        <li>A visualization study combining known mathematical concepts</li>
-                        <li>An exploration of the Cayley transform applied to the critical line</li>
-                        <li>A pedagogical tool for understanding modular arithmetic patterns</li>
-                        <li>A computational implementation exercise</li>
-                    </ul>
-                </div>
-
-                <div class="warning-box">
-                    <h3>What This Work IS NOT:</h3>
-                    <ul>
-                        <li>A proof attempt of the Riemann Hypothesis</li>
-                        <li>A claim of discovering new mathematical structure</li>
-                        <li>A proposal for a viable RH proof strategy</li>
-                        <li>Evidence that modular arithmetic determines zeta zero locations</li>
-                    </ul>
-                </div>
-
-                <p>The Cayley transform Γ(s) = (s - 1/2)/(s + 1/2) is simply a <strong>coordinate change</strong>. Saying "RH is true iff all zeros satisfy |Γ(ρ)| = 1" is a tautology—it's true by construction but doesn't reduce the problem's difficulty.</p>
-            </section>
-
-            <section id="framework" class="section">
-                <h2>Mathematical Framework</h2>
-                
-                <h3>The Cayley Transform</h3>
-                <p>For s ∈ ℂ, we define Γ(s) = (s - 1/2)/(s + 1/2). This Möbius transformation maps:</p>
-                <ul>
-                    <li>The critical line Re(s) = 1/2 → unit circle |Γ| = 1</li>
-                    <li>Right half-plane Re(s) > 1/2 → disk interior |Γ| < 1</li>
-                    <li>Left half-plane Re(s) < 1/2 → exterior |Γ| > 1</li>
-                </ul>
-
-                <div class="info-box">
-                    <strong>Connection to Smith Chart:</strong> RF engineers use an identical transform for impedance matching. This is a mathematical coincidence—both contexts use the same Möbius transformation, but there's no known physical connection between impedance and zeta zeros.
-                </div>
-
-                <h3>Modular Arithmetic Overlay</h3>
-                <p>For visualization purposes, we overlay modular structure:</p>
-                <div class="code-block">
-For modulus M and residue r:
-    θ = 2πr/M           (angular position)
-    t = c·θ              (scaling by arbitrary constant c)
-    s = 1/2 + it        (on critical line)
-    Γ = it/(1 + it)     (Cayley coordinate)
-</div>
-
-                <p>We filter for coprime residues where gcd(r,M) = 1 and compute density ρ(M) = φ(M)/M.</p>
-
-                <div class="warning-box">
-                    <strong>Critical Disclaimer:</strong> This overlay is chosen for <em>visualization</em>. There is <strong>no established mathematical connection</strong> between residue classes mod M and zeta zero locations. Patterns we observe come from our construction choices, not from intrinsic properties of ζ(s).
-                </div>
-            </section>
-
-            <section id="viz" class="section">
-                <h2>Interactive Visualization</h2>
-                
-                <div class="controls">
-                    <div class="control-group">
-                        <label>Maximum Modulus M: <span id="m-val">500</span></label>
-                        <input type="range" id="m-slider" min="20" max="2000" value="500">
-                        <small>Note: Values >1000 may slow rendering. Reveals finer structure.</small>
-                    </div>
-                    <div class="control-group">
-                        <label>Scaling Factor: <span id="scale-val">10</span></label>
-                        <input type="range" id="scale-slider" min="1" max="50" value="10" step="0.5">
-                        <small>Note: Higher values map to larger imaginary parts</small>
-                    </div>
-                    <div class="control-group">
-                        <label>Point Size: <span id="size-val">2</span>px</label>
-                        <input type="range" id="size-slider" min="1" max="5" value="2">
-                        <small>Adjust for high-density visualizations</small>
-                    </div>
-                    <div class="control-group">
-                        <label>Opacity: <span id="opacity-val">0.3</span></label>
-                        <input type="range" id="opacity-slider" min="0.1" max="1" value="0.3" step="0.1">
-                        <small>Lower opacity better for overlapping points</small>
-                    </div>
-                    <div class="control-group">
-                        <label><input type="checkbox" id="coprime" checked> Coprime only (gcd=1)</label>
-                    </div>
-                    <div class="control-group">
-                        <label><input type="checkbox" id="zeros" checked> Show known zeros</label>
-                    </div>
-                    <div class="control-group">
-                        <label><input type="checkbox" id="density-color" checked> Color by density ρ(M)</label>
-                    </div>
-                    <div class="control-group">
-                        <label><input type="checkbox" id="radial-lines"> Show radial structure</label>
-                    </div>
-                    <button onclick="draw()">Regenerate</button>
-                    <button onclick="exportImg()">Export PNG</button>
-                    <button onclick="analyze()">Deep Analysis</button>
-                </div>
-
-                <canvas id="canvas" width="800" height="800"></canvas>
-                
-                <div id="stats" style="background:#ecf0f1; padding:15px; border-radius:5px; margin-top:15px;">
-                    <h3>Visualization Statistics</h3>
-                    <p id="stats-text">Click Regenerate to compute...</p>
-                </div>
-            </section>
-
-            <section id="observations" class="section">
-                <h2>Observations and Interpretation</h2>
-                
-                <h3>What We See</h3>
-                <p>The visualization shows:</p>
-                <ul>
-                    <li>Concentration of points near |Γ| = 1 (the unit circle)</li>
-                    <li>Density variation: ρ(M) ranges from ~0.2 to ~1.0</li>
-                    <li>Rotational symmetry (expected from angular mapping)</li>
-                    <li>Prime moduli create denser rings than composite moduli</li>
-                </ul>
-
-                <h3>What These Patterns Mean</h3>
-                <div class="success-box">
-                    <strong>Legitimate observations:</strong>
-                    <ul>
-                        <li>The Cayley transform successfully maps the critical line to a circle</li>
-                        <li>Coprime residues mod M create predictable density patterns</li>
-                        <li>Prime moduli have higher ρ(M) than highly composite moduli</li>
-                        <li>The visualization has aesthetic and pedagogical value</li>
-                    </ul>
-                </div>
-
-                <div class="warning-box">
-                    <strong>What we CANNOT claim:</strong>
-                    <ul>
-                        <li>These patterns "explain" why zeros lie on the critical line</li>
-                        <li>Modular arithmetic "constrains" zero locations</li>
-                        <li>This reveals "emergent structure" relevant to RH</li>
-                        <li>This suggests a proof strategy</li>
-                    </ul>
-                    <p style="margin-top:10px;">The concentration near |Γ| = 1 is largely an artifact of our scaling choices and the Cayley transform's properties.</p>
-                </div>
-
-                <h3>Known Zeros</h3>
-                <p>The red points show known zeta zeros from established tables. They lie exactly on |Γ| = 1 because they lie on Re(s) = 1/2. This confirms our implementation is correct but provides zero new information about the zeros themselves.</p>
-            </section>
-
-            <section id="limitations" class="section">
-                <h2>Limitations and Missing Elements</h2>
-                
-                <h3>What's Missing: The Critical Gaps</h3>
-                <div class="warning-box">
-                    <strong>1. No Connection to Actual Zeta Function</strong>
-                    <p>This visualization doesn't compute ζ(s) at all! It only:</p>
-                    <ul>
-                        <li>Generates modular points artificially</li>
-                        <li>Maps them through Cayley transform</li>
-                        <li>Shows known zeros from pre-existing tables</li>
-                    </ul>
-                    <p><strong>Missing:</strong> Computing ζ(1/2 + it) to see where it actually approaches zero</p>
-                </div>
-
-                <div class="warning-box">
-                    <strong>2. No Functional Equation Integration</strong>
-                    <p>The functional equation ζ(s) = 2^s π^(s-1) sin(πs/2) Γ(1-s) ζ(1-s) is completely ignored.</p>
-                    <p><strong>Missing:</strong> Showing how this symmetry constrains zero locations</p>
-                </div>
-
-                <div class="warning-box">
-                    <strong>3. No Prime Number Connection</strong>
-                    <p>RH is important because of the Euler product: ζ(s) = ∏(1 - p^(-s))^(-1)</p>
-                    <p><strong>Missing:</strong> Visualization of how prime distribution relates to zeros</p>
-                </div>
-
-                <div class="warning-box">
-                    <strong>4. No Rigorous Distance Metrics</strong>
-                    <p><strong>Missing:</strong> Quantitative analysis of:</p>
-                    <ul>
-                        <li>How close modular points come to actual zeros</li>
-                        <li>Statistical significance of apparent clustering</li>
-                        <li>Comparison with random point distributions</li>
-                        <li>Error bounds and confidence intervals</li>
-                    </ul>
-                </div>
-
-                <h3>Maximum Modulus: Computational Limits</h3>
-                <table>
-                    <tr>
-                        <th>M_max</th>
-                        <th>Total Points</th>
-                        <th>Coprime Points</th>
-                        <th>Render Time</th>
-                        <th>Practical?</th>
-                    </tr>
-                    <tr>
-                        <td>500</td>
-                        <td>~125,000</td>
-                        <td>~78,000</td>
-                        <td>&lt;1s</td>
-                        <td>✓ Excellent</td>
-                    </tr>
-                    <tr>
-                        <td>1,000</td>
-                        <td>~500,000</td>
-                        <td>~304,000</td>
-                        <td>2-3s</td>
-                        <td>✓ Good</td>
-                    </tr>
-                    <tr>
-                        <td>2,000</td>
-                        <td>~2,000,000</td>
-                        <td>~1,216,000</td>
-                        <td>8-12s</td>
-                        <td>⚠ Slow</td>
-                    </tr>
-                    <tr>
-                        <td>5,000</td>
-                        <td>~12,500,000</td>
-                        <td>~7,600,000</td>
-                        <td>45-60s</td>
-                        <td>✗ Too slow</td>
-                    </tr>
-                </table>
-
-                <p><strong>Recommended maximum:</strong> M = 1000-2000 for browser-based rendering. Beyond this:</p>
-                <ul>
-                    <li>Canvas becomes oversaturated</li>
-                    <li>Individual points become indistinguishable</li>
-                    <li>No new mathematical insight gained</li>
-                    <li>Better to use heatmap/density visualization</li>
-                </ul>
-
-                <h3>Why Higher M Doesn't Help</h3>
-                <p>Increasing M reveals:</p>
-                <ul>
-                    <li><strong>Denser rings</strong> at predictable radii (by construction)</li>
-                    <li><strong>Finer angular structure</strong> (from more residue classes)</li>
-                    <li><strong>Same fundamental patterns</strong> (no new phenomena)</li>
-                </ul>
-                
-                <div class="info-box">
-                    <p><strong>Asymptotic density:</strong> As M → ∞, the proportion of coprime points approaches 6/π² ≈ 0.608. This is a known result (sum of 1/n² over coprimes), not a discovery about zeta zeros.</p>
-                </div>
-
-                <h3>Why RH Is Actually Hard</h3>
-                <p>The Riemann Hypothesis resists this approach because:</p>
-                <ul>
-                    <li>The <strong>analytic continuation</strong> of ζ(s) is subtle</li>
-                    <li>The <strong>functional equation</strong> creates complex constraints not visible here</li>
-                    <li>The <strong>distribution of primes</strong> connects to zeros in non-obvious ways</li>
-                    <li>Modular arithmetic has no known direct connection to zero locations</li>
-                </ul>
-
-                <h3>What Would Make This Meaningful?</h3>
-                <ol>
-                    <li><strong>Compute actual ζ(1/2 + it)</strong> values and plot |ζ| approaching zero</li>
-                    <li><strong>Implement functional equation</strong> to show symmetry constraints</li>
-                    <li><strong>Statistical hypothesis testing</strong>: Do modular points cluster near zeros more than random points?</li>
-                    <li><strong>Connect to prime distribution</strong> via explicit formulas</li>
-                    <li><strong>Theoretical justification</strong> for why modular arithmetic would matter</li>
-                </ol>
-            </section>
-
-            <section id="code" class="section">
-                <h2>Implementation Code</h2>
-                
-                <div class="code-block">
-def euler_totient(n):
-    result = n
-    p = 2
-    while p * p <= n:
-        if n % p == 0:
-            while n % p == 0:
-                n //= p
-            result -= result // p
-        p += 1
-    if n > 1:
-        result -= result // n
-    return result
-
-def cayley_transform(sigma, t):
-    """Γ(s) = (s - 1/2)/(s + 1/2)"""
-    num_real = sigma - 0.5
-    num_imag = t
-    den_real = sigma + 0.5
-    den_imag = t
-    mag_sq = den_real**2 + den_imag**2
-    return (
-        (num_real * den_real + num_imag * den_imag) / mag_sq,
-        (num_imag * den_real - num_real * den_imag) / mag_sq
-    )
-
-# Generate points
-for M in range(1, M_max + 1):
-    phi_M = euler_totient(M)
-    density = phi_M / M
-    for r in range(M):
-        if gcd(r, M) != 1: continue
-        theta = 2 * pi * r / M
-        t = theta * scaling_factor  # Arbitrary choice
-        gamma = cayley_transform(0.5, t)
-        # Plot (gamma, density, M)
-                </div>
-            </section>
-
-            <section class="section">
-                <h2>Conclusions</h2>
-                
-                <p>We have presented a visualization technique combining the Cayley transform with modular arithmetic patterns. The resulting visualizations are aesthetically interesting and may have pedagogical value, but they <strong>do not constitute progress</strong> on the Riemann Hypothesis.</p>
-
-                <p>This work is best understood as:</p>
-                <ul>
-                    <li>An exercise in mathematical visualization</li>
-                    <li>A programming project connecting multiple concepts</li>
-                    <li>A reminder that pattern recognition ≠ mathematical insight</li>
-                </ul>
-
-                <div class="info-box">
-                    <strong>For anyone interested in actually working on RH:</strong>
-                    <ul>
-                        <li>Study existing literature deeply (Edwards, Titchmarsh, Ivić)</li>
-                        <li>Get formal training in complex analysis and analytic number theory</li>
-                        <li>Work with experienced mentors</li>
-                        <li>Build rigorous theoretical foundations</li>
-                    </ul>
-                </div>
-            </section>
+        <div>
+          <label for="pointsPerRing">Residues per ring (show every k-th residue)</label>
+          <input id="pointsPerRing" type="number" min="1" step="1" value="1" />
         </div>
 
-        <div class="footer">
-            <h3>Wessen Getachew • 2025</h3>
-            <p>Exploratory Visualization Study</p>
-            <p style="margin-top:10px; font-size:0.9em;">This work makes no claims about advancing the Riemann Hypothesis</p>
+        <div>
+          <label for="pointSize">Point size (px)</label>
+          <input id="pointSize" type="range" min="1" max="8" step="0.5" value="3" />
         </div>
+
+        <div class="control-row">
+          <label><input id="showGcd1" type="checkbox" checked /> show only gcd(r, m)=1</label>
+        </div>
+
+        <div class="control-row">
+          <button id="drawBtn" class="btn">Draw</button>
+          <button id="animateBtn" class="btn secondary">Play</button>
+        </div>
+
+        <div class="control-row">
+          <button id="exportPng" class="btn secondary">Export PNG</button>
+          <button id="copyHtml" class="btn">Copy HTML</button>
+        </div>
+
+        <div class="control-row small">
+          <label for="colorMode">Color mode</label>
+          <select id="colorMode" style="width:160px;">
+            <option value="gradient">Gradient by ring</option>
+            <option value="solid">Solid points</option>
+            <option value="monochrome">Monochrome</option>
+          </select>
+        </div>
+
+        <div class="footer small">
+          Tip: Hover points for details. Click a point to pin info. Press <strong>space</strong> to play/pause animation.
+          <div style="margin-top:8px;color:var(--muted)">Built for modular residue/gcd visualization.</div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const w = canvas.width;
-        const h = canvas.height;
-        const cx = w/2, cy = h/2;
-        const scale = 160;
+    <div class="viewport" role="region" aria-label="visualization">
+      <div class="legend" aria-hidden="true">
+        <div class="item"><div class="swatch sw-accent"></div> modulus ring</div>
+        <div class="item"><div class="swatch sw-gcd1"></div> gcd = 1 residues</div>
+        <div class="item"><div class="swatch sw-pt"></div> other residues</div>
+      </div>
 
-        const zeros = [14.134725,21.022040,25.010858,30.424876,32.935062,
-                       37.586178,40.918719,43.327073,48.005151,49.773832];
+      <canvas id="vizCanvas" width="1200" height="800"></canvas>
+      <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+    </div>
+  </div>
 
-        function gcd(a,b) { return b===0 ? a : gcd(b, a%b); }
+  <footer class="note">Modular Rings • interactive demo</footer>
 
-        function phi(n) {
-            let res = n, temp = n;
-            for(let p=2; p*p<=temp; p++) {
-                if(temp%p===0) {
-                    while(temp%p===0) temp/=p;
-                    res -= res/p;
-                }
-            }
-            if(temp>1) res -= res/temp;
-            return Math.floor(res);
+  <script>
+    // Modular Rings Visualizer
+    // Single-file interactive HTML. No external dependencies.
+    // Author: ChatGPT (generated). Feel free to modify.
+
+    // --- Utilities ---------------------------------------------------------
+    const $ = (id) => document.getElementById(id);
+    const gcd = (a,b) => { a = Math.abs(a); b = Math.abs(b); while(b){ [a,b] = [b, a % b]; } return a; };
+
+    // --- Canvas setup -----------------------------------------------------
+    const canvas = $('vizCanvas');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    function resizeCanvasToDisplaySize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', () => { resizeCanvasToDisplaySize(); draw(); });
+    resizeCanvasToDisplaySize();
+
+    // --- State -------------------------------------------------------------
+    const state = {
+      baseMod: 30,
+      rings: 5,
+      pointsPerRingSkip: 1,
+      pointSize: 3,
+      showGcd1: true,
+      colorMode: 'gradient',
+      anim: { playing:false, t:0, speed:0.8 },
+      pinned: null,
+      cached: [] // precomputed points
+    };
+
+    // DOM refs
+    const baseModInput = $('baseMod');
+    const ringsInput = $('rings');
+    const pointsPerRingInput = $('pointsPerRing');
+    const pointSizeInput = $('pointSize');
+    const showGcd1Input = $('showGcd1');
+    const drawBtn = $('drawBtn');
+    const animateBtn = $('animateBtn');
+    const exportPng = $('exportPng');
+    const tooltip = $('tooltip');
+    const colorModeSelect = $('colorMode');
+    const copyHtml = $('copyHtml');
+
+    // initialize UI values
+    baseModInput.value = state.baseMod;
+    ringsInput.value = state.rings;
+    pointsPerRingInput.value = state.pointsPerRingSkip;
+    pointSizeInput.value = state.pointSize;
+    showGcd1Input.checked = state.showGcd1;
+    colorModeSelect.value = state.colorMode;
+
+    function computePoints() {
+      const M = parseInt(baseModInput.value) || 30;
+      const rings = parseInt(ringsInput.value) || 5;
+      const skip = Math.max(1, parseInt(pointsPerRingInput.value) || 1);
+      const points = [];
+      for (let r = 0; r < rings; r++) {
+        const mod = M * Math.pow(2, r); // use doubling sequence M, 2M, 4M, 8M...
+        const N = Math.max(1, mod);
+        for (let a = 0; a < N; a += skip) {
+          const angle = (a / N) * Math.PI * 2 - Math.PI/2; // start at top
+          const isGcd1 = gcd(a, mod) === 1;
+          points.push({ ring: r, mod, residue: a, N, angle, isGcd1 });
         }
+      }
+      state.cached = points;
+      return points;
+    }
 
-        function cayley(sigma, t) {
-            const nr = sigma - 0.5, ni = t;
-            const dr = sigma + 0.5, di = t;
-            const mag = dr*dr + di*di;
-            return {
-                x: (nr*dr + ni*di)/mag,
-                y: (ni*dr - nr*di)/mag
-            };
+    // Color helpers
+    function ringColor(r, total) {
+      // gradient from cyan -> purple -> orange
+      const t = total <= 1 ? 0 : r/(total-1);
+      const c1 = [125,211,252]; // cyan
+      const c2 = [167,139,250]; // purple
+      const c3 = [255,179,71];  // orange
+      // blend c1->c2->c3
+      if (t < 0.5) {
+        const u = t / 0.5;
+        return lerpColor(c1, c2, u);
+      } else {
+        const u = (t-0.5) / 0.5;
+        return lerpColor(c2, c3, u);
+      }
+    }
+    function lerpColor(a,b,t){ return `rgb(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)})`; }
+
+    // --- Draw logic -------------------------------------------------------
+    function clear() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+
+    function draw() {
+      resizeCanvasToDisplaySize();
+      clear();
+      const pts = state.cached.length ? state.cached : computePoints();
+      const rings = Math.max(1, parseInt(ringsInput.value) || 5);
+      const padding = 28;
+      const vw = canvas.width / (window.devicePixelRatio || 1);
+      const vh = canvas.height / (window.devicePixelRatio || 1);
+      const cx = vw/2;
+      const cy = vh/2;
+      // radius range
+      const maxRadius = Math.min(vw, vh) / 2 - 64;
+      const ringSpacing = maxRadius / Math.max(1, rings);
+      // draw rings
+      for (let r = rings-1; r >= 0; r--) {
+        const radius = ringSpacing * (r + 0.7); // slight offset
+        ctx.beginPath();
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.arc(cx, cy, radius, 0, Math.PI*2);
+        ctx.stroke();
+
+        // ring label
+        const modForLabel = (parseInt(baseModInput.value) || 30) * Math.pow(2, r);
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.font = '12px Inter, Arial';
+        ctx.fillText(`mod ${modForLabel}`, cx + radius - 52, cy - 8);
+      }
+
+      // animate radial offset (for visual effect)
+      const animOffset = state.anim.playing ? Math.sin(state.anim.t * state.anim.speed) * 0.3 : 0;
+
+      // draw points
+      for (const p of pts) {
+        if (showGcd1Input.checked && !p.isGcd1) continue;
+        const r = p.ring;
+        const radius = ringSpacing * (r + 0.7) * (1 + animOffset * (r / Math.max(1, rings-1)));
+        const x = cx + Math.cos(p.angle) * radius;
+        const y = cy + Math.sin(p.angle) * radius;
+
+        // style
+        const size = parseFloat(pointSizeInput.value) || 3;
+        if (p.isGcd1) {
+          ctx.fillStyle = (state.colorMode === 'monochrome') ? 'rgb(52,211,153)' : (state.colorMode === 'solid' ? 'rgb(125,211,252)' : ringColor(r, rings));
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
         }
-
-        function draw() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0,0,w,h);
-
-            const M = parseInt(document.getElementById('m-slider').value);
-            const scaleFactor = parseFloat(document.getElementById('scale-slider').value);
-            const pointSize = parseInt(document.getElementById('size-slider').value);
-            const opacity = parseFloat(document.getElementById('opacity-slider').value);
-            const coprimeOnly = document.getElementById('coprime').checked;
-            const showZeros = document.getElementById('zeros').checked;
-            const densityColor = document.getElementById('density-color').checked;
-            const radialLines = document.getElementById('radial-lines').checked;
-
-            document.getElementById('m-val').textContent = M;
-            document.getElementById('scale-val').textContent = scaleFactor;
-            document.getElementById('size-val').textContent = pointSize;
-            document.getElementById('opacity-val').textContent = opacity;
-
-            let points = 0, coprimeCount = 0;
-            let minDist = Infinity, maxDist = 0;
-            const distToZeros = [];
-
-            const startTime = performance.now();
-
-            // Radial structure
-            if(radialLines) {
-                ctx.strokeStyle = 'rgba(52,152,219,0.2)';
-                ctx.lineWidth = 0.5;
-                for(let angle=0; angle<Math.PI*2; angle+=Math.PI/12) {
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    ctx.lineTo(cx + Math.cos(angle)*scale, cy + Math.sin(angle)*scale);
-                    ctx.stroke();
-                }
-            }
-
-            for(let m=1; m<=M; m++) {
-                const phiM = phi(m);
-                const density = phiM/m;
-                
-                for(let r=0; r<m; r++) {
-                    if(coprimeOnly && gcd(r,m)!==1) continue;
-                    
-                    points++;
-                    if(gcd(r,m)===1) coprimeCount++;
-                    
-                    const theta = 2*Math.PI*r/m;
-                    const t = theta * scaleFactor;
-                    const g = cayley(0.5, t);
-                    
-                    const radius = Math.sqrt(g.x*g.x + g.y*g.y);
-                    const distFromCircle = Math.abs(radius - 1);
-                    minDist = Math.min(minDist, distFromCircle);
-                    maxDist = Math.max(maxDist, distFromCircle);
-                    
-                    const px = cx + g.x * scale;
-                    const py = cy - g.y * scale;
-                    
-                    let color;
-                    if(densityColor) {
-                        const hue = 60 + density*180;
-                        color = `hsla(${hue},70%,55%,${opacity})`;
-                    } else {
-                        const hue = (m/M)*360;
-                        color = `hsla(${hue},70%,55%,${opacity})`;
-                    }
-                    
-                    ctx.fillStyle = color;
-                    ctx.fillRect(px-pointSize/2, py-pointSize/2, pointSize, pointSize);
-                    
-                    // Track distance to nearest zero
-                    if(showZeros) {
-                        let minZeroDist = Infinity;
-                        zeros.forEach(zt => {
-                            const gz = cayley(0.5, zt);
-                            const d = Math.sqrt((g.x-gz.x)**2 + (g.y-gz.y)**2);
-                            minZeroDist = Math.min(minZeroDist, d);
-                        });
-                        distToZeros.push(minZeroDist);
-                    }
-                }
-            }
-
-            const renderTime = ((performance.now() - startTime)/1000).toFixed(2);
-
-            // Unit circle
-            ctx.strokeStyle = '#3498db';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(cx, cy, scale, 0, 2*Math.PI);
-            ctx.stroke();
-
-            // Zeros
-            if(showZeros) {
-                ctx.fillStyle = '#e74c3c';
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1;
-                zeros.forEach(t => {
-                    const g = cayley(0.5, t);
-                    const px = cx + g.x*scale;
-                    const py = cy - g.y*scale;
-                    ctx.beginPath();
-                    ctx.arc(px, py, 4, 0, 2*Math.PI);
-                    ctx.fill();
-                    ctx.stroke();
-                    
-                    const g2 = cayley(0.5, -t);
-                    const px2 = cx + g2.x*scale;
-                    const py2 = cy - g2.y*scale;
-                    ctx.beginPath();
-                    ctx.arc(px2, py2, 4, 0, 2*Math.PI);
-                    ctx.fill();
-                    ctx.stroke();
-                });
-            }
-
-            const avgDist = distToZeros.length > 0 ? 
-                (distToZeros.reduce((a,b)=>a+b,0)/distToZeros.length).toFixed(4) : 'N/A';
-
-            document.getElementById('stats-text').innerHTML = `
-                <strong>Computational Performance:</strong><br>
-                • Modulus range: 1 to ${M}<br>
-                • Render time: ${renderTime}s<br>
-                • Total points: ${points.toLocaleString()}<br>
-                • Coprime points: ${coprimeCount.toLocaleString()} (${(100*coprimeCount/points).toFixed(1)}%)<br>
-                • Asymptotic coprime density: ${(coprimeCount/points).toFixed(4)} (expect ~0.608 as M→∞)<br><br>
-                
-                <strong>Distance Analysis:</strong><br>
-                • Min distance from |Γ|=1: ${minDist.toFixed(6)}<br>
-                • Max distance from |Γ|=1: ${maxDist.toFixed(6)}<br>
-                • Avg distance to nearest zero: ${avgDist}<br><br>
-                
-                <strong>Parameters:</strong><br>
-                • Scaling factor: ${scaleFactor} (arbitrary, affects t-values)<br>
-                • Point size: ${pointSize}px<br>
-                • Opacity: ${opacity}<br>
-                • Known zeros: ${showZeros ? '20 shown' : 'Hidden'}
-            `;
+        // subtle radial glow for gcd1
+        if (p.isGcd1) {
+          ctx.beginPath();
+          ctx.globalAlpha = 0.08;
+          ctx.fillStyle = ctx.fillStyle;
+          ctx.arc(x, y, size * 2.2, 0, Math.PI*2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
         }
+        // draw dot
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI*2);
+        ctx.fill();
 
-        function analyze() {
-            const M = parseInt(document.getElementById('m-slider').value);
-            let analysis = '<h3>Deep Analysis</h3>';
-            
-            // Density histogram
-            const densities = {};
-            for(let m=1; m<=Math.min(M, 100); m++) {
-                const d = (phi(m)/m).toFixed(2);
-                densities[d] = (densities[d] || 0) + 1;
-            }
-            
-            analysis += '<strong>Density Distribution (first 100 moduli):</strong><br>';
-            Object.keys(densities).sort().forEach(d => {
-                analysis += `ρ=${d}: ${densities[d]} moduli<br>`;
-            });
-            
-            analysis += '<br><strong>Prime Moduli Analysis:</strong><br>';
-            const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
-            primes.forEach(p => {
-                if(p <= M) {
-                    analysis += `M=${p} (prime): ρ=${(phi(p)/p).toFixed(4)} = ${((p-1)/p).toFixed(4)}<br>`;
-                }
-            });
-            
-            analysis += '<br><strong>Highly Composite Examples:</strong><br>';
-            [12,24,30,60,120].forEach(n => {
-                if(n <= M) {
-                    analysis += `M=${n}: ρ=${(phi(n)/n).toFixed(4)}<br>`;
-                }
-            });
-            
-            analysis += '<br><em>Note: Higher ρ means more coprime residues, creating denser rings in visualization.</em>';
-            
-            document.getElementById('stats-text').innerHTML = analysis;
-        }
+        // attach cached canvas coordinates for hit-testing
+        p._x = x;
+        p._y = y;
+        p._radius = size;
+      }
 
-        function exportImg() {
-            const link = document.createElement('a');
-            link.download = 'cayley-modular-visualization.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        }
+      // pinned info (if any)
+      if (state.pinned) {
+        const p = state.pinned;
+        // draw a highlighted halo
+        ctx.beginPath();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(125,211,252,0.9)';
+        ctx.arc(p._x, p._y, p._radius + 6, 0, Math.PI*2);
+        ctx.stroke();
+      }
+    }
 
-        document.getElementById('m-slider').addEventListener('input', () => {
-            document.getElementById('m-val').textContent = document.getElementById('m-slider').value;
-        });
+    // initial compute & draw
+    computePoints();
+    draw();
 
-        document.getElementById('scale-slider').addEventListener('input', () => {
-            document.getElementById('scale-val').textContent = document.getElementById('scale-slider').value;
-        });
+    // --- Interaction / hit-testing ---------------------------------------
+    function findPointAt(pos) {
+      const pts = state.cached;
+      // search from topmost (largest ring)
+      for (let i = pts.length - 1; i >= 0; i--) {
+        const p = pts[i];
+        if (showGcd1Input.checked && !p.isGcd1) continue;
+        if (!p._x) continue;
+        const dx = pos.x - p._x;
+        const dy = pos.y - p._y;
+        const r = p._radius + 4;
+        if (dx*dx + dy*dy <= r*r) return p;
+      }
+      return null;
+    }
 
-        document.getElementById('size-slider').addEventListener('input', () => {
-            document.getElementById('size-val').textContent = document.getElementById('size-slider').value;
-        });
+    function pageToCanvas(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left);
+      const y = (e.clientY - rect.top);
+      return { x, y };
+    }
 
-        document.getElementById('opacity-slider').addEventListener('input', () => {
-            document.getElementById('opacity-val').textContent = document.getElementById('opacity-slider').value;
-        });
+    canvas.addEventListener('mousemove', (ev) => {
+      const pos = pageToCanvas(ev);
+      const p = findPointAt(pos);
+      if (p) {
+        showTooltip(ev.clientX, ev.clientY, `mod ${p.mod}, r=${p.residue} (N=${p.N}) — gcd=${gcd(p.residue,p.mod)}`);
+      } else {
+        hideTooltip();
+      }
+    });
 
+    canvas.addEventListener('mouseleave', (ev) => { hideTooltip(); });
+
+    canvas.addEventListener('click', (ev) => {
+      const pos = pageToCanvas(ev);
+      const p = findPointAt(pos);
+      if (p) {
+        state.pinned = p;
+        showTooltip(ev.clientX, ev.clientY, `Pinned → mod ${p.mod}, r=${p.residue} — gcd=${gcd(p.residue,p.mod)}. Click pin again to unpin.`);
+      } else {
+        state.pinned = null;
+        hideTooltip();
+      }
+      draw();
+    });
+
+    function showTooltip(clientX, clientY, text) {
+      tooltip.style.display = 'block';
+      tooltip.textContent = text;
+      // position relative to viewport bounds
+      const rect = canvas.getBoundingClientRect();
+      tooltip.style.left = (clientX - rect.left) + 'px';
+      tooltip.style.top = (clientY - rect.top) + 'px';
+    }
+    function hideTooltip() {
+      if (state.pinned) return; // keep pinned
+      tooltip.style.display = 'none';
+    }
+
+    // --- Animation loop --------------------------------------------------
+    let lastTime = 0;
+    function loop(ts) {
+      const dt = (ts - lastTime) / 1000;
+      lastTime = ts;
+      if (state.anim.playing) {
+        state.anim.t += dt;
         draw();
-    </script>
+      }
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    // --- UI wiring -------------------------------------------------------
+    drawBtn.addEventListener('click', () => {
+      computePoints();
+      draw();
+    });
+
+    animateBtn.addEventListener('click', () => {
+      toggleAnimation();
+    });
+
+    function toggleAnimation() {
+      state.anim.playing = !state.anim.playing;
+      animateBtn.textContent = state.anim.playing ? 'Pause' : 'Play';
+      if (!state.anim.playing) draw();
+    }
+    // space toggles animation
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        toggleAnimation();
+      }
+    });
+
+    // live updates for inputs (minor performance: only recompute on Draw click)
+    baseModInput.addEventListener('input', () => { /* leave for Draw */ });
+    ringsInput.addEventListener('input', () => { /* leave for Draw */ });
+    pointsPerRingInput.addEventListener('input', () => { /* leave for Draw */ });
+    pointSizeInput.addEventListener('input', () => { state.pointSize = parseFloat(pointSizeInput.value); draw(); });
+    showGcd1Input.addEventListener('change', () => { draw(); });
+    colorModeSelect.addEventListener('change', () => { state.colorMode = colorModeSelect.value; draw(); });
+
+    // Export PNG
+    exportPng.addEventListener('click', () => {
+      // produce an image from the canvas
+      const link = document.createElement('a');
+      link.download = `modular_rings_M${baseModInput.value}_rings${ringsInput.value}.png`;
+      // to avoid cross-origin problems, the canvas is same-origin (no external images)
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+
+    // Copy HTML to clipboard (helpful convenience)
+    copyHtml.addEventListener('click', async () => {
+      try {
+        // Reconstruct the original HTML (this file) by grabbing outerHTML
+        // We'll copy a minimal instruction with a message pointing to the canvas data
+        const htmlText = `<!-- Save this full HTML into a file named modular_rings.html and open in a browser -->\n` +
+          document.documentElement.outerHTML;
+        await navigator.clipboard.writeText(htmlText);
+        copyHtml.textContent = 'Copied!';
+        setTimeout(()=> copyHtml.textContent = 'Copy HTML', 1500);
+      } catch (err) {
+        copyHtml.textContent = 'Denied';
+        setTimeout(()=> copyHtml.textContent = 'Copy HTML', 1500);
+      }
+    });
+
+    // Recompute when the numeric inputs lose focus (for convenience)
+    [baseModInput, ringsInput, pointsPerRingInput].forEach(el => {
+      el.addEventListener('change', () => { computePoints(); draw(); });
+      el.addEventListener('keyup', (e) => { if (e.key === 'Enter') { computePoints(); draw(); } });
+    });
+
+    // Keep canvas crisp on hot-reload: recompute on visibility change
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) draw(); });
+
+    // Initial instruction overlay
+    setTimeout(()=> {
+      // gentle first-frame draw
+      draw();
+    }, 50);
+  </script>
 </body>
 </html>
