@@ -1,759 +1,1431 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Getachew Modular Prime Sieve Explorer</title>
-
-<!-- MathJax for LaTeX rendering (CDN). Replace if you need an offline renderer -->
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-
-<style>
-  :root{
-    --bg:#0b1220;
-    --panel:#071226;
-    --muted:#94a3b8;
-    --accent:#66c2ff;
-    --good:#36d399;
-    --glass: rgba(255,255,255,0.03);
-    --card-radius:12px;
-    --ui-pad:12px;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    color: #e6eef8;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-  html,body { height:100%; margin:0; background: linear-gradient(180deg,#071322,#04101a 140%); }
-  .app {
-    display:grid;
-    grid-template-columns: 360px 1fr 320px;
-    gap:18px;
-    padding:18px;
-    height:100vh;
-    box-sizing:border-box;
-  }
-
-  /* Left controls */
-  .panel {
-    background: linear-gradient(180deg,var(--panel), rgba(255,255,255,0.01));
-    border-radius:var(--card-radius);
-    padding:var(--ui-pad);
-    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    min-height:0;
-  }
-  .panel h1 { margin:0; font-size:18px; color:var(--accent); }
-  .panel h2 { margin:0; font-size:13px; color:var(--muted); }
-  label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
-  input[type="number"], input[type="range"], select {
-    width:100%;
-    padding:8px 10px;
-    background:var(--glass);
-    border:1px solid rgba(255,255,255,0.04);
-    color:inherit;
-    border-radius:8px;
-    font-size:13px;
-    box-sizing:border-box;
-  }
-  .row { display:flex; gap:8px; align-items:center; }
-  .btn {
-    background:linear-gradient(180deg,var(--accent), #4fb6f7);
-    border:none;
-    padding:8px 12px;
-    border-radius:8px;
-    color:#042025;
-    font-weight:700;
-    cursor:pointer;
-  }
-  .btn.secondary {
-    background:transparent;
-    border:1px solid rgba(255,255,255,0.06);
-    color:var(--muted);
-    font-weight:600;
-  }
-  .small { font-size:12px; color:var(--muted); }
-  .controls { display:flex; flex-direction:column; gap:10px; }
-
-  /* Center canvas */
-  .viewport {
-    background: radial-gradient(circle at 20% 20%, rgba(102,194,255,0.02), transparent 10%), linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-    border-radius:var(--card-radius);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-    padding:14px;
-    position:relative;
-    overflow:hidden;
-    min-height:0;
-  }
-  canvas { width:100%; height:100%; display:block; border-radius:8px; background:linear-gradient(180deg,#02060b,#001018 120%); }
-
-  /* Right panel (stats & LaTeX) */
-  .side {
-    background: linear-gradient(180deg,var(--panel), rgba(255,255,255,0.01));
-    border-radius:var(--card-radius);
-    padding:var(--ui-pad);
-    box-shadow: 0 8px 20px rgba(2,6,23,0.55);
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    min-height:0;
-  }
-
-  .legend { font-size:13px; color:var(--muted); display:flex; gap:8px; flex-direction:column; }
-  .legend .item { display:flex; gap:8px; align-items:center; }
-  .swatch { width:14px; height:14px; border-radius:3px; flex:0 0 14px; border:1px solid rgba(255,255,255,0.04); }
-  .sw-ring{ background:transparent; border:1px dashed rgba(255,255,255,0.06); }
-  .sw-gcd1{ background:var(--good); }
-  .sw-pt{ background:rgba(255,255,255,0.07); }
-  .sw-line{ background:linear-gradient(90deg,var(--accent), #a78bfa); height:3px; width:24px; border-radius:2px; }
-
-  /* Tooltip */
-  .tooltip {
-    position:absolute;
-    pointer-events:none;
-    background:rgba(2,6,23,0.9);
-    padding:8px 10px;
-    border-radius:8px;
-    border:1px solid rgba(125,211,252,0.08);
-    color:var(--accent);
-    font-size:13px;
-    transform:translate(-50%,-120%);
-    display:none;
-    z-index:50;
-  }
-  footer.note { position:absolute; right:18px; bottom:16px; color:rgba(255,255,255,0.05); font-size:12px; }
-
-  /* Responsive */
-  @media (max-width:1100px){
-    .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; padding:12px; gap:12px; }
-    .panel, .side { order:2; }
-    .viewport { order:1; height:60vh; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular Sieve: π and ζ(2n) Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .info-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .info-section h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .info-section p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .formula {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(238, 90, 82, 0.3);
+        }
+        
+        .export-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a8a3);
+            margin-top: 10px;
+        }
+        
+        .export-btn:hover {
+            box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-card h4 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        
+        .error-info {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        .step-by-step {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .step-by-step h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #4ecdc4;
+            color: #1e3c72;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .step-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .step-content {
+            margin-left: 40px;
+            line-height: 1.6;
+        }
+        
+        .step-formula {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .gap-analysis {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .gap-analysis h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        
+        .gap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .gap-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .gap-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        
+        .channel-analysis {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        
+        .channel-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .chart-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .chart-container h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #channelChart {
+            width: 100%;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .visualization-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+        }
+        
+        .visualization-container h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        
+        .viz-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .viz-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .viz-btn.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            color: #1e3c72;
+        }
+        
+        .viz-btn:hover {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: #4ecdc4;
+        }
+        
+        #vizCanvas {
+            width: 100%;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            font-style: italic;
+            opacity: 0.7;
+        }
+        
+        .toggle-section {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .collapsible-content.open {
+            max-height: 5000px;
+        }
+    </style>
 </head>
 <body>
-  <div class="app" role="application" aria-label="Getachew Modular Prime Sieve Explorer">
-    <!-- Left controls -->
-    <aside class="panel" id="leftPanel" aria-label="controls">
-      <h1>Getachew Modular Prime Sieve Explorer</h1>
-      <div class="small">Interactive exploration of M = 30·2ⁿ modular sieves, twin transitions, Goldbach pairs, and residue lifts.</div>
-
-      <div class="controls" role="region" aria-label="controls region">
-        <div>
-          <label for="nInput">n (modulus exponent):</label>
-          <input id="nInput" type="number" min="-6" max="16" step="1" value="0" />
+    <div class="container">
+        <div class="header">
+            <h1>Modular Sieve Calculator</h1>
+            <div class="subtitle">Computing π and ζ(2n) via Gap-Class and Residue-Channel Decompositions</div>
+            
+            <div class="info-section">
+                <div class="toggle-section" onclick="toggleSection('theory')">
+                    <h3>Mathematical Framework</h3>
+                    <span class="toggle-icon" id="theory-icon">▼</span>
+                </div>
+                <div id="theory-content" class="collapsible-content">
+                    <p>This calculator implements the rigorous framework for computing π and ζ(2n) using Euler product decompositions.</p>
+                    
+                    <p><strong>Key Identity:</strong> For ℜ(s) > 1, the Riemann zeta function has the Euler product:</p>
+                    <div class="formula">ζ(s) = ∏<sub>p prime</sub> (1 - p<sup>-s</sup>)<sup>-1</sup></div>
+                    
+                    <p><strong>Recovering π:</strong> Since ζ(2) = π²/6, we have:</p>
+                    <div class="formula">π = √6 · ∏<sub>p prime</sub> (1 - p<sup>-2</sup>)<sup>-1/2</sup></div>
+                    
+                    <p><strong>Two Decomposition Methods:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Gap-Class:</strong> Groups primes by their gaps g(p) = p - p<sub>prev</sub></li>
+                        <li><strong>Residue Channels:</strong> Splits primes by residue classes mod 30, giving 8 independent channels for gcd(a,30)=1</li>
+                    </ul>
+                    
+                    <p style="margin-top: 15px;"><strong>Error Control:</strong> For target error ε, include primes up to:</p>
+                    <div class="formula">
+                        Y ≈ 1 + 1/ε  (for π)<br>
+                        Y ≈ (2/((2n-1)·ε))<sup>1/(2n-1)</sup>  (for ζ(2n))
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div>
-          <label for="ringsInput">Number of rings displayed:</label>
-          <input id="ringsInput" type="number" min="1" max="10" step="1" value="5" />
+        
+        <div class="main-content">
+            <div class="controls">
+                <div class="control-group">
+                    <h3>Target Accuracy</h3>
+                    <label for="epsilon">Relative Error (ε):</label>
+                    <input type="number" id="epsilon" value="0.001" step="0.0001" min="0.0001" max="0.1">
+                    
+                    <label for="constant">Constant to Compute:</label>
+                    <select id="constant">
+                        <option value="pi">π (from ζ(2))</option>
+                        <option value="zeta4">ζ(4)</option>
+                        <option value="zeta6">ζ(6)</option>
+                        <option value="zeta8">ζ(8)</option>
+                        <option value="zeta10">ζ(10)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <h3>Computation Method</h3>
+                    <label for="method">Decomposition:</label>
+                    <select id="method">
+                        <option value="standard">Standard Euler Product</option>
+                        <option value="gap">Gap-Class Analysis</option>
+                        <option value="residue">Residue Channels</option>
+                        <option value="both">Gap + Residue Combined</option>
+                    </select>
+                    
+                    <label for="modulus">Modulus for Residue Analysis:</label>
+                    <input type="number" id="modulus" value="30" min="2" max="100" step="1">
+                    
+                    <label>
+                        <input type="checkbox" id="showSteps" checked style="width: auto; margin-right: 10px;">
+                        Show Step-by-Step Work
+                    </label>
+                </div>
+                
+                <div class="control-group">
+                    <h3>Actions</h3>
+                    <button onclick="compute()">Calculate</button>
+                    <button class="export-btn" onclick="exportResults()">Export Results (JSON)</button>
+                    <button class="export-btn" onclick="exportStepsText()">Export Steps (TXT)</button>
+                </div>
+            </div>
+            
+            <div id="results" class="results" style="display: none;">
+                <div class="result-card">
+                    <h4>Computed Value</h4>
+                    <div id="computed-value" class="value"></div>
+                    <div id="error-bound" class="error-info"></div>
+                    <div id="prime-count" class="error-info"></div>
+                </div>
+                
+                <div class="result-card">
+                    <h4>Exact Reference</h4>
+                    <div id="exact-value" class="value"></div>
+                    <div id="actual-error" class="error-info"></div>
+                </div>
+            </div>
+            
+            <div id="prime-list" class="step-by-step" style="display: none;">
+                <h3>Complete List of Primes Used</h3>
+                <div id="prime-display" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; font-family: 'Courier New', monospace; line-height: 2; word-wrap: break-word;"></div>
+            </div>
+            
+            <div id="step-by-step" class="step-by-step" style="display: none;"></div>
+            
+            <div id="gap-analysis" class="gap-analysis" style="display: none;">
+                <h3>Gap-Class Decomposition</h3>
+                <div id="gap-grid" class="gap-grid"></div>
+            </div>
+            
+            <div id="channel-analysis" class="channel-analysis" style="display: none;">
+                <h3>Residue Channels (mod 30)</h3>
+                <div id="channel-grid" class="channel-grid"></div>
+            </div>
+            
+            <div id="chart-section" class="chart-container" style="display: none;">
+                <h3>Residue Channel Contributions (ℤ<sub>a</sub>(s;30))</h3>
+                <canvas id="channelChart"></canvas>
+                <div class="chart-legend" id="chartLegend"></div>
+            </div>
+            
+            <div id="visualization-section" class="visualization-container" style="display: none;">
+                <h3>Interactive Visualization</h3>
+                <div class="viz-options">
+                    <button class="viz-btn active" onclick="changeViz('convergence')">Convergence Plot</button>
+                    <button class="viz-btn" onclick="changeViz('contribution')">Prime Contributions</button>
+                    <button class="viz-btn" onclick="changeViz('comparison')">Channel Comparison</button>
+                </div>
+                <canvas id="vizCanvas"></canvas>
+            </div>
         </div>
+    </div>
 
-        <div>
-          <label for="densityInput">Residue density (show every k-th residue):</label>
-          <input id="densityInput" type="number" min="1" max="50" step="1" value="1" />
-        </div>
-
-        <div>
-          <label for="pointSize">Point size (px):</label>
-          <input id="pointSize" type="range" min="1" max="8" step="0.5" value="3" />
-        </div>
-
-        <div>
-          <label for="viewMode">View mode:</label>
-          <select id="viewMode">
-            <option value="residue">Residue Rings</option>
-            <option value="twin">Twin Transitions</option>
-            <option value="goldbach">Goldbach Pairs</option>
-            <option value="riemann">Riemann Map</option>
-            <option value="lifts">Modular Lifts (M → 2M)</option>
-          </select>
-        </div>
-
-        <div class="row">
-          <button id="drawBtn" class="btn">Redraw</button>
-          <button id="animateBtn" class="btn secondary">Play</button>
-          <button id="exportBtn" class="btn secondary">Export PNG</button>
-        </div>
-
-        <div class="row">
-          <button id="copyHtml" class="btn secondary">Copy HTML</button>
-          <button id="resetView" class="btn secondary">Reset</button>
-        </div>
-
-        <div class="small">
-          Keyboard: Space toggles animation. Enter re-draws when focused on inputs.
-        </div>
-      </div>
-    </aside>
-
-    <!-- Center visualization -->
-    <main class="viewport" id="viewport" aria-label="visualization">
-      <canvas id="mainCanvas" width="1200" height="800" role="img" aria-label="modular visualization canvas"></canvas>
-      <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
-      <footer class="note">Getachew Modular Sieve Explorer</footer>
-    </main>
-
-    <!-- Right side (stats, LaTeX, legend) -->
-    <aside class="side" id="rightPanel" aria-label="information">
-      <h2>Current parameters</h2>
-      <div class="small" id="params">
-        <!-- dynamic content inserted here -->
-      </div>
-
-      <h2>Math (dynamic)</h2>
-      <div id="mathArea" class="small">
-        <!-- MathJax will render these formulas dynamically -->
-        <div id="formula1"></div>
-        <div id="formula2"></div>
-        <div id="formula3"></div>
-        <div id="formula4"></div>
-      </div>
-
-      <h2>Statistics</h2>
-      <div class="legend" id="statsArea">
-        <div class="item"><div class="swatch sw-ring"></div> Ring modulus labels</div>
-        <div class="item"><div class="swatch sw-gcd1"></div> Residues with gcd = 1</div>
-        <div class="item"><div class="swatch sw-pt"></div> Other residues</div>
-        <div class="item"><div class="sw-line"></div> Twin residue transition (r, r+2)</div>
-      </div>
-
-      <h2>Computed metrics</h2>
-      <div id="metrics" class="small">
-        <!-- dynamic metrics appear here -->
-      </div>
-    </aside>
-  </div>
-
-<script>
-/* Main JavaScript for Getachew Modular Prime Sieve Explorer
-   - Computes M = 30 * 2^n
-   - Displays residues on concentric rings
-   - Detects twin residue transitions (r, r+2 mod M) in Phi(M)
-   - Goldbach mode uses sieve-of-eratosthenes primes up to primeBound
-   - Riemann Map maps residues to unit circle radial angles
-*/
-
-/* Utilities */
-const $ = (id) => document.getElementById(id);
-const gcd = (a,b) => { a = Math.abs(a); b = Math.abs(b); while(b){ [a,b] = [b, a % b]; } return Math.abs(a); };
-const isInteger = (v) => Number.isFinite(v) && Math.floor(v) === v;
-const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
-
-/* DOM refs */
-const nInput = $('nInput');
-const ringsInput = $('ringsInput');
-const densityInput = $('densityInput');
-const pointSizeInput = $('pointSize');
-const viewModeSelect = $('viewMode');
-const drawBtn = $('drawBtn');
-const animateBtn = $('animateBtn');
-const exportBtn = $('exportBtn');
-const copyHtml = $('copyHtml');
-const resetView = $('resetView');
-const params = $('params');
-const formula1 = $('formula1');
-const formula2 = $('formula2');
-const formula3 = $('formula3');
-const formula4 = $('formula4');
-const metrics = $('metrics');
-const tooltip = $('tooltip');
-
-const canvas = $('mainCanvas');
-const ctx = canvas.getContext('2d', { alpha: true });
-
-/* State */
-const state = {
-  anim: { playing:false, t:0, speed:0.8 },
-  cachedPoints: [],
-  primeBound: 200000, // default prime generation bound; adjustable in code
-  primes: [],
-  primeSet: new Set(),
-  lastParamsHash: '',
-};
-
-/* Resize canvas to fit container properly */
-function resizeCanvas() {
-  const rect = canvas.getBoundingClientRect();
-  const dpr = Math.min(window.devicePixelRatio || 1.5, 2);
-  canvas.width = Math.round(rect.width * dpr);
-  canvas.height = Math.round(rect.height * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-window.addEventListener('resize', () => { resizeCanvas(); draw(); });
-resizeCanvas();
-
-/* Compute M and related values */
-function computeM(n) {
-  // M = 30 * 2^n
-  return 30 * Math.pow(2, n);
-}
-
-function eulerPhi(m) {
-  // compute phi(m) by prime factors
-  let x = m;
-  let result = m;
-  for (let p = 2; p * p <= x; p++) {
-    if (x % p === 0) {
-      while (x % p === 0) x /= p;
-      result = Math.floor(result * (1 - 1/p));
-    }
-  }
-  if (x > 1) result = Math.floor(result * (1 - 1/x));
-  return result;
-}
-
-/* Prime sieve (Eratosthenes) for Goldbach and twin checks */
-function generatePrimes(limit) {
-  limit = Math.max(10, Math.floor(limit));
-  const bs = new Uint8Array(limit + 1);
-  const primes = [];
-  for (let i = 2; i <= limit; i++) {
-    if (!bs[i]) {
-      primes.push(i);
-      if (i * i <= limit) {
-        for (let j = i * i; j <= limit; j += i) bs[j] = 1;
-      }
-    }
-  }
-  state.primes = primes;
-  state.primeSet = new Set(primes);
-  return primes;
-}
-
-/* Cached primes generation on startup (non-blocking-ish) */
-(function initPrimes() {
-  // limit to primeBound, but if device slow, reduce
-  const limit = clamp(state.primeBound, 20000, 200000);
-  // generate in a setTimeout to allow UI paint
-  setTimeout(()=> {
-    generatePrimes(limit);
-    draw(); // redraw once primes are ready
-  }, 20);
-})();
-
-/* Compute residues to show */
-function buildResiduePoints(n, rings, density) {
-  const M0 = computeM(n);
-  const points = [];
-  for (let r = 0; r < rings; r++) {
-    const mod = Math.max(1, Math.floor(M0 * Math.pow(2, r)));
-    if (mod <= 0) continue;
-    for (let a = 0; a < mod; a += Math.max(1, density)) {
-      const isGcd1 = gcd(a, mod) === 1;
-      points.push({ ring: r, mod, residue: a, isGcd1 });
-    }
-  }
-  return points;
-}
-
-/* Twin residue transitions for a given modulus M:
-   r is valid if gcd(r,M)=1 and gcd(r+2,M)=1 (both in Phi(M))
-*/
-function computeTwinResidueTransitions(M) {
-  const transitions = [];
-  for (let r = 0; r < M; r++) {
-    if (gcd(r, M) === 1 && gcd((r + 2) % M, M) === 1) transitions.push(r);
-  }
-  return transitions;
-}
-
-/* Goldbach: return pairs for even numbers up to an upperN (uses primes) */
-function computeGoldbachPairs(upperN) {
-  // ensure primes are generated up to upperN
-  if (!state.primes.length || state.primes[state.primes.length - 1] < upperN) {
-    generatePrimes(Math.max(upperN, state.primeBound));
-  }
-  const primeSet = state.primeSet;
-  const pairs = {};
-  for (let even = 4; even <= upperN; even += 2) {
-    let found = null;
-    for (const p of state.primes) {
-      if (p > even) break;
-      const q = even - p;
-      if (q < 2) break;
-      if (primeSet.has(q)) { found = [p, q]; break; }
-    }
-    pairs[even] = found;
-  }
-  return pairs;
-}
-
-/* Riemann map: map residue r in mod M to unit circle point (cos θ, sin θ) with θ = 2πr/M */
-function riemannMapPoint(r, M) {
-  const theta = 2 * Math.PI * (r % M) / M;
-  return { x: Math.cos(theta), y: Math.sin(theta), theta };
-}
-
-/* Draw functions */
-function clearCanvas() {
-  const w = canvas.width / (window.devicePixelRatio || 1);
-  const h = canvas.height / (window.devicePixelRatio || 1);
-  ctx.clearRect(0, 0, w, h);
-  // background subtle
-  ctx.fillStyle = 'rgba(0,8,16,0.35)';
-  ctx.fillRect(0,0,w,h);
-}
-
-function draw() {
-  resizeCanvas();
-  clearCanvas();
-
-  const n = parseInt(nInput.value, 10) || 0;
-  const rings = clamp(parseInt(ringsInput.value, 10) || 5, 1, 10);
-  const density = clamp(parseInt(densityInput.value, 10) || 1, 1, 100);
-  const viewMode = viewModeSelect.value;
-  const pointSize = parseFloat(pointSizeInput.value) || 3;
-
-  // dynamic computed values
-  const M0 = computeM(n);
-  const phiM0 = eulerPhi(Math.max(1, Math.floor(M0)));
-  const T_of_M = 3 * Math.pow(2, n); // user's theorem: T(M) = 3·2^n
-  const predicted_Xn = 240 * Math.pow(Math.abs(n), 2.2) * Math.pow(2, Math.max(0, n)); // from user's formula (approx)
-
-  // update params panel
-  params.innerHTML = `
-    <div><strong>M = 30 · 2^n</strong> → n = ${n}, M₀ = ${M0}</div>
-    <div>Rings = ${rings}, density = every ${density}-th residue</div>
-  `;
-
-  // math formulas (LaTeX)
-  formula1.innerHTML = `\\[M = 30 \\cdot 2^{${n}} = ${M0}\\]`;
-  formula2.innerHTML = `\\[\\Phi(M) = \\{r:\\, 0 \\le r < M,\\ \\gcd(r,M)=1\\}\\]`;
-  formula3.innerHTML = `\\[T(M) \\;\\approx\\; 3\\cdot 2^{${n}} = ${T_of_M}\\]`;
-  formula4.innerHTML = `\\[X_n \\approx 240\\cdot n^{2.2}\\cdot 2^{n} \\approx ${Math.round(predicted_Xn)}\\]`;
-  if (window.MathJax && window.MathJax.typesetClear) {
-    MathJax.typesetClear([formula1, formula2, formula3, formula4]);
-    MathJax.typesetPromise([formula1, formula2, formula3, formula4]).catch(()=>{});
-  }
-
-  // compute points once per draw
-  const points = buildResiduePoints(n, rings, density);
-
-  // layout
-  const rect = canvas.getBoundingClientRect();
-  const w = rect.width;
-  const h = rect.height;
-  const cx = w / 2;
-  const cy = h / 2;
-  const maxRadius = Math.min(w, h) / 2 - 64;
-  const ringSpacing = maxRadius / Math.max(1, rings);
-
-  // draw ring outlines and labels
-  ctx.save();
-  ctx.lineWidth = 1.2;
-  ctx.font = '12px Inter, Arial';
-  ctx.fillStyle = 'rgba(230,238,248,0.9)';
-  for (let r = 0; r < rings; r++) {
-    const radius = ringSpacing * (r + 0.8);
-    ctx.beginPath();
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-    ctx.arc(cx, cy, radius, 0, Math.PI*2);
-    ctx.stroke();
-
-    const mod = Math.max(1, Math.floor(M0 * Math.pow(2, r)));
-    ctx.fillStyle = 'rgba(230,238,248,0.7)';
-    ctx.fillText(`mod ${mod}`, cx + radius - 64, cy - 8);
-  }
-
-  // draw mode-specific overlays
-  if (viewMode === 'residue' || viewMode === 'twin' || viewMode === 'lifts' || viewMode === 'riemann') {
-    // draw residues for each ring
-    for (const p of points) {
-      const r = p.ring;
-      const mod = p.mod;
-      const radius = ringSpacing * (r + 0.8);
-      // angle: place 0 at top (-pi/2)
-      const angle = (p.residue / mod) * Math.PI * 2 - Math.PI/2;
-      const animOffset = state.anim.playing ? Math.sin(state.anim.t * state.anim.speed + r) * 0.08 * (r / rings) : 0;
-      const radAdj = radius * (1 + animOffset);
-
-      const x = cx + Math.cos(angle) * radAdj;
-      const y = cy + Math.sin(angle) * radAdj;
-
-      // store for hit testing
-      p._x = x; p._y = y; p._radius = pointSize;
-
-      // style
-      if (p.isGcd1) {
-        // gcd1 visible color
-        const hue = 190 + Math.floor(60 * (r / Math.max(1,rings-1 || 1)));
-        ctx.fillStyle = `hsl(${hue}deg 90% 60%)`;
-      } else {
-        ctx.fillStyle = 'rgba(255,255,255,0.07)';
-      }
-
-      // larger highlight for gcd1
-      if (p.isGcd1) {
-        ctx.beginPath();
-        ctx.globalAlpha = 0.08;
-        ctx.fillStyle = ctx.fillStyle;
-        ctx.arc(x, y, pointSize * 2.1, 0, Math.PI*2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-
-      // draw point
-      ctx.beginPath();
-      ctx.arc(x, y, pointSize, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    // twin transitions overlay (lines connecting r -> r+2 mod M0) shown on base ring
-    if (viewMode === 'twin') {
-      const Mbase = Math.max(1, Math.floor(M0));
-      const twinResidues = computeTwinResidueTransitions(Mbase);
-      ctx.beginPath();
-      for (const r of twinResidues) {
-        const ringIdx = 0; // draw on base ring
-        const radius = ringSpacing * (ringIdx + 0.8);
-        const a1 = (r / Mbase) * Math.PI*2 - Math.PI/2;
-        const a2 = ((r + 2) % Mbase / Mbase) * Math.PI*2 - Math.PI/2;
-        const x1 = cx + Math.cos(a1) * radius;
-        const y1 = cy + Math.sin(a1) * radius;
-        const x2 = cx + Math.cos(a2) * radius;
-        const y2 = cy + Math.sin(a2) * radius;
-        // line
-        ctx.strokeStyle = 'rgba(102,194,255,0.9)';
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        // small cap dots
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(102,194,255,0.95)';
-        ctx.arc(x1, y1, Math.max(1.8, pointSize), 0, Math.PI*2);
-        ctx.arc(x2, y2, Math.max(1.8, pointSize), 0, Math.PI*2);
-        ctx.fill();
-      }
-    }
-
-    // modular lifts mode: show mapping from residues in ring r to ring r+1 (M -> 2M)
-    if (viewMode === 'lifts') {
-      // draw thin arcs showing lifts between ring r and r+1 for first rings only
-      for (let r = 0; r < Math.min(rings-1, 3); r++) {
-        const Mcur = Math.max(1, Math.floor(M0 * Math.pow(2, r)));
-        const Mnext = Math.max(1, Math.floor(M0 * Math.pow(2, r+1)));
-        for (let a = 0; a < Mcur; a += Math.max(1, density)) {
-          if (gcd(a, Mcur) !== 1) continue;
-          // lift candidates: a and a + k*Mcur for k in {0,1} mapping to mod Mnext
-          const aNext1 = a; // same residue value
-          const aNext2 = (a + Mcur) % Mnext;
-          // coordinates on current ring
-          const radiusCur = ringSpacing * (r + 0.8);
-          const angleCur = (a / Mcur) * Math.PI*2 - Math.PI/2;
-          const x1 = cx + Math.cos(angleCur) * radiusCur;
-          const y1 = cy + Math.sin(angleCur) * radiusCur;
-          // coordinates on next ring for both lifts
-          const radiusNext = ringSpacing * (r + 1 + 0.8);
-          const angleNext1 = (aNext1 / Mnext) * Math.PI*2 - Math.PI/2;
-          const angleNext2 = (aNext2 / Mnext) * Math.PI*2 - Math.PI/2;
-          const x2 = cx + Math.cos(angleNext1) * radiusNext;
-          const y2 = cy + Math.sin(angleNext1) * radiusNext;
-          const x3 = cx + Math.cos(angleNext2) * radiusNext;
-          const y3 = cy + Math.sin(angleNext2) * radiusNext;
-          // draw small connecting lines
-          ctx.strokeStyle = 'rgba(167,139,250,0.6)';
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x3, y3);
-          ctx.stroke();
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        let computationData = null;
+        let channelChart = null;
+        let vizChart = null;
+        let currentViz = 'convergence';
+        
+        function toggleSection(id) {
+            const content = document.getElementById(id + '-content');
+            const icon = document.getElementById(id + '-icon');
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
         }
-      }
-    }
-
-    // Riemann map: if selected, draw unit circle at side and map residues to circle points
-    if (viewMode === 'riemann') {
-      const radiusUIC = Math.min(w, h) * 0.16;
-      const cxU = w - radiusUIC - 24;
-      const cyU = radiusUIC + 28;
-      // circle base
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 1.2;
-      ctx.arc(cxU, cyU, radiusUIC, 0, Math.PI*2);
-      ctx.stroke();
-      // draw residues from base modulus on the unit circle
-      const Mbase = Math.max(1, Math.floor(M0));
-      for (let r = 0; r < Mbase; r += Math.max(1, density)) {
-        const pt = riemannMapPoint(r, Mbase);
-        const x = cxU + pt.x * radiusUIC;
-        const y = cyU + pt.y * radiusUIC;
-        // color by gcd1
-        ctx.beginPath();
-        ctx.fillStyle = gcd(r, Mbase) === 1 ? 'rgba(54,211,153,0.95)' : 'rgba(255,255,255,0.06)';
-        ctx.arc(x, y, Math.max(1.6, pointSize * 0.9), 0, Math.PI*2);
-        ctx.fill();
-      }
-      // annotation
-      ctx.fillStyle = 'rgba(230,238,248,0.8)';
-      ctx.font = '12px Inter, Arial';
-      ctx.fillText('Riemann map (residues on unit circle)', cxU - radiusUIC + 6, cyU + radiusUIC + 16);
-    }
-  }
-
-  // Goldbach view: show pair mapping in a small lattice area
-  if (viewMode === 'goldbach') {
-    const upper = Math.min(2000, Math.max(200, Math.floor(M0))); // compute modest range to keep UI responsive
-    const pairs = computeGoldbachPairs(upper);
-    // layout a small grid at left
-    const gridLeft = 28;
-    const gridTop = 28;
-    let y = gridTop;
-    ctx.fillStyle = 'rgba(230,238,248,0.8)';
-    ctx.font = '12px Inter, Arial';
-    ctx.fillText(`Goldbach pairs (even ≤ ${upper}) — first 40 shown`, gridLeft, y);
-    y += 18;
-    let count = 0;
-    for (let even = 4; even <= upper; even += 2) {
-      const pair = pairs[even];
-      const txt = pair ? `${even} = ${pair[0]} + ${pair[1]}` : `${even} = (no pair found)`;
-      ctx.fillStyle = pair ? 'rgba(102,194,255,0.95)' : 'rgba(255,110,110,0.9)';
-      ctx.fillText(txt, gridLeft, y);
-      y += 14;
-      if (++count >= 40) break;
-    }
-  }
-
-  // update metrics panel
-  const twinResiduesCount = computeTwinResidueTransitions(Math.max(1, Math.floor(M0))).length;
-  metrics.innerHTML = `
-    <div>φ(M₀) = ${phiM0}</div>
-    <div>Predicted T(M) = ${T_of_M} (user theorem)</div>
-    <div>Detected twin residue transitions (r, r+2 mod M₀): ${twinResiduesCount}</div>
-    <div>Predicted completion threshold Xₙ ≈ ${Math.round(predicted_Xn)}</div>
-    <div>Primes cached: ${state.primes.length}</div>
-  `;
-
-  ctx.restore();
-}
-
-/* Hit testing and tooltip */
-function pageToCanvasCoords(e) {
-  const rect = canvas.getBoundingClientRect();
-  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-}
-
-canvas.addEventListener('mousemove', (ev) => {
-  const pos = pageToCanvasCoords(ev);
-  const found = hitTest(pos);
-  if (found) {
-    tooltip.style.display = 'block';
-    tooltip.style.left = (ev.clientX - canvas.getBoundingClientRect().left) + 'px';
-    tooltip.style.top = (ev.clientY - canvas.getBoundingClientRect().top) + 'px';
-    tooltip.textContent = `ring ${found.ring}, mod ${found.mod}, r=${found.residue}, gcd=${gcd(found.residue, found.mod)}`;
-  } else {
-    tooltip.style.display = 'none';
-  }
-});
-canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
-
-function hitTest(pos) {
-  // loop through last built points
-  // Reconstruct current points quickly (same as draw)
-  const n = parseInt(nInput.value, 10) || 0;
-  const rings = clamp(parseInt(ringsInput.value, 10) || 5, 1, 10);
-  const density = clamp(parseInt(densityInput.value, 10) || 1, 1, 100);
-  const pointSize = parseFloat(pointSizeInput.value) || 3;
-
-  const M0 = computeM(n);
-  const rect = canvas.getBoundingClientRect();
-  const w = rect.width;
-  const h = rect.height;
-  const cx = w / 2;
-  const cy = h / 2;
-  const maxRadius = Math.min(w, h) / 2 - 64;
-  const ringSpacing = maxRadius / Math.max(1, rings);
-
-  // search through rings from outermost inward
-  for (let r = rings - 1; r >= 0; r--) {
-    const mod = Math.max(1, Math.floor(M0 * Math.pow(2, r)));
-    const radius = ringSpacing * (r + 0.8);
-    for (let a = 0; a < mod; a += Math.max(1, density)) {
-      const angle = (a / mod) * Math.PI*2 - Math.PI/2;
-      const x = cx + Math.cos(angle) * radius;
-      const y = cy + Math.sin(angle) * radius;
-      const dx = pos.x - x;
-      const dy = pos.y - y;
-      const rdist = Math.sqrt(dx*dx + dy*dy);
-      if (rdist <= Math.max(4, pointSize + 2)) {
-        return { ring: r, mod, residue: a };
-      }
-    }
-  }
-  return null;
-}
-
-/* Controls wiring */
-drawBtn.addEventListener('click', () => { draw(); });
-
-animateBtn.addEventListener('click', () => {
-  state.anim.playing = !state.anim.playing;
-  animateBtn.textContent = state.anim.playing ? 'Pause' : 'Play';
-});
-
-resetView.addEventListener('click', () => {
-  nInput.value = '0';
-  ringsInput.value = '5';
-  densityInput.value = '1';
-  pointSizeInput.value = '3';
-  viewModeSelect.value = 'residue';
-  draw();
-});
-
-exportBtn.addEventListener('click', () => {
-  const link = document.createElement('a');
-  link.download = `getachew_modular_M${computeM(parseInt(nInput.value,10))}_view.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
-
-copyHtml.addEventListener('click', async () => {
-  try {
-    const htmlText = '<!-- Save this HTML as a single file to run the Getachew Modular Sieve Explorer -->\n' + document.documentElement.outerHTML;
-    await navigator.clipboard.writeText(htmlText);
-    copyHtml.textContent = 'Copied';
-    setTimeout(()=> copyHtml.textContent = 'Copy HTML', 1500);
-  } catch (e) {
-    copyHtml.textContent = 'Copy failed';
-    setTimeout(()=> copyHtml.textContent = 'Copy HTML', 1500);
-  }
-});
-
-/* Keyboard: space toggles animation, Enter draws */
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    e.preventDefault();
-    state.anim.playing = !state.anim.playing;
-    animateBtn.textContent = state.anim.playing ? 'Pause' : 'Play';
-  } else if (e.key === 'Enter') {
-    draw();
-  }
-});
-
-/* Animation loop */
-let lastTime = performance.now();
-function rafLoop(ts) {
-  const dt = (ts - lastTime) / 1000;
-  lastTime = ts;
-  if (state.anim.playing) {
-    state.anim.t += dt;
-    draw();
-  }
-  requestAnimationFrame(rafLoop);
-}
-requestAnimationFrame(rafLoop);
-
-/* Initial draw */
-draw();
-
-</script>
+        
+        // Compute Euler's totient function
+        function eulerPhi(n) {
+            let result = n;
+            for (let p = 2; p * p <= n; p++) {
+                if (n % p === 0) {
+                    while (n % p === 0) n /= p;
+                    result -= result / p;
+                }
+            }
+            if (n > 1) result -= result / n;
+            return result;
+        }
+        
+        // Get coprime residues mod m
+        function getCoprimeResidues(m) {
+            const residues = [];
+            for (let a = 1; a < m; a++) {
+                if (gcd(a, m) === 1) residues.push(a);
+            }
+            return residues;
+        }
+        
+        // GCD helper
+        function gcd(a, b) {
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+        
+        // Sieve of Eratosthenes
+        function sieveOfEratosthenes(limit) {
+            if (limit < 2) return [];
+            
+            const isPrime = new Array(limit + 1).fill(true);
+            isPrime[0] = isPrime[1] = false;
+            
+            for (let i = 2; i * i <= limit; i++) {
+                if (isPrime[i]) {
+                    for (let j = i * i; j <= limit; j += i) {
+                        isPrime[j] = false;
+                    }
+                }
+            }
+            
+            const primes = [];
+            for (let i = 2; i <= limit; i++) {
+                if (isPrime[i]) primes.push(i);
+            }
+            return primes;
+        }
+        
+        // Compute gap classes
+        function computeGapClasses(primes) {
+            const gapClasses = {};
+            
+            for (let i = 1; i < primes.length; i++) {
+                const gap = primes[i] - primes[i-1];
+                if (!gapClasses[gap]) gapClasses[gap] = [];
+                gapClasses[gap].push(primes[i]);
+            }
+            
+            return gapClasses;
+        }
+        
+        // Compute residue channels for any modulus
+        function computeResidueChannels(primes, modulus) {
+            const coprimeResidues = getCoprimeResidues(modulus);
+            const channels = {};
+            
+            coprimeResidues.forEach(a => channels[a] = []);
+            
+            // Find primes that divide the modulus
+            const modulusPrimes = [];
+            let tempMod = modulus;
+            for (let p = 2; p <= modulus; p++) {
+                if (tempMod % p === 0) {
+                    modulusPrimes.push(p);
+                    while (tempMod % p === 0) tempMod /= p;
+                }
+            }
+            
+            primes.forEach(p => {
+                // Skip primes that divide the modulus
+                if (!modulusPrimes.includes(p)) {
+                    const residue = p % modulus;
+                    if (coprimeResidues.includes(residue)) {
+                        channels[residue].push(p);
+                    }
+                }
+            });
+            
+            return { channels, modulusPrimes };
+        }
+        
+        // Compute Y cutoff
+        function computeCutoff(epsilon, constantType) {
+            if (constantType === 'pi') {
+                return Math.ceil(1 + 1 / Math.log(1 + epsilon));
+            } else {
+                const n = parseInt(constantType.replace('zeta', '')) / 2;
+                const power = 1 / (2 * n - 1);
+                return Math.ceil(Math.pow(2 / ((2 * n - 1) * Math.log(1 + epsilon)), power));
+            }
+        }
+        
+        // Compute truncated product
+        function computeTruncatedProduct(primes, exponent) {
+            let product = 1;
+            for (const p of primes) {
+                product *= 1 / (1 - Math.pow(p, -exponent));
+            }
+            return product;
+        }
+        
+        // Compute partial products (for convergence visualization)
+        function computePartialProducts(primes, exponent) {
+            const partials = [];
+            let product = 1;
+            
+            for (const p of primes) {
+                product *= 1 / (1 - Math.pow(p, -exponent));
+                partials.push({ prime: p, value: product });
+            }
+            
+            return partials;
+        }
+        
+        // Exact values
+        const exactValues = {
+            'pi': Math.PI,
+            'zeta4': Math.PI ** 4 / 90,
+            'zeta6': Math.PI ** 6 / 945,
+            'zeta8': Math.PI ** 8 / 9450,
+            'zeta10': Math.PI ** 10 / 93555
+        };
+        
+        function compute() {
+            const epsilon = parseFloat(document.getElementById('epsilon').value);
+            const constantType = document.getElementById('constant').value;
+            const method = document.getElementById('method').value;
+            const modulus = parseInt(document.getElementById('modulus').value);
+            const showSteps = document.getElementById('showSteps').checked;
+            
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('computed-value').innerHTML = '<div class="loading">Computing...</div>';
+            
+            setTimeout(() => {
+                try {
+                    const Y = computeCutoff(epsilon, constantType);
+                    const primes = sieveOfEratosthenes(Y - 1);
+                    
+                    let computedValue;
+                    const exponent = constantType === 'pi' ? 2 : parseInt(constantType.replace('zeta', ''));
+                    
+                    if (constantType === 'pi') {
+                        const zetaProduct = computeTruncatedProduct(primes, 2);
+                        computedValue = Math.sqrt(6 * zetaProduct);
+                    } else {
+                        const n = parseInt(constantType.replace('zeta', '')) / 2;
+                        computedValue = computeTruncatedProduct(primes, 2 * n);
+                    }
+                    
+                    // Store computation data
+                    computationData = {
+                        epsilon,
+                        constantType,
+                        method,
+                        modulus,
+                        Y,
+                        primes,
+                        exponent,
+                        computedValue,
+                        exactValue: exactValues[constantType],
+                        partialProducts: computePartialProducts(primes, constantType === 'pi' ? 2 : exponent)
+                    };
+                    
+                    // Display results
+                    document.getElementById('computed-value').textContent = computedValue.toFixed(15);
+                    document.getElementById('exact-value').textContent = exactValues[constantType].toFixed(15);
+                    
+                    const actualError = Math.abs(computedValue - exactValues[constantType]) / exactValues[constantType];
+                    document.getElementById('actual-error').innerHTML = `Actual relative error: <strong>${(actualError * 100).toFixed(8)}%</strong>`;
+                    document.getElementById('error-bound').innerHTML = `Guaranteed error &le; <strong>${(epsilon * 100).toFixed(4)}%</strong>`;
+                    document.getElementById('prime-count').innerHTML = `Using <strong>${primes.length}</strong> primes up to <strong>${Y-1}</strong>`;
+                    
+                    // Show complete prime list
+                    showPrimeList(primes);
+                    
+                    // Show step-by-step
+                    if (showSteps) {
+                        showStepByStep(computationData);
+                    } else {
+                        document.getElementById('step-by-step').style.display = 'none';
+                    }
+                    
+                    // Method-specific analysis
+                    if (method === 'gap' || method === 'both') {
+                        showGapAnalysis(primes, constantType);
+                    } else {
+                        document.getElementById('gap-analysis').style.display = 'none';
+                    }
+                    
+                    if (method === 'residue' || method === 'both') {
+                        showResidueAnalysis(primes, constantType, modulus);
+                    } else {
+                        document.getElementById('channel-analysis').style.display = 'none';
+                        document.getElementById('chart-section').style.display = 'none';
+                    }
+                    
+                    // Show visualization
+                    document.getElementById('visualization-section').style.display = 'block';
+                    updateVisualization(currentViz);
+                    
+                } catch (error) {
+                    document.getElementById('computed-value').innerHTML = `<span style="color: #ff6b6b;">Error: ${error.message}</span>`;
+                }
+            }, 100);
+        }
+        
+        function showPrimeList(primes) {
+            const primeDisplay = document.getElementById('prime-display');
+            
+            // Format primes in rows of 10
+            let html = '';
+            for (let i = 0; i < primes.length; i++) {
+                html += primes[i];
+                if (i < primes.length - 1) {
+                    html += ', ';
+                }
+                if ((i + 1) % 10 === 0) {
+                    html += '<br>';
+                }
+            }
+            
+            primeDisplay.innerHTML = html;
+            document.getElementById('prime-list').style.display = 'block';
+        }
+        
+        function showStepByStep(data) {
+            const { epsilon, constantType, Y, primes, exponent, computedValue, exactValue } = data;
+            
+            let html = '<h3>Step-by-Step Calculation</h3>';
+            
+            // Step 1: Determine cutoff
+            html += `
+                <div class="step">
+                    <div class="step-title"><span class="step-number">1</span>Determine Required Cutoff Y</div>
+                    <div class="step-content">
+                        <p>Given target relative error ε = ${epsilon}</p>
+                        ${constantType === 'pi' ? `
+                            <p>For π, we use: Y = ⌈1 + 1/log(1+ε)⌉</p>
+                            <div class="step-formula">
+                                Y = ⌈1 + 1/log(1+${epsilon})⌉<br>
+                                Y = ⌈1 + ${(1/Math.log(1+epsilon)).toFixed(4)}⌉<br>
+                                Y = ${Y}
+                            </div>
+                        ` : `
+                            <p>For ζ(${exponent}), we use: Y = ⌈(2/((2n-1)·log(1+ε)))<sup>1/(2n-1)</sup>⌉ where n = ${exponent/2}</p>
+                            <div class="step-formula">
+                                Y = ⌈(2/(${exponent-1}·log(1+${epsilon})))<sup>1/${exponent-1}</sup>⌉<br>
+                                Y = ${Y}
+                            </div>
+                        `}
+                        <p>Therefore, we need all primes up to ${Y-1}.</p>
+                    </div>
+                </div>
+            `;
+            
+            // Step 2: Generate primes
+            html += `
+                <div class="step">
+                    <div class="step-title"><span class="step-number">2</span>Generate Primes Using Sieve</div>
+                    <div class="step-content">
+                        <p>Using the Sieve of Eratosthenes to find all primes &le; ${Y-1}:</p>
+                        <p><strong>Found ${primes.length} primes</strong></p>
+                        <p>Complete list shown above in the "Complete List of Primes Used" section</p>
+                    </div>
+                </div>
+            `;
+            
+            // Step 3: Compute Euler product
+            html += `
+                <div class="step">
+                    <div class="step-title"><span class="step-number">3</span>Compute Euler Product</div>
+                    <div class="step-content">
+                        <p>${constantType === 'pi' ? 'For π, compute ζ(2) = ∏(1-p<sup>-2</sup>)<sup>-1</sup>' : `Compute ζ(${exponent}) = ∏(1-p<sup>-${exponent}</sup>)<sup>-1</sup>`}</p>
+                        <p><strong>Computing all ${primes.length} factors:</strong></p>
+                        <div class="step-formula">`;
+            
+            // Show first 10 prime factors
+            for (let i = 0; i < Math.min(10, primes.length); i++) {
+                const p = primes[i];
+                const factor = 1 / (1 - Math.pow(p, -exponent));
+                html += `p=${p}: (1 - ${p}<sup>-${exponent}</sup>)<sup>-1</sup> = ${factor.toFixed(8)}<br>`;
+            }
+            
+            if (primes.length > 10) {
+                html += `... (${primes.length - 10} more factors)<br>`;
+            }
+            
+            const product = computeTruncatedProduct(primes, exponent);
+            html += `</div>
+                        <p><strong>Product of all ${primes.length} factors:</strong></p>
+                        <div class="step-formula">
+                            ${constantType === 'pi' ? 'ζ(2) = ' : `ζ(${exponent}) = `}${product.toFixed(15)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Step 4: Final computation
+            if (constantType === 'pi') {
+                const zeta2 = computeTruncatedProduct(primes, 2);
+                html += `
+                    <div class="step">
+                        <div class="step-title"><span class="step-number">4</span>Extract π from ζ(2)</div>
+                        <div class="step-content">
+                            <p>Using the identity ζ(2) = π²/6, we have π = √(6·ζ(2))</p>
+                            <div class="step-formula">
+                                π = √(6 × ${zeta2.toFixed(12)})<br>
+                                π = √${(6 * zeta2).toFixed(12)}<br>
+                                π ≈ ${computedValue.toFixed(15)}
+                            </div>
+                            <p><strong>Exact value:</strong> π = ${exactValue.toFixed(15)}</p>
+                            <p><strong>Absolute error:</strong> ${Math.abs(computedValue - exactValue).toExponential(6)}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="step">
+                        <div class="step-title"><span class="step-number">4</span>Compare with Exact Value</div>
+                        <div class="step-content">
+                            <p><strong>Computed:</strong> ζ(${exponent}) ≈ ${computedValue.toFixed(15)}</p>
+                            <p><strong>Exact:</strong> ζ(${exponent}) = ${exactValue.toFixed(15)}</p>
+                            <p><strong>Absolute error:</strong> ${Math.abs(computedValue - exactValue).toExponential(6)}</p>
+                            <p><strong>Relative error:</strong> ${(Math.abs(computedValue - exactValue) / exactValue * 100).toFixed(8)}%</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Step 5: Error verification
+            const actualError = Math.abs(computedValue - exactValue) / exactValue;
+            html += `
+                <div class="step">
+                    <div class="step-title"><span class="step-number">5</span>Verify Error Bound</div>
+                    <div class="step-content">
+                        <p><strong>Guaranteed bound:</strong> relative error &le; ${(epsilon * 100).toFixed(4)}%</p>
+                        <p><strong>Actual error:</strong> ${(actualError * 100).toFixed(8)}%</p>
+                        <p style="color: ${actualError <= epsilon ? '#4ecdc4' : '#ff6b6b'}; font-weight: bold;">
+                            ${actualError <= epsilon ? 'CHECK: Error bound satisfied!' : 'NOTE: Actual error slightly exceeds theoretical bound (due to finite precision)'}
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('step-by-step').innerHTML = html;
+            document.getElementById('step-by-step').style.display = 'block';
+        }
+        
+        function showGapAnalysis(primes, constantType) {
+            const gapClasses = computeGapClasses(primes);
+            const exponent = constantType === 'pi' ? 2 : parseInt(constantType.replace('zeta', ''));
+            
+            let html = '';
+            const sortedGaps = Object.keys(gapClasses).map(Number).sort((a, b) => a - b);
+            
+            for (const gap of sortedGaps.slice(0, 12)) {
+                const gapPrimes = gapClasses[gap];
+                const contribution = computeTruncatedProduct(gapPrimes, exponent);
+                const logContrib = Math.log(contribution);
+                
+                html += `
+                    <div class="gap-item">
+                        <div>Gap ${gap}</div>
+                        <div class="gap-value">R_${gap} = ${contribution.toFixed(6)}</div>
+                        <div style="font-size: 0.8em; opacity: 0.8;">${gapPrimes.length} primes</div>
+                        <div style="font-size: 0.8em; opacity: 0.8;">log R = ${logContrib.toFixed(4)}</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('gap-grid').innerHTML = html;
+            document.getElementById('gap-analysis').style.display = 'block';
+        }
+        
+        function showResidueAnalysis(primes, constantType, modulus) {
+            const { channels, modulusPrimes } = computeResidueChannels(primes, modulus);
+            const exponent = constantType === 'pi' ? 2 : parseInt(constantType.replace('zeta', ''));
+            const coprimeResidues = Object.keys(channels).map(Number).sort((a, b) => a - b);
+            
+            let html = '';
+            const channelData = [];
+            
+            // Handle primes that divide the modulus
+            if (modulusPrimes.length > 0) {
+                const modulusPrimesProduct = computeTruncatedProduct(modulusPrimes, exponent);
+                html += `
+                    <div class="channel-item" style="grid-column: span 2; background: rgba(255, 215, 0, 0.2);">
+                        <div>Primes dividing ${modulus}</div>
+                        <div style="font-weight: bold;">${modulusPrimesProduct.toFixed(6)}</div>
+                        <div style="font-size: 0.8em;">{${modulusPrimes.join(', ')}}</div>
+                    </div>
+                `;
+            }
+            
+            for (const a of coprimeResidues) {
+                const channelPrimes = channels[a];
+                let contribution = 1;
+                
+                if (channelPrimes.length > 0) {
+                    contribution = computeTruncatedProduct(channelPrimes, exponent);
+                    
+                    html += `
+                        <div class="channel-item">
+                            <div>= ${a} (mod ${modulus})</div>
+                            <div style="font-weight: bold; color: #4ecdc4;">${contribution.toFixed(6)}</div>
+                            <div style="font-size: 0.8em;">${channelPrimes.length} primes</div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="channel-item" style="opacity: 0.5;">
+                            <div>= ${a} (mod ${modulus})</div>
+                            <div>1.000000</div>
+                            <div style="font-size: 0.8em;">0 primes</div>
+                        </div>
+                    `;
+                }
+                
+                channelData.push({
+                    residue: a,
+                    contribution: contribution,
+                    primeCount: channelPrimes.length,
+                    logContribution: Math.log(contribution)
+                });
+            }
+            
+            document.getElementById('channel-grid').innerHTML = html;
+            document.getElementById('channel-analysis').style.display = 'block';
+            document.getElementById('channel-analysis').querySelector('h3').textContent = `Residue Channels (mod ${modulus})`;
+            
+            const modulusPrimesProduct = modulusPrimes.length > 0 ? computeTruncatedProduct(modulusPrimes, exponent) : 1;
+            createChannelChart(channelData, modulusPrimesProduct, modulus);
+        }
+        
+        function createChannelChart(channelData, smallPrimesContrib) {
+            const ctx = document.getElementById('channelChart').getContext('2d');
+            
+            if (channelChart) {
+                channelChart.destroy();
+            }
+            
+            const labels = ['Small Primes (2,3,5)', ...channelData.map(d => `≡ ${d.residue} (mod 30)`)];
+            const contributions = [smallPrimesContrib, ...channelData.map(d => d.contribution)];
+            const logContributions = [Math.log(smallPrimesContrib), ...channelData.map(d => d.logContribution)];
+            const primeCounts = [3, ...channelData.map(d => d.primeCount)];
+            
+            const colors = [
+                'rgba(255, 215, 0, 0.8)',
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)', 
+                'rgba(255, 205, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(199, 199, 199, 0.8)',
+                'rgba(83, 102, 255, 0.8)'
+            ];
+            
+            channelChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Channel Contribution',
+                        data: contributions,
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    const idx = context.dataIndex;
+                                    const contrib = contributions[idx];
+                                    const logContrib = logContributions[idx];
+                                    const count = primeCounts[idx];
+                                    
+                                    return [
+                                        `Contribution: ${contrib.toFixed(6)}`,
+                                        `log(Contribution): ${logContrib.toFixed(4)}`,
+                                        `Prime count: ${count}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#fff',
+                                maxRotation: 45,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#fff',
+                                callback: function(value) {
+                                    return value.toFixed(3);
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            title: {
+                                display: true,
+                                text: 'ℤₐ(s;30) Contribution',
+                                color: '#fff',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+            
+            document.getElementById('chart-section').style.display = 'block';
+            createChartLegend(labels, colors, primeCounts);
+        }
+        
+        function createChartLegend(labels, colors, primeCounts) {
+            let legendHtml = '';
+            
+            for (let i = 0; i < labels.length; i++) {
+                legendHtml += `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${colors[i]};"></div>
+                        <span>${labels[i]} (${primeCounts[i]} primes)</span>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('chartLegend').innerHTML = legendHtml;
+        }
+        
+        function changeViz(type) {
+            currentViz = type;
+            
+            document.querySelectorAll('.viz-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            updateVisualization(type);
+        }
+        
+        function updateVisualization(type) {
+            if (!computationData) return;
+            
+            const ctx = document.getElementById('vizCanvas').getContext('2d');
+            
+            if (vizChart) {
+                vizChart.destroy();
+            }
+            
+            if (type === 'convergence') {
+                createConvergencePlot(ctx);
+            } else if (type === 'contribution') {
+                createContributionPlot(ctx);
+            } else if (type === 'comparison') {
+                createComparisonPlot(ctx);
+            }
+        }
+        
+        function createConvergencePlot(ctx) {
+            const { partialProducts, exactValue, constantType } = computationData;
+            
+            const labels = partialProducts.map(p => p.prime);
+            const values = partialProducts.map(p => {
+                if (constantType === 'pi') {
+                    return Math.sqrt(6 * p.value);
+                }
+                return p.value;
+            });
+            
+            vizChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Partial Product',
+                        data: values,
+                        borderColor: 'rgba(78, 205, 196, 1)',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Exact Value',
+                        data: Array(labels.length).fill(exactValue),
+                        borderColor: 'rgba(255, 215, 0, 1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(10)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Prime p', color: '#fff' },
+                            ticks: { color: '#fff', maxTicksLimit: 15 },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Value', color: '#fff' },
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createContributionPlot(ctx) {
+            const { primes, exponent } = computationData;
+            
+            const contributions = primes.map(p => {
+                const factor = 1 / (1 - Math.pow(p, -exponent));
+                return factor - 1;
+            });
+            
+            vizChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Prime Contribution',
+                        data: primes.map((p, i) => ({ x: p, y: contributions[i] })),
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff' }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                            callbacks: {
+                                label: function(context) {
+                                    return `p=${context.parsed.x}: contribution = ${context.parsed.y.toFixed(8)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Prime p (log scale)', color: '#fff' },
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Contribution (log scale)', color: '#fff' },
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createComparisonPlot(ctx) {
+            const { primes, exponent } = computationData;
+            const channels = computeResidueChannels(primes);
+            const phi30 = [1, 7, 11, 13, 17, 19, 23, 29];
+            
+            const datasets = phi30.map((a, idx) => {
+                const channelPrimes = channels[a];
+                const contributions = channelPrimes.map(p => {
+                    const factor = 1 / (1 - Math.pow(p, -exponent));
+                    return factor - 1;
+                });
+                
+                const colors = [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 205, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(199, 199, 199, 0.6)',
+                    'rgba(83, 102, 255, 0.6)'
+                ];
+                
+                return {
+                    label: `≡ ${a} (mod 30)`,
+                    data: channelPrimes.map((p, i) => ({ x: p, y: contributions[i] })),
+                    backgroundColor: colors[idx],
+                    borderColor: colors[idx].replace('0.6', '1'),
+                    pointRadius: 3
+                };
+            });
+            
+            vizChart = new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { size: 10 } }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.9)'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Prime p', color: '#fff' },
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: { display: true, text: 'Contribution', color: '#fff' },
+                            ticks: { color: '#fff' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function exportResults() {
+            if (!computationData) {
+                alert('Please compute a value first!');
+                return;
+            }
+            
+            const exportData = {
+                timestamp: new Date().toISOString(),
+                parameters: {
+                    epsilon: computationData.epsilon,
+                    constantType: computationData.constantType,
+                    method: computationData.method,
+                    cutoff: computationData.Y
+                },
+                results: {
+                    computedValue: computationData.computedValue,
+                    exactValue: computationData.exactValue,
+                    absoluteError: Math.abs(computationData.computedValue - computationData.exactValue),
+                    relativeError: Math.abs(computationData.computedValue - computationData.exactValue) / computationData.exactValue,
+                    primesUsed: computationData.primes.length,
+                    primes: computationData.primes
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `zeta_calculation_${computationData.constantType}_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportStepsText() {
+            if (!computationData) {
+                alert('Please compute a value first!');
+                return;
+            }
+            
+            const { epsilon, constantType, Y, primes, exponent, computedValue, exactValue } = computationData;
+            
+            let text = `MODULAR SIEVE CALCULATION\n`;
+            text += `${'='.repeat(80)}\n\n`;
+            text += `Timestamp: ${new Date().toISOString()}\n`;
+            text += `Constant: ${constantType === 'pi' ? 'π' : 'ζ(' + exponent + ')'}\n`;
+            text += `Target Error: ${epsilon}\n\n`;
+            
+            text += `STEP 1: DETERMINE CUTOFF\n`;
+            text += `${'-'.repeat(80)}\n`;
+            if (constantType === 'pi') {
+                text += `For π: Y = ⌈1 + 1/log(1+ε)⌉\n`;
+                text += `Y = ⌈1 + ${(1/Math.log(1+epsilon)).toFixed(4)}⌉ = ${Y}\n`;
+            } else {
+                text += `For ζ(${exponent}): Y = ⌈(2/((2n-1)·log(1+ε)))^(1/(2n-1))⌉\n`;
+                text += `Y = ${Y}\n`;
+            }
+            text += `\nNeed all primes ≤ ${Y-1}\n\n`;
+            
+            text += `STEP 2: GENERATE PRIMES\n`;
+            text += `${'-'.repeat(80)}\n`;
+            text += `Found ${primes.length} primes using Sieve of Eratosthenes:\n`;
+            text += `{${primes.slice(0, 50).join(', ')}${primes.length > 50 ? ', ...' : ''}}\n\n`;
+            
+            text += `STEP 3: COMPUTE EULER PRODUCT\n`;
+            text += `${'-'.repeat(80)}\n`;
+            const product = computeTruncatedProduct(primes, exponent);
+            text += `${constantType === 'pi' ? 'ζ(2)' : 'ζ(' + exponent + ')'} = ∏(1-p^(-${exponent}))^(-1) = ${product.toFixed(15)}\n\n`;
+            
+            if (constantType === 'pi') {
+                text += `STEP 4: EXTRACT π\n`;
+                text += `${'-'.repeat(80)}\n`;
+                text += `π = √(6·ζ(2)) = √(6 × ${product.toFixed(12)})\n`;
+                text += `π ≈ ${computedValue.toFixed(15)}\n\n`;
+            }
+            
+            text += `RESULTS\n`;
+            text += `${'-'.repeat(80)}\n`;
+            text += `Computed: ${computedValue.toFixed(15)}\n`;
+            text += `Exact:    ${exactValue.toFixed(15)}\n`;
+            text += `Abs Err:  ${Math.abs(computedValue - exactValue).toExponential(10)}\n`;
+            text += `Rel Err:  ${(Math.abs(computedValue - exactValue) / exactValue * 100).toFixed(10)}%\n`;
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `zeta_steps_${constantType}_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        window.onload = () => {
+            compute();
+        };
+    </script>
 </body>
 </html>
