@@ -671,7 +671,7 @@
             <div class="canvas-panel">
                 <div class="panel-header">
                     <div>
-                        <div class="panel-title">⊚ Nested Modular Rings</div>
+                        <div class="panel-title">Nested Modular Rings</div>
                         <div class="panel-subtitle">Unlimited GCD Structure</div>
                     </div>
                 </div>
@@ -686,7 +686,7 @@
             </div>
             <div class="controls-body">
                 <!-- Basic Parameters -->
-                <div class="section-header">🎯 Basic Parameters</div>
+                <div class="section-header">Basic Parameters</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -694,15 +694,17 @@
                             <span class="control-value" id="phaseValue">0°</span>
                         </div>
                         <input type="range" id="phaseSlider" min="0" max="360" value="0" step="0.1">
+                        <input type="number" id="phaseInput" value="0" min="0" max="360" step="0.1" style="margin-top: 5px;">
                     </div>
 
                     <div class="control-item">
                         <div class="control-label">
-                            <span>Modulus m (Any Integer)</span>
+                            <span>Modulus m</span>
                             <span class="control-value" id="modulusDisplay">30</span>
                         </div>
+                        <input type="range" id="modulusSlider" min="1" max="200" value="30" step="1">
                         <input type="number" id="modulusInput" value="30" min="1" step="1">
-                        <div class="help-text">No upper limit - enter any positive integer</div>
+                        <div class="help-text">No upper limit</div>
                     </div>
 
                     <div class="control-item">
@@ -711,11 +713,12 @@
                             <span class="control-value" id="speedValue">1.0×</span>
                         </div>
                         <input type="range" id="speedSlider" min="0.1" max="20" value="1" step="0.1">
+                        <input type="number" id="speedInput" value="1" min="0.1" max="100" step="0.1" style="margin-top: 5px;">
                     </div>
                 </div>
 
                 <!-- Cayley View Controls -->
-                <div class="section-header">🔭 Cayley Plane View Range</div>
+                <div class="section-header">Cayley Plane View Range</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -755,7 +758,7 @@
                 </div>
 
                 <!-- Prime Distribution -->
-                <div class="section-header">🔢 Prime Distribution</div>
+                <div class="section-header">Prime Distribution</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -777,7 +780,7 @@
                 </div>
 
                 <!-- Nested Rings Parameters -->
-                <div class="section-header">⊚ Nested Rings Configuration</div>
+                <div class="section-header">Nested Rings Configuration</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -806,7 +809,7 @@
                 </div>
 
                 <!-- Custom Farey Points -->
-                <div class="section-header">🎯 Custom Farey Points</div>
+                <div class="section-header">Custom Farey Points</div>
                 <div class="control-row">
                     <div class="control-item" style="grid-column: 1 / -1;">
                         <div class="control-label">
@@ -819,7 +822,7 @@
                 </div>
 
                 <!-- Connection Options -->
-                <div class="section-header">🔗 Connection Options</div>
+                <div class="section-header">Connection Options</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -853,7 +856,7 @@
                 </div>
 
                 <!-- Label Options -->
-                <div class="section-header">🏷️ Label Options</div>
+                <div class="section-header">Label Options</div>
                 <div class="control-row">
                     <div class="control-item">
                         <div class="control-label">
@@ -887,7 +890,7 @@
                 </div>
 
                 <!-- Toggles -->
-                <div class="section-header">⚡ Display Options</div>
+                <div class="section-header">Display Options</div>
                 <div class="toggle-grid">
                     <input type="checkbox" id="toggleFarey" checked>
                     <label for="toggleFarey" class="toggle-item">
@@ -965,19 +968,19 @@
                 <!-- Action Buttons -->
                 <div class="action-bar">
                     <button class="btn btn-primary" onclick="updateAll()">
-                        <span>🔄 Update All</span>
+                        <span>Update All</span>
                     </button>
                     <button class="btn btn-secondary" onclick="regeneratePrimes()">
-                        <span>🔢 Regenerate Primes</span>
+                        <span>Regenerate Primes</span>
                     </button>
                     <button class="btn btn-accent" onclick="resetDefaults()">
-                        <span>🔁 Reset to Defaults</span>
+                        <span>Reset to Defaults</span>
                     </button>
                     <button class="btn btn-secondary" onclick="exportVisualization()">
-                        <span>💾 Export PNG</span>
+                        <span>Export PNG</span>
                     </button>
                     <button class="btn btn-secondary" onclick="printDiagnostics()">
-                        <span>🔍 Print Diagnostics</span>
+                        <span>Print Diagnostics</span>
                     </button>
                 </div>
             </div>
@@ -1144,20 +1147,63 @@
         }
 
         function setupEventListeners() {
-            // Phase slider
+            // Phase controls (both slider and input)
             document.getElementById('phaseSlider').addEventListener('input', e => {
                 state.phase = parseFloat(e.target.value);
                 document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+                document.getElementById('phaseInput').value = state.phase.toFixed(1);
                 if (!state.animationId) updateAll();
             });
 
-            // Modulus input
+            document.getElementById('phaseInput').addEventListener('change', e => {
+                let val = parseFloat(e.target.value);
+                if (!isNaN(val)) {
+                    val = val % 360;
+                    if (val < 0) val += 360;
+                    state.phase = val;
+                    document.getElementById('phaseSlider').value = val;
+                    document.getElementById('phaseValue').textContent = val.toFixed(1) + '°';
+                    e.target.value = val.toFixed(1);
+                    updateAll();
+                }
+            });
+
+            // Modulus controls (both slider and input)
+            document.getElementById('modulusSlider').addEventListener('input', e => {
+                const val = parseInt(e.target.value);
+                state.modulus = val;
+                document.getElementById('modulusInput').value = val;
+                document.getElementById('modulusDisplay').textContent = val;
+                if (!state.animationId) updateAll();
+            });
+
             document.getElementById('modulusInput').addEventListener('change', e => {
                 const val = parseInt(e.target.value);
                 if (val > 0) {
                     state.modulus = val;
+                    if (val <= 200) {
+                        document.getElementById('modulusSlider').value = val;
+                    }
                     document.getElementById('modulusDisplay').textContent = val;
                     updateAll();
+                }
+            });
+
+            // Speed controls (both slider and input)
+            document.getElementById('speedSlider').addEventListener('input', e => {
+                state.animSpeed = parseFloat(e.target.value);
+                document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
+                document.getElementById('speedInput').value = state.animSpeed.toFixed(1);
+            });
+
+            document.getElementById('speedInput').addEventListener('change', e => {
+                const val = parseFloat(e.target.value);
+                if (val >= 0.1) {
+                    state.animSpeed = val;
+                    if (val <= 20) {
+                        document.getElementById('speedSlider').value = val;
+                    }
+                    document.getElementById('speedValue').textContent = val.toFixed(1) + '×';
                 }
             });
 
@@ -2241,10 +2287,13 @@
 
             // Reset UI
             document.getElementById('phaseSlider').value = 0;
+            document.getElementById('phaseInput').value = 0;
+            document.getElementById('modulusSlider').value = 30;
             document.getElementById('modulusInput').value = 30;
             document.getElementById('primesInput').value = 150;
             document.getElementById('primeLimitInput').value = 10000;
             document.getElementById('speedSlider').value = 1;
+            document.getElementById('speedInput').value = 1;
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
@@ -2311,23 +2360,23 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('\nBASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('\nCAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
             console.log('  Grid density:', state.cayleyGridDensity);
             
-            console.log('\n⊚ NESTED RINGS:');
+            console.log('\nNESTED RINGS:');
             console.log('  Ring range: m =', state.minRing, 'to', state.maxRing);
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n🎯 FAREY POINTS:');
+            console.log('\nFAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + state.phase * Math.PI / 180;
@@ -2340,7 +2389,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('\nPRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -2349,15 +2398,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('\nCONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('\nLABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n📊 DISPLAY TOGGLES:');
+            console.log('\nDISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -2370,7 +2419,7 @@
                 }
             });
             
-            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\nCAYLEY TRANSFORM VERIFICATION:');
             console.log('  Formula: w = i(1-z)/(1+z)');
             console.log('  Inverse: z = (i-w)/(i+w)');
             
