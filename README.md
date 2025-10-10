@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farey Triangle & Cayley Transform Explorer by Wessen</title>
+    <title>Farey Triangle & Cayley Transform - Unlimited Explorer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
         
@@ -714,6 +714,46 @@
                     </div>
                 </div>
 
+                <!-- Cayley View Controls -->
+                <div class="section-header">🔭 Cayley Plane View Range</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Horizontal Range (Re)</span>
+                            <span class="control-value" id="cayleyHRangeValue">6.0</span>
+                        </div>
+                        <input type="range" id="cayleyHRangeSlider" min="2" max="20" value="6" step="0.5">
+                        <div class="help-text">Width of visible area in ℍ</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Vertical Range (Im)</span>
+                            <span class="control-value" id="cayleyVRangeValue">4.0</span>
+                        </div>
+                        <input type="range" id="cayleyVRangeSlider" min="1" max="15" value="4" step="0.5">
+                        <div class="help-text">Height of visible area in ℍ</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Vertical Offset</span>
+                            <span class="control-value" id="cayleyVOffsetValue">0.0</span>
+                        </div>
+                        <input type="range" id="cayleyVOffsetSlider" min="-5" max="5" value="0" step="0.1">
+                        <div class="help-text">Shift view up/down</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Grid Density</span>
+                            <span class="control-value" id="cayleyGridDensityValue">1.0</span>
+                        </div>
+                        <input type="range" id="cayleyGridDensitySlider" min="0.5" max="3" value="1" step="0.1">
+                        <div class="help-text">Grid line spacing</div>
+                    </div>
+                </div>
+
                 <!-- Prime Distribution -->
                 <div class="section-header">🔢 Prime Distribution</div>
                 <div class="control-row">
@@ -897,6 +937,24 @@
                         <span class="toggle-label">Grid Lines</span>
                     </label>
 
+                    <input type="checkbox" id="toggleFundDomain">
+                    <label for="toggleFundDomain" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Fundamental Domain</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleVerticals">
+                    <label for="toggleVerticals" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Vertical Geodesics</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleDiskOutline">
+                    <label for="toggleDiskOutline" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Unit Disk Outline</span>
+                    </label>
+
                     <input type="checkbox" id="toggleAnimate">
                     <label for="toggleAnimate" class="toggle-item">
                         <div class="toggle-switch"></div>
@@ -917,6 +975,9 @@
                     </button>
                     <button class="btn btn-secondary" onclick="exportVisualization()">
                         <span>💾 Export PNG</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="printDiagnostics()">
+                        <span>🔍 Print Diagnostics</span>
                     </button>
                 </div>
             </div>
@@ -958,6 +1019,10 @@
             labelMode: 'farey',
             labelSize: 10,
             labelFreq: 1,
+            cayleyHRange: 6,
+            cayleyVRange: 4,
+            cayleyVOffset: 0,
+            cayleyGridDensity: 1,
             fareyPoints: [
                 {num: 1, den: 3},
                 {num: 1, den: 2},
@@ -1146,6 +1211,35 @@
                 if (!state.animationId) updateAll();
             });
 
+            // Cayley view controls
+            document.getElementById('cayleyHRangeSlider').addEventListener('input', e => {
+                state.cayleyHRange = parseFloat(e.target.value);
+                document.getElementById('cayleyHRangeValue').textContent = state.cayleyHRange.toFixed(1);
+                console.log('Cayley H Range changed to:', state.cayleyHRange);
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('cayleyVRangeSlider').addEventListener('input', e => {
+                state.cayleyVRange = parseFloat(e.target.value);
+                document.getElementById('cayleyVRangeValue').textContent = state.cayleyVRange.toFixed(1);
+                console.log('Cayley V Range changed to:', state.cayleyVRange);
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('cayleyVOffsetSlider').addEventListener('input', e => {
+                state.cayleyVOffset = parseFloat(e.target.value);
+                document.getElementById('cayleyVOffsetValue').textContent = state.cayleyVOffset.toFixed(1);
+                console.log('Cayley V Offset changed to:', state.cayleyVOffset);
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('cayleyGridDensitySlider').addEventListener('input', e => {
+                state.cayleyGridDensity = parseFloat(e.target.value);
+                document.getElementById('cayleyGridDensityValue').textContent = state.cayleyGridDensity.toFixed(1);
+                console.log('Cayley Grid Density changed to:', state.cayleyGridDensity);
+                if (!state.animationId) updateAll();
+            });
+
             // Connection controls
             document.getElementById('connectionMode').addEventListener('change', e => {
                 state.connectionMode = e.target.value;
@@ -1196,7 +1290,8 @@
 
             // Display toggles
             ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels', 
-             'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid'].forEach(id => {
+             'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
+             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline'].forEach(id => {
                 document.getElementById(id).addEventListener('change', updateAll);
             });
         }
@@ -1447,48 +1542,21 @@
             const ctx = canvases.cayleyCtx;
             const w = canvas.width / (window.devicePixelRatio || 1);
             const h = canvas.height / (window.devicePixelRatio || 1);
-            const cx = w / 2;
-            const cy = h * 0.7;
-            const scale = Math.min(w, h) * CONFIG.halfPlaneScale;
 
             ctx.clearRect(0, 0, w, h);
 
-            // Grid
-            if (document.getElementById('toggleGrid').checked) {
-                ctx.strokeStyle = CONFIG.colors.grid;
-                ctx.lineWidth = 0.5;
-                for (let i = -15; i <= 15; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(cx + i * scale / 3, 0);
-                    ctx.lineTo(cx + i * scale / 3, h);
-                    ctx.stroke();
-                    const y = cy - i * scale / 3;
-                    if (y >= 0 && y <= h) {
-                        ctx.beginPath();
-                        ctx.moveTo(0, y);
-                        ctx.lineTo(w, y);
-                        ctx.stroke();
-                    }
-                }
+            // Coordinate conversion functions for Cayley plane
+            function mathToScreen(wp) {
+                const reMin = -state.cayleyHRange / 2;
+                const reMax = state.cayleyHRange / 2;
+                const imMin = state.cayleyVOffset;
+                const imMax = state.cayleyVRange + state.cayleyVOffset;
+                
+                const x = ((wp.re - reMin) / (reMax - reMin)) * w;
+                const y = (1 - (wp.im - imMin) / (imMax - imMin)) * h;
+                
+                return { x, y };
             }
-
-            // Axes
-            ctx.strokeStyle = CONFIG.colors.axes;
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = CONFIG.colors.axes;
-            ctx.beginPath();
-            ctx.moveTo(0, cy);
-            ctx.lineTo(w, cy);
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            ctx.strokeStyle = CONFIG.colors.axes;
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(cx, 0);
-            ctx.lineTo(cx, h);
-            ctx.stroke();
 
             const phase = state.phase * Math.PI / 180;
             const showGeodesic = document.getElementById('toggleGeodesic').checked;
@@ -1496,50 +1564,274 @@
             const showPrimes = document.getElementById('togglePrimes').checked;
             const showChannels = document.getElementById('toggleChannels').checked;
             const showFarey = document.getElementById('toggleFarey').checked;
+            const showGrid = document.getElementById('toggleGrid').checked;
+            const showFundDomain = document.getElementById('toggleFundDomain').checked;
+            const showVerticals = document.getElementById('toggleVerticals').checked;
+            const showDiskOutline = document.getElementById('toggleDiskOutline').checked;
 
-            // Geodesic
-            if (showGeodesic && state.fareyPoints.length >= 2) {
-                // Calculate geodesic for custom Farey points
-                const transformedPoints = state.fareyPoints.map(fp => {
-                    const frac = fp.num / fp.den;
-                    const angle = 2 * Math.PI * frac + phase;
-                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const w = cayleyTransform(z);
-                    return { x: cx + w.re * scale, y: cy - w.im * scale, w: w };
-                });
+            // Draw grid
+            if (showGrid) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 1;
 
-                // Calculate geodesic circle parameters
-                if (transformedPoints.length >= 2) {
-                    const p1 = transformedPoints[0];
-                    const p2 = transformedPoints[1];
-                    const midX = (p1.x + p2.x) / 2;
-                    const geodR = Math.sqrt((p1.x - p2.x) ** 2 / 4 + (cy - midX) ** 2);
+                const spacing = 0.5 / state.cayleyGridDensity;
+                const reMin = -state.cayleyHRange / 2;
+                const reMax = state.cayleyHRange / 2;
+                const imMin = state.cayleyVOffset;
+                const imMax = state.cayleyVRange + state.cayleyVOffset;
 
-                    ctx.strokeStyle = CONFIG.colors.geodesic;
-                    ctx.lineWidth = 4;
-                    ctx.shadowBlur = 20;
-                    ctx.shadowColor = CONFIG.colors.geodesic;
+                // Vertical lines
+                for (let re = Math.ceil(reMin / spacing) * spacing; re <= reMax; re += spacing) {
+                    const p1 = mathToScreen({ re, im: imMin });
+                    const p2 = mathToScreen({ re, im: imMax });
+                    
                     ctx.beginPath();
-                    ctx.arc(midX, cy, geodR, Math.PI, 0, false);
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
                     ctx.stroke();
-                    ctx.shadowBlur = 0;
+
+                    // Labels for major gridlines
+                    if (Math.abs(re) > 0.01 && Math.abs(re % 1) < 0.01) {
+                        const p = mathToScreen({ re, im: imMin });
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.font = '10px Fira Code';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(re.toFixed(0), p.x, p.y - 5);
+                    }
+                }
+
+                // Horizontal lines
+                for (let im = Math.ceil(imMin / spacing) * spacing; im <= imMax; im += spacing) {
+                    if (im < 0.01) continue;
+                    
+                    const p1 = mathToScreen({ re: reMin, im });
+                    const p2 = mathToScreen({ re: reMax, im });
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+
+                    // Labels for major gridlines
+                    if (im > 0.1 && Math.abs(im % 1) < 0.01) {
+                        const p = mathToScreen({ re: reMin, im });
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.font = '10px Fira Code';
+                        ctx.textAlign = 'right';
+                        ctx.fillText(im.toFixed(0) + 'i', p.x + w - 5, p.y);
+                    }
                 }
             }
 
-            // Cusps
+            // Real axis (boundary of ℍ)
+            const axisP1 = mathToScreen({ re: -state.cayleyHRange / 2, im: 0 });
+            const axisP2 = mathToScreen({ re: state.cayleyHRange / 2, im: 0 });
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(axisP1.x, axisP1.y);
+            ctx.lineTo(axisP2.x, axisP2.y);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Imaginary axis
+            const iAxisP1 = mathToScreen({ re: 0, im: state.cayleyVOffset });
+            const iAxisP2 = mathToScreen({ re: 0, im: state.cayleyVRange + state.cayleyVOffset });
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(iAxisP1.x, iAxisP1.y);
+            ctx.lineTo(iAxisP2.x, iAxisP2.y);
+            ctx.stroke();
+
+            // Fundamental domain
+            if (showFundDomain) {
+                ctx.strokeStyle = 'rgba(230, 126, 34, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+
+                // Left boundary: Re = -1/2
+                const leftTop = mathToScreen({ re: -0.5, im: state.cayleyVRange + state.cayleyVOffset });
+                const leftBot = mathToScreen({ re: -0.5, im: Math.max(0, Math.sqrt(1 - 0.25)) });
+                ctx.beginPath();
+                ctx.moveTo(leftBot.x, leftBot.y);
+                ctx.lineTo(leftTop.x, leftTop.y);
+                ctx.stroke();
+
+                // Right boundary: Re = 1/2
+                const rightTop = mathToScreen({ re: 0.5, im: state.cayleyVRange + state.cayleyVOffset });
+                const rightBot = mathToScreen({ re: 0.5, im: Math.max(0, Math.sqrt(1 - 0.25)) });
+                ctx.beginPath();
+                ctx.moveTo(rightBot.x, rightBot.y);
+                ctx.lineTo(rightTop.x, rightTop.y);
+                ctx.stroke();
+
+                // Bottom arc: |z| = 1
+                ctx.beginPath();
+                let firstArc = true;
+                for (let i = 0; i <= 50; i++) {
+                    const angle = Math.PI * i / 50;
+                    const re = Math.cos(angle);
+                    const im = Math.sin(angle);
+                    if (Math.abs(re) <= 0.5 && im >= 0) {
+                        const p = mathToScreen({ re, im });
+                        if (firstArc) {
+                            ctx.moveTo(p.x, p.y);
+                            firstArc = false;
+                        } else {
+                            ctx.lineTo(p.x, p.y);
+                        }
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Unit disk outline (where |z|=1 on disk maps under Cayley)
+            if (showDiskOutline) {
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([3, 3]);
+
+                ctx.beginPath();
+                let firstDisk = true;
+                for (let i = 0; i <= 100; i++) {
+                    const angle = 2 * Math.PI * i / 100;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const wp = cayleyTransform(z);
+                    
+                    const p = mathToScreen(wp);
+                    if (firstDisk) {
+                        ctx.moveTo(p.x, p.y);
+                        firstDisk = false;
+                    } else {
+                        ctx.lineTo(p.x, p.y);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Vertical geodesics
+            if (showVerticals) {
+                ctx.strokeStyle = 'rgba(155, 89, 182, 0.3)';
+                ctx.lineWidth = 1;
+                
+                for (let re = Math.ceil(-state.cayleyHRange / 2); re <= state.cayleyHRange / 2; re++) {
+                    const p1 = mathToScreen({ re, im: state.cayleyVOffset });
+                    const p2 = mathToScreen({ re, im: state.cayleyVRange + state.cayleyVOffset });
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+
+            // Geodesic
+            if (showGeodesic && state.fareyPoints.length >= 2) {
+                // Draw all geodesics between all pairs of Farey points
+                for (let i = 0; i < state.fareyPoints.length; i++) {
+                    for (let j = i + 1; j < state.fareyPoints.length; j++) {
+                        const fp1 = state.fareyPoints[i];
+                        const fp2 = state.fareyPoints[j];
+                        
+                        const frac1 = fp1.num / fp1.den;
+                        const frac2 = fp2.num / fp2.den;
+                        
+                        const angle1 = 2 * Math.PI * frac1 + phase;
+                        const angle2 = 2 * Math.PI * frac2 + phase;
+                        
+                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
+                        const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
+                        
+                        const w1 = cayleyTransform(z1);
+                        const w2 = cayleyTransform(z2);
+
+                        const centerRe = (w1.re + w2.re) / 2;
+                        const radius = Math.sqrt((w1.re - centerRe) ** 2 + w1.im ** 2);
+
+                        // Highlight first geodesic
+                        const isFirst = (i === 0 && j === 1);
+                        ctx.strokeStyle = isFirst ? CONFIG.colors.geodesic : 'rgba(26, 188, 156, 0.3)';
+                        ctx.lineWidth = isFirst ? 4 : 2;
+                        if (isFirst) {
+                            ctx.shadowBlur = 20;
+                            ctx.shadowColor = CONFIG.colors.geodesic;
+                        }
+                        
+                        ctx.beginPath();
+                        let firstGeo = true;
+                        for (let k = 0; k <= 100; k++) {
+                            const angle = Math.PI * k / 100;
+                            const re = centerRe + radius * Math.cos(angle);
+                            const im = radius * Math.sin(angle);
+                            
+                            const p = mathToScreen({ re, im });
+                            if (firstGeo) {
+                                ctx.moveTo(p.x, p.y);
+                                firstGeo = false;
+                            } else {
+                                ctx.lineTo(p.x, p.y);
+                            }
+                        }
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            // Transformed primes
+            if (showPrimes) {
+                const colors = generateColors(state.modulus);
+                const displayPrimes = state.primes.slice(0, state.numPrimes);
+
+                const reMin = -state.cayleyHRange / 2;
+                const reMax = state.cayleyHRange / 2;
+                const imMin = state.cayleyVOffset;
+                const imMax = state.cayleyVRange + state.cayleyVOffset;
+
+                displayPrimes.forEach(p => {
+                    if (showChannels && gcd(p, state.modulus) !== 1) return;
+
+                    const angle = 2 * Math.PI * p / state.modulus + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const wp = cayleyTransform(z);
+
+                    // Only draw if in visible range
+                    if (wp.re >= reMin && wp.re <= reMax && wp.im >= imMin && wp.im <= imMax && wp.im > 0.01) {
+                        const p_screen = mathToScreen(wp);
+                        const color = showChannels ? colors[p % state.modulus] : CONFIG.colors.prime;
+                        
+                        ctx.fillStyle = color;
+                        ctx.shadowBlur = 6;
+                        ctx.shadowColor = color;
+                        ctx.beginPath();
+                        ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Cusps on real axis
             if (showCusps && state.fareyPoints.length > 0) {
                 state.fareyPoints.forEach(fp => {
                     const frac = fp.num / fp.den;
                     const angle = 2 * Math.PI * frac + phase;
                     const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const w = cayleyTransform(z);
-                    const x = cx + w.re * scale;
+                    const wp = cayleyTransform(z);
+                    const cuspP = mathToScreen({ re: wp.re, im: 0 });
 
                     ctx.fillStyle = CONFIG.colors.cusp;
                     ctx.shadowBlur = 15;
                     ctx.shadowColor = CONFIG.colors.cusp;
                     ctx.beginPath();
-                    ctx.arc(x, cy, 6, 0, 2 * Math.PI);
+                    ctx.arc(cuspP.x, cuspP.y, 6, 0, 2 * Math.PI);
                     ctx.fill();
                     ctx.shadowBlur = 0;
 
@@ -1549,36 +1841,7 @@
                         ctx.textAlign = 'center';
                         ctx.shadowBlur = 8;
                         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                        ctx.fillText(`${fp.num}/${fp.den}`, x, cy + 22);
-                        ctx.shadowBlur = 0;
-                    }
-                });
-            }
-
-            // Transformed primes
-            if (showPrimes) {
-                const colors = generateColors(state.modulus);
-                const displayPrimes = state.primes.slice(0, state.numPrimes);
-
-                displayPrimes.forEach(p => {
-                    if (showChannels && gcd(p, state.modulus) !== 1) return;
-
-                    const angle = 2 * Math.PI * p / state.modulus + phase;
-                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const w = cayleyTransform(z);
-
-                    if (Math.abs(w.im) < 15 && Math.abs(w.re) < 15 && w.im > 0.01) {
-                        const x = cx + w.re * scale;
-                        const y = cy - w.im * scale;
-
-                        const color = showChannels ? colors[p % state.modulus] : CONFIG.colors.prime;
-                        
-                        ctx.fillStyle = color;
-                        ctx.shadowBlur = 8;
-                        ctx.shadowColor = color;
-                        ctx.beginPath();
-                        ctx.arc(x, y, 3.5, 0, 2 * Math.PI);
-                        ctx.fill();
+                        ctx.fillText(`${fp.num}/${fp.den}`, cuspP.x, cuspP.y + 22);
                         ctx.shadowBlur = 0;
                     }
                 });
@@ -1590,11 +1853,10 @@
                     const frac = fp.num / fp.den;
                     const angle = 2 * Math.PI * frac + phase;
                     const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const w = cayleyTransform(z);
+                    const wp = cayleyTransform(z);
                     return {
-                        x: cx + w.re * scale,
-                        y: cy - w.im * scale,
-                        w: w,
+                        ...mathToScreen(wp),
+                        wp: wp,
                         label: `${fp.num}/${fp.den}`
                     };
                 });
@@ -1646,7 +1908,16 @@
             ctx.textAlign = 'center';
             ctx.shadowBlur = 10;
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.fillText('Upper Half-Plane ℍ', cx, 35);
+            ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
+            
+            // Show current view range
+            ctx.font = '11px "Fira Code"';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            const reMin = -state.cayleyHRange / 2;
+            const reMax = state.cayleyHRange / 2;
+            const imMin = state.cayleyVOffset;
+            const imMax = state.cayleyVRange + state.cayleyVOffset;
+            ctx.fillText(`Re: [${reMin.toFixed(1)}, ${reMax.toFixed(1)}]  Im: [${imMin.toFixed(1)}, ${imMax.toFixed(1)}]`, w/2, 55);
             ctx.shadowBlur = 0;
         }
 
@@ -1955,6 +2226,10 @@
                 labelMode: 'farey',
                 labelSize: 10,
                 labelFreq: 1,
+                cayleyHRange: 6,
+                cayleyVRange: 4,
+                cayleyVOffset: 0,
+                cayleyGridDensity: 1,
                 fareyPoints: [
                     {num: 1, den: 3},
                     {num: 1, den: 2},
@@ -1973,6 +2248,10 @@
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
+            document.getElementById('cayleyHRangeSlider').value = 6;
+            document.getElementById('cayleyVRangeSlider').value = 4;
+            document.getElementById('cayleyVOffsetSlider').value = 0;
+            document.getElementById('cayleyGridDensitySlider').value = 1;
             document.getElementById('connectionMode').value = 'none';
             document.getElementById('connectionThicknessSlider').value = 1;
             document.getElementById('connectionOpacitySlider').value = 0.3;
@@ -1980,6 +2259,9 @@
             document.getElementById('labelSizeSlider').value = 10;
             document.getElementById('labelFreqInput').value = 1;
             document.getElementById('toggleAnimate').checked = false;
+            document.getElementById('toggleFundDomain').checked = false;
+            document.getElementById('toggleVerticals').checked = false;
+            document.getElementById('toggleDiskOutline').checked = false;
 
             document.getElementById('phaseValue').textContent = '0°';
             document.getElementById('modulusDisplay').textContent = '30';
@@ -1989,6 +2271,10 @@
             document.getElementById('minRingDisplay').textContent = '1';
             document.getElementById('maxRingDisplay').textContent = '12';
             document.getElementById('spacingValue').textContent = '1.0';
+            document.getElementById('cayleyHRangeValue').textContent = '6.0';
+            document.getElementById('cayleyVRangeValue').textContent = '4.0';
+            document.getElementById('cayleyVOffsetValue').textContent = '0.0';
+            document.getElementById('cayleyGridDensityValue').textContent = '1.0';
             document.getElementById('connectionThicknessValue').textContent = '1.0';
             document.getElementById('connectionOpacityValue').textContent = '0.30';
             document.getElementById('labelSizeValue').textContent = '10';
@@ -2021,6 +2307,88 @@
             link.download = `farey-unlimited-${Date.now()}.png`;
             link.href = tempCanvas.toDataURL('image/png');
             link.click();
+        }
+
+        function printDiagnostics() {
+            console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
+            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('  Modulus m:', state.modulus);
+            console.log('  Phase rotation:', state.phase, 'degrees');
+            console.log('  Animation speed:', state.animSpeed + '×');
+            
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
+            console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
+            console.log('  Vertical offset:', state.cayleyVOffset);
+            console.log('  Grid density:', state.cayleyGridDensity);
+            
+            console.log('\n⊚ NESTED RINGS:');
+            console.log('  Ring range: m =', state.minRing, 'to', state.maxRing);
+            console.log('  Ring spacing factor:', state.ringSpacing);
+            console.log('  Total rings:', state.maxRing - state.minRing + 1);
+            
+            console.log('\n🎯 FAREY POINTS:');
+            state.fareyPoints.forEach((fp, idx) => {
+                const frac = fp.num / fp.den;
+                const angle = 2 * Math.PI * frac + state.phase * Math.PI / 180;
+                const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                const w = cayleyTransform(z);
+                console.log(`  ${idx + 1}. ${fp.num}/${fp.den} = ${frac.toFixed(6)}`);
+                console.log(`     Unit Disk:     z = ${z.re.toFixed(6)} + ${z.im.toFixed(6)}i`);
+                console.log(`     Upper Half-Plane: w = ${w.re.toFixed(6)} + ${w.im.toFixed(6)}i`);
+                console.log(`     |z| = ${Math.sqrt(z.re*z.re + z.im*z.im).toFixed(6)}`);
+                console.log(`     Im(w) = ${w.im.toFixed(6)}`);
+            });
+            
+            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('  Total primes available:', state.primes.length);
+            console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
+            console.log('  Prime limit:', state.primeLimit);
+            if (state.primes.length > 0) {
+                console.log('  First 10 primes:', state.primes.slice(0, 10).join(', '));
+                console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
+            }
+            
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('  Thickness:', state.connectionThickness);
+            console.log('  Opacity:', state.connectionOpacity);
+            
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('  Size:', state.labelSize + 'px');
+            console.log('  Frequency: every', state.labelFreq, 'ring(s)');
+            
+            console.log('\n📊 DISPLAY TOGGLES:');
+            const toggles = [
+                'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
+                'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
+                'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline', 'toggleAnimate'
+            ];
+            toggles.forEach(id => {
+                const elem = document.getElementById(id);
+                if (elem) {
+                    console.log('  ' + id.replace('toggle', '') + ':', elem.checked ? '✓' : '✗');
+                }
+            });
+            
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('  Formula: w = i(1-z)/(1+z)');
+            console.log('  Inverse: z = (i-w)/(i+w)');
+            
+            // Test a few points
+            const testPoints = [
+                { re: 1, im: 0, label: '1 (right)' },
+                { re: -1, im: 0, label: '-1 (left)' },
+                { re: 0, im: 1, label: 'i (top)' },
+                { re: 0, im: -1, label: '-i (bottom)' }
+            ];
+            
+            console.log('\n  Test transformations:');
+            testPoints.forEach(z => {
+                const w = cayleyTransform(z);
+                console.log(`    z = ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
+            });
+            
+            console.log('\n=====================================================');
         }
     </script>
 </body>
