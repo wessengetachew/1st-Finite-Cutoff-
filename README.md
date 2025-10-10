@@ -3,893 +3,1209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modular Sieve: π and ζ(2n) Calculator</title>
+    <title>Farey Triangle & Cayley Transform - Unlimited Explorer</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        :root {
+            --bg-deep: #0a0e27;
+            --bg-mid: #141b3d;
+            --bg-light: #1e2a4a;
+            --gold: #ffd700;
+            --gold-dim: #b8960f;
+            --cyan: #00ffff;
+            --cyan-dim: #008b8b;
+            --geodesic: #1abc9c;
+            --cusp: #e67e22;
+            --prime: #3498db;
+            --text: #e8f1f5;
+            --text-dim: #8899aa;
+            --border: rgba(255, 215, 0, 0.3);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #fff;
+            font-family: 'Libre Baskerville', serif;
+            background: radial-gradient(ellipse at center, var(--bg-mid) 0%, var(--bg-deep) 100%);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .tooltip {
             position: relative;
-            display: inline-block;
-            cursor: help;
-            color: #ffd700;
-            margin-left: 5px;
-            font-weight: bold;
+            overflow-x: hidden;
         }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 300px;
-            background-color: rgba(0, 0, 0, 0.95);
-            color: #fff;
-            text-align: left;
-            border-radius: 8px;
-            padding: 15px;
-            position: absolute;
-            z-index: 1000;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -150px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9em;
-            line-height: 1.4;
-            border: 1px solid #ffd700;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+
+        body::after {
+            content: 'PSL(2,ℤ)';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-family: 'Fira Code', monospace;
+            font-size: 6em;
+            color: rgba(255, 215, 0, 0.03);
+            font-weight: 700;
+            z-index: 0;
+            pointer-events: none;
         }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        .progress-container {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .progress-bar {
-            height: 25px;
-            background: linear-gradient(90deg, #4ecdc4, #44a08d);
-            width: 0%;
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-        
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .export-btn {
-            padding: 8px 15px;
-            background: linear-gradient(45deg, #44a08d, #4ecdc4);
-            border: none;
-            border-radius: 6px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.9em;
-            flex: 1;
-            min-width: 120px;
-        }
-        
-        .export-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(68, 160, 141, 0.4);
-        }
-        
-        .presets {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .preset-btn {
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s;
-        }
-        
-        .preset-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.05);
-        }
-        
-        .formula-display {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 1.1em;
-            text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .comparison-table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        
-        .comparison-table th,
-        .comparison-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .comparison-table th {
-            background: rgba(255, 215, 0, 0.2);
-            font-weight: bold;
-        }
-        
-        .convergence-chart {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-        }
-        
-        .tour-overlay {
+
+        .starfield {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
         }
-        
-        .tour-content {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            border: 2px solid #ffd700;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-        }
-        
-        .tour-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .tour-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .help-icon {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 24px;
-            font-weight: bold;
-            color: #1e3c72;
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
-            transition: transform 0.3s;
-            z-index: 1000;
+            animation: twinkle 4s ease-in-out infinite;
         }
-        
-        .help-icon:hover {
-            transform: scale(1.1);
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
         }
-        
-        .keyboard-shortcuts {
-            font-size: 0.85em;
-            opacity: 0.7;
-            margin-top: 10px;
-        }
-        
-        .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            border: 1px solid #ff6b6b;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: none;
-        }
-        
-        .container {
-            max-width: 1200px;
+
+        .main-container {
+            max-width: 2400px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            position: relative;
+            z-index: 1;
         }
-        
-        h1 {
+
+        header {
             text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            padding: 40px 20px 30px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::before {
+            content: '⟨';
+            color: var(--gold);
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        h1::after {
+            content: '⟩';
+            color: var(--gold);
+            margin-left: 15px;
+            font-size: 1.2em;
+        }
+
+        .title-main {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
         }
-        
+
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
         .subtitle {
-            text-align: center;
-            font-size: 1.1em;
-            opacity: 0.9;
-            margin-bottom: 30px;
+            font-size: 1em;
+            color: var(--text-dim);
+            font-style: italic;
+            letter-spacing: 2px;
+            font-family: 'Fira Code', monospace;
         }
-        
-        .controls {
+
+        .viz-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-        
-        .control-group {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .canvas-panel {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-mid) 100%);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
         }
-        
-        .control-group h3 {
-            margin-bottom: 15px;
-            color: #ffd700;
+
+        .canvas-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.02) 75%, rgba(255, 255, 255, 0.02) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.02) 25%, rgba(255, 255, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.02) 75%, rgba(255, 255, 255, 0.02) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+            pointer-events: none;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
+
+        .panel-header {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(0, 255, 255, 0.1));
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-        
-        button {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(238, 90, 82, 0.3);
-        }
-        
-        .results {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .result-card {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 25px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .result-card h4 {
-            color: #ffd700;
-            margin-bottom: 15px;
+
+        .panel-title {
             font-size: 1.3em;
+            font-weight: 700;
+            font-family: 'Fira Code', monospace;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        
-        .value {
-            font-family: 'Courier New', monospace;
+
+        .panel-subtitle {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            font-family: 'Fira Code', monospace;
+            font-style: italic;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: radial-gradient(ellipse at center, rgba(26, 26, 46, 0.5), rgba(10, 14, 39, 0.9));
+        }
+
+        .controls-section {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-mid) 100%);
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .controls-header {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(0, 255, 255, 0.15));
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Fira Code', monospace;
             font-size: 1.2em;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            word-break: break-all;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
-        
-        .error-info {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-top: 10px;
+
+        .controls-header::before {
+            content: '⚙ ';
+            margin-right: 10px;
         }
-        
-        .gap-analysis {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 15px;
+
+        .controls-body {
+            padding: 30px;
         }
-        
-        .gap-analysis h3 {
-            color: #ffd700;
+
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin-bottom: 20px;
         }
-        
-        .gap-grid {
+
+        .control-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .control-item:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-value {
+            color: var(--cyan);
+            font-weight: 600;
+            font-size: 1.1em;
+            font-family: 'Fira Code', monospace;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            color: var(--cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--gold-dim), var(--cyan-dim));
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--gold);
+            border: 2px solid var(--bg-deep);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--gold);
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            width: 22px;
+            height: 22px;
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--gold);
+            border: 2px solid var(--bg-deep);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .section-header {
+            font-family: 'Fira Code', monospace;
+            color: var(--gold);
+            font-size: 1.1em;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .toggle-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
+            margin-top: 20px;
         }
-        
-        .gap-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .gap-value {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #4ecdc4;
-        }
-        
-        .channel-analysis {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        
-        .channel-analysis::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .channel-analysis::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-        
-        .channel-analysis::-webkit-scrollbar-thumb {
-            background: rgba(255, 215, 0, 0.5);
-            border-radius: 4px;
-        }
-        
-        .channel-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        
-        .channel-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .channel-grid::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-        
-        .channel-grid::-webkit-scrollbar-thumb {
-            background: rgba(255, 215, 0, 0.5);
-            border-radius: 4px;
-        }
-        
-        .channel-grid::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 215, 0, 0.7);
-        }
-        
-        .channel-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.9em;
-        }
-        
-        .loading {
-            text-align: center;
-            font-style: italic;
-            opacity: 0.7;
-        }
-        
-        .chart-container {
-            margin-top: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 15px;
-        }
-        
-        .chart-container h3 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        #channelChart {
-            width: 100%;
-            height: 400px;
-            max-height: 400px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .chart-legend {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            font-size: 0.9em;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        
-        .chart-legend::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .chart-legend::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-        
-        .chart-legend::-webkit-scrollbar-thumb {
-            background: rgba(255, 215, 0, 0.5);
-            border-radius: 3px;
-        }
-        
-        .legend-item {
+
+        .toggle-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
+
+        .toggle-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: var(--cyan);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s;
+            border: 1px solid var(--text-dim);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-dim);
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked + .toggle-item .toggle-switch {
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+
+        input[type="checkbox"]:checked + .toggle-item .toggle-switch::after {
+            left: 28px;
+            background: white;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .toggle-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+            color: var(--bg-deep);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--cyan-dim), var(--cyan));
+            color: var(--bg-deep);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 6px 25px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, #e67e22, #e74c3c);
+            color: white;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+        }
+
+        .farey-point-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .farey-point-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .farey-point-item input {
+            flex: 1;
+        }
+
+        .remove-btn {
+            padding: 5px 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8em;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-btn {
+            padding: 8px 20px;
+            background: var(--geodesic);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            background: #16a085;
+        }
+
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            color: var(--cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .help-text {
+            font-size: 0.8em;
+            color: var(--text-dim);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 1800px) {
+            .viz-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .viz-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .control-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-deep);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-symbol {
+            font-size: 4em;
+            color: var(--gold);
+            font-family: 'Fira Code', monospace;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-dim);
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Modular Sieve Calculator</h1>
-        <div class="subtitle">Computing π and ζ(2n) via Gap-Class and Residue-Channel Decompositions</div>
-        
-        <div class="error-message" id="error-message"></div>
-        
-        <div class="presets">
-            <button class="preset-btn" onclick="loadPreset('quick')">Quick Demo<br>(ε=0.01)</button>
-            <button class="preset-btn" onclick="loadPreset('accurate')">High Accuracy<br>(ε=0.0001)</button>
-            <button class="preset-btn" onclick="loadPreset('ultra')">Ultra Precise<br>(ε=0.00001)</button>
-            <button class="preset-btn" onclick="loadPreset('compare')">Compare All<br>Methods</button>
-        </div>
-        
-        <div class="keyboard-shortcuts">
-            ⌨️ Shortcuts: <strong>Ctrl+Enter</strong> Calculate | <strong>Ctrl+E</strong> Export | <strong>Ctrl+H</strong> Help
-        </div>
-        
-        <div class="controls">
-            <div class="control-group">
-                <h3>Target Accuracy</h3>
-                <label for="epsilon">Relative Error (ε):</label>
-                <input type="number" id="epsilon" value="0.001" step="0.0001" min="0.0001" max="0.1">
-                
-                <label for="constant">Constant to Compute:</label>
-                <select id="constant">
-                    <option value="pi">π (from ζ(2))</option>
-                    <option value="zeta4">ζ(4)</option>
-                    <option value="zeta6">ζ(6)</option>
-                    <option value="zeta8">ζ(8)</option>
-                    <option value="zeta10">ζ(10)</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <h3>Computation Method
-                    <span class="tooltip">ℹ️
-                        <span class="tooltiptext">
-                            <strong>Standard:</strong> Classic Euler product<br>
-                            <strong>Gap-Class:</strong> Group primes by gap sizes (p_{n+1} - p_n)<br>
-                            <strong>Residue Channels:</strong> Group primes by residue mod k<br>
-                            <strong>Combined:</strong> Both decompositions
-                        </span>
-                    </span>
-                </h3>
-                <label for="method">Decomposition:</label>
-                <select id="method">
-                    <option value="standard">Standard Euler Product</option>
-                    <option value="gap">Gap-Class Analysis</option>
-                    <option value="residue">Residue Channels</option>
-                    <option value="both">Gap + Residue Combined</option>
-                </select>
-                
-                <div id="modulus-control" style="display: none;">
-                    <label for="modulus">Modulus (k):
-                        <span class="tooltip">ℹ️
-                            <span class="tooltiptext">
-                                Primes are grouped by their remainder when divided by k. Common choices:<br>
-                                <strong>k=6:</strong> Primes ≡ 1,5 (mod 6)<br>
-                                <strong>k=12:</strong> Primes ≡ 1,5,7,11 (mod 12)<br>
-                                <strong>k=30:</strong> 8 residue classes (Euler's φ(30)=8)<br>
-                                <strong>Higher k:</strong> More refined decomposition
-                            </span>
-                        </span>
-                    </label>
-                    <input type="number" id="modulus" value="30" min="3" max="210" step="1">
-                    <div style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;" id="phi-info"></div>
-                </div>
-                
-                <div class="progress-container" id="progress-container">
-                    <div class="progress-bar" id="progress-bar">0%</div>
-                </div>
-                
-                <button onclick="compute()">Calculate</button>
-                
-                <div class="export-buttons">
-                    <button class="export-btn" onclick="exportCSV()">📊 Export CSV</button>
-                    <button class="export-btn" onclick="exportJSON()">📄 Export JSON</button>
-                    <button class="export-btn" onclick="exportImage()">🖼️ Save Chart</button>
-                </div>
-            </div>
-        </div>
-        
-        <div id="results" class="results" style="display: none;">
-            <div class="result-card">
-                <h4>Computed Value</h4>
-                <div id="computed-value" class="value"></div>
-                <div id="error-bound" class="error-info"></div>
-                <div id="prime-count" class="error-info"></div>
-            </div>
-            
-            <div class="result-card">
-                <h4>Exact Reference</h4>
-                <div id="exact-value" class="value"></div>
-                <div id="actual-error" class="error-info"></div>
-            </div>
-        </div>
-        
-        <div id="intermediate-section" class="gap-analysis" style="display: none;">
-            <h3>Mathematical Structure 
-                <span class="tooltip">ℹ️
-                    <span class="tooltiptext">
-                        Shows the exact mathematical form of the truncated product before transformation. This reveals what constant you're actually computing!
-                    </span>
-                </span>
-            </h3>
-            <div class="result-card" style="background: rgba(255, 215, 0, 0.1); border: 2px solid rgba(255, 215, 0, 0.3);">
-                <h4>Intermediate Value</h4>
-                <div id="intermediate-product" class="value"></div>
-                <div id="intermediate-formula" class="error-info" style="margin-top: 15px; font-size: 1.05em;"></div>
-                <div id="intermediate-explanation" class="error-info" style="margin-top: 10px; line-height: 1.6;"></div>
-            </div>
-        </div>
-        
-        <div id="gap-analysis" class="gap-analysis" style="display: none;">
-            <h3>Gap-Class Decomposition</h3>
-            <div id="gap-grid" class="gap-grid"></div>
-        </div>
-        
-        <div id="channel-analysis" class="channel-analysis" style="display: none;">
-            <h3 id="channel-title">Residue Channels</h3>
-            <div id="channel-grid" class="channel-grid"></div>
-        </div>
-        
-        <div id="chart-section" class="chart-container" style="display: none;">
-            <h3 id="chart-title">Residue Channel Contributions</h3>
-            <canvas id="channelChart"></canvas>
-            <div class="chart-legend" id="chartLegend"></div>
-        </div>
-        
-        <div id="convergence-section" class="convergence-chart" style="display: none;">
-            <h3>Convergence Analysis</h3>
-            <canvas id="convergenceChart"></canvas>
-        </div>
-        
-        <div id="comparison-section" class="gap-analysis" style="display: none;">
-            <h3>Method Comparison</h3>
-            <table class="comparison-table" id="comparison-table"></table>
-        </div>
+    <div class="loading" id="loading">
+        <div class="loading-symbol">ζ(s)</div>
+        <div class="loading-text">Initializing Unlimited Explorer...</div>
     </div>
-    
-    <div class="help-icon" onclick="showTour()" aria-label="Help and Tutorial">?</div>
-    
-    <div class="tour-overlay" id="tour-overlay">
-        <div class="tour-content">
-            <h2 style="color: #ffd700; margin-bottom: 15px;">Welcome to Modular Sieve Calculator!</h2>
-            <div id="tour-text"></div>
-            <div class="tour-buttons">
-                <button class="tour-btn" style="background: #666; color: white;" onclick="closeTour()">Skip</button>
-                <button class="tour-btn" style="background: #ffd700; color: #1e3c72;" onclick="nextTourStep()">Next</button>
+
+    <div class="starfield" id="starfield"></div>
+
+    <div class="main-container">
+        <header>
+            <h1>
+                <span class="title-main">Farey Triangle & Cayley Transform</span>
+            </h1>
+            <p class="subtitle">Unlimited · Unbounded · Fully Customizable</p>
+        </header>
+
+        <!-- Visualization Canvases -->
+        <div class="viz-grid">
+            <div class="canvas-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">𝔻 Unit Disk</div>
+                        <div class="panel-subtitle">Custom Farey Configuration</div>
+                    </div>
+                </div>
+                <canvas id="diskCanvas" width="1000" height="1000"></canvas>
+            </div>
+
+            <div class="canvas-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">ℍ Upper Half-Plane</div>
+                        <div class="panel-subtitle">Cayley Transform & Geodesics</div>
+                    </div>
+                </div>
+                <canvas id="cayleyCanvas" width="1000" height="1000"></canvas>
+            </div>
+
+            <div class="canvas-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">⊚ Nested Modular Rings</div>
+                        <div class="panel-subtitle">Unlimited GCD Structure</div>
+                    </div>
+                </div>
+                <canvas id="nestedCanvas" width="1000" height="1000"></canvas>
+            </div>
+        </div>
+
+        <!-- Advanced Controls -->
+        <div class="controls-section">
+            <div class="controls-header">
+                Unlimited Parameter Control
+            </div>
+            <div class="controls-body">
+                <!-- Basic Parameters -->
+                <div class="section-header">🎯 Basic Parameters</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Phase Rotation θ</span>
+                            <span class="control-value" id="phaseValue">0°</span>
+                        </div>
+                        <input type="range" id="phaseSlider" min="0" max="360" value="0" step="0.1">
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Modulus m (Any Integer)</span>
+                            <span class="control-value" id="modulusDisplay">30</span>
+                        </div>
+                        <input type="number" id="modulusInput" value="30" min="1" step="1">
+                        <div class="help-text">No upper limit - enter any positive integer</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Animation Speed</span>
+                            <span class="control-value" id="speedValue">1.0×</span>
+                        </div>
+                        <input type="range" id="speedSlider" min="0.1" max="20" value="1" step="0.1">
+                    </div>
+                </div>
+
+                <!-- Prime Distribution -->
+                <div class="section-header">🔢 Prime Distribution</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Number of Primes</span>
+                            <span class="control-value" id="primesDisplay">150</span>
+                        </div>
+                        <input type="number" id="primesInput" value="150" min="0" step="10">
+                        <div class="help-text">No limit - computation may slow with >5000</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Prime Upper Limit</span>
+                            <span class="control-value" id="primeLimitDisplay">10000</span>
+                        </div>
+                        <input type="number" id="primeLimitInput" value="10000" min="100" step="100">
+                        <div class="help-text">Generate primes up to this value</div>
+                    </div>
+                </div>
+
+                <!-- Nested Rings Parameters -->
+                <div class="section-header">⊚ Nested Rings Configuration</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Min Ring (m_start)</span>
+                            <span class="control-value" id="minRingDisplay">1</span>
+                        </div>
+                        <input type="number" id="minRingInput" value="1" min="1" step="1">
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Max Ring (m_end)</span>
+                            <span class="control-value" id="maxRingDisplay">12</span>
+                        </div>
+                        <input type="number" id="maxRingInput" value="12" min="1" step="1">
+                        <div class="help-text">Unlimited - 100+ rings possible</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Ring Spacing Factor</span>
+                            <span class="control-value" id="spacingValue">1.0</span>
+                        </div>
+                        <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
+                    </div>
+                </div>
+
+                <!-- Custom Farey Points -->
+                <div class="section-header">🎯 Custom Farey Points</div>
+                <div class="control-row">
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Farey Points (Fractions)</span>
+                        </div>
+                        <div id="fareyPointsList" class="farey-point-list"></div>
+                        <button class="add-btn" onclick="addFareyPoint()">+ Add Farey Point</button>
+                        <div class="help-text">Format: numerator/denominator (e.g., 1/3, 2/5, 3/7)</div>
+                    </div>
+                </div>
+
+                <!-- Connection Options -->
+                <div class="section-header">🔗 Connection Options</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Connect Points By</span>
+                        </div>
+                        <select id="connectionMode">
+                            <option value="none">No Connections</option>
+                            <option value="farey">Farey Points Only</option>
+                            <option value="mod">Same Modulus</option>
+                            <option value="angle">Same Angle</option>
+                            <option value="gcd">Same GCD</option>
+                            <option value="fraction">Same Fraction Value</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Connection Thickness</span>
+                            <span class="control-value" id="connectionThicknessValue">1.0</span>
+                        </div>
+                        <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Connection Opacity</span>
+                            <span class="control-value" id="connectionOpacityValue">0.3</span>
+                        </div>
+                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.05">
+                    </div>
+                </div>
+
+                <!-- Label Options -->
+                <div class="section-header">🏷️ Label Options</div>
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Label Mode</span>
+                        </div>
+                        <select id="labelMode">
+                            <option value="none">No Labels</option>
+                            <option value="farey">Farey Points Only</option>
+                            <option value="all">All Points</option>
+                            <option value="coprime">Coprime Only</option>
+                            <option value="rings">Ring Numbers Only</option>
+                            <option value="everything">Everything</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Label Size</span>
+                            <span class="control-value" id="labelSizeValue">10</span>
+                        </div>
+                        <input type="range" id="labelSizeSlider" min="6" max="24" value="10" step="1">
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Label Every Nth Ring</span>
+                            <span class="control-value" id="labelFreqValue">1</span>
+                        </div>
+                        <input type="number" id="labelFreqInput" value="1" min="1" step="1">
+                    </div>
+                </div>
+
+                <!-- Toggles -->
+                <div class="section-header">⚡ Display Options</div>
+                <div class="toggle-grid">
+                    <input type="checkbox" id="toggleFarey" checked>
+                    <label for="toggleFarey" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Farey Triangle</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleGeodesic" checked>
+                    <label for="toggleGeodesic" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Geodesic Arc</span>
+                    </label>
+
+                    <input type="checkbox" id="togglePrimes" checked>
+                    <label for="togglePrimes" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Prime Distribution</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleChannels" checked>
+                    <label for="toggleChannels" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Residue Channels</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleCusps" checked>
+                    <label for="toggleCusps" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Cusp Points</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleRings" checked>
+                    <label for="toggleRings" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Ring Circles</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleGCD" checked>
+                    <label for="toggleGCD" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">GCD Coloring</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleGrid" checked>
+                    <label for="toggleGrid" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Grid Lines</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleAnimate">
+                    <label for="toggleAnimate" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Auto-Rotate</span>
+                    </label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="updateAll()">
+                        <span>🔄 Update All</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="regeneratePrimes()">
+                        <span>🔢 Regenerate Primes</span>
+                    </button>
+                    <button class="btn btn-accent" onclick="resetDefaults()">
+                        <span>🔁 Reset to Defaults</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportVisualization()">
+                        <span>💾 Export PNG</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script>
-        // Global state
-        let computationCache = {};
-        let currentResults = null;
-        let tourStep = 0;
+        // ============================================================
+        // GLOBAL STATE
+        // ============================================================
         
-        const tourSteps = [
-            {
-                title: "Mathematical Foundation",
-                text: "This calculator uses the <strong>Euler Product Formula</strong> to compute mathematical constants:<br><br>ζ(s) = ∏<sub>p prime</sub> (1 - p<sup>-s</sup>)<sup>-1</sup><br><br>We can compute π and ζ(2n) by truncating this infinite product."
-            },
-            {
-                title: "Accuracy Control",
-                text: "Set your desired <strong>relative error (ε)</strong> to control accuracy. The calculator automatically determines how many primes are needed to guarantee this error bound."
-            },
-            {
-                title: "Decomposition Methods",
-                text: "<strong>Gap-Class:</strong> Groups primes by their spacing<br><strong>Residue Channels:</strong> Groups primes by their remainder mod 30<br><br>These reveal hidden structure in prime distribution!"
-            },
-            {
-                title: "Export & Analysis",
-                text: "Export your results as CSV or JSON, save charts as images, and compare different methods side-by-side. Use keyboard shortcuts for faster workflow!"
+        const CONFIG = {
+            diskRadius: 0.38,
+            halfPlaneScale: 0.22,
+            colors: {
+                disk: '#e74c3c',
+                farey: '#ffd700',
+                fareyFill: 'rgba(255, 215, 0, 0.08)',
+                geodesic: '#1abc9c',
+                cusp: '#e67e22',
+                axes: 'rgba(255, 255, 255, 0.2)',
+                grid: 'rgba(255, 255, 255, 0.05)',
+                prime: '#3498db'
             }
-        ];
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    compute();
-                } else if (e.key === 'e') {
-                    e.preventDefault();
-                    exportJSON();
-                } else if (e.key === 'h') {
-                    e.preventDefault();
-                    showTour();
-                }
-            }
+        };
+
+        let state = {
+            phase: 0,
+            modulus: 30,
+            numPrimes: 150,
+            primeLimit: 10000,
+            animSpeed: 1.0,
+            minRing: 1,
+            maxRing: 12,
+            ringSpacing: 1.0,
+            connectionMode: 'none',
+            connectionThickness: 1.0,
+            connectionOpacity: 0.3,
+            labelMode: 'farey',
+            labelSize: 10,
+            labelFreq: 1,
+            fareyPoints: [
+                {num: 1, den: 3},
+                {num: 1, den: 2},
+                {num: 2, den: 3}
+            ],
+            primes: [],
+            animationId: null
+        };
+
+        let canvases = {
+            disk: null,
+            cayley: null,
+            nested: null,
+            diskCtx: null,
+            cayleyCtx: null,
+            nestedCtx: null
+        };
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+
+        window.addEventListener('load', () => {
+            initStarfield();
+            initCanvases();
+            initFareyPointsUI();
+            regeneratePrimes();
+            setupEventListeners();
+            updateAll();
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 800);
         });
-        
-        // Tour functions
-        function showTour() {
-            tourStep = 0;
-            document.getElementById('tour-overlay').style.display = 'flex';
-            updateTourContent();
-        }
-        
-        function closeTour() {
-            document.getElementById('tour-overlay').style.display = 'none';
-        }
-        
-        function nextTourStep() {
-            tourStep++;
-            if (tourStep >= tourSteps.length) {
-                closeTour();
-            } else {
-                updateTourContent();
+
+        function initStarfield() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 4 + 's';
+                starfield.appendChild(star);
             }
         }
-        
-        function updateTourContent() {
-            const step = tourSteps[tourStep];
-            document.getElementById('tour-text').innerHTML = `
-                <h3 style="color: #4ecdc4; margin-bottom: 10px;">${step.title}</h3>
-                <p style="line-height: 1.6;">${step.text}</p>
-                <p style="margin-top: 15px; opacity: 0.7; font-size: 0.9em;">Step ${tourStep + 1} of ${tourSteps.length}</p>
-            `;
-        }
-        
-        // Preset configurations
-        function loadPreset(type) {
-            const epsilonInput = document.getElementById('epsilon');
-            const methodSelect = document.getElementById('method');
+
+        function initCanvases() {
+            canvases.disk = document.getElementById('diskCanvas');
+            canvases.cayley = document.getElementById('cayleyCanvas');
+            canvases.nested = document.getElementById('nestedCanvas');
             
-            switch(type) {
-                case 'quick':
-                    epsilonInput.value = 0.01;
-                    methodSelect.value = 'standard';
-                    break;
-                case 'accurate':
-                    epsilonInput.value = 0.0001;
-                    methodSelect.value = 'residue';
-                    break;
-                case 'ultra':
-                    epsilonInput.value = 0.00001;
-                    methodSelect.value = 'both';
-                    break;
-                case 'compare':
-                    epsilonInput.value = 0.001;
-                    compareAllMethods();
-                    return;
+            const dpr = window.devicePixelRatio || 1;
+            
+            [canvases.disk, canvases.cayley, canvases.nested].forEach(canvas => {
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = canvas.width * dpr;
+                canvas.height = canvas.height * dpr;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(dpr, dpr);
+            });
+            
+            canvases.diskCtx = canvases.disk.getContext('2d');
+            canvases.cayleyCtx = canvases.cayley.getContext('2d');
+            canvases.nestedCtx = canvases.nested.getContext('2d');
+        }
+
+        function initFareyPointsUI() {
+            updateFareyPointsList();
+        }
+
+        function updateFareyPointsList() {
+            const list = document.getElementById('fareyPointsList');
+            list.innerHTML = '';
+            
+            state.fareyPoints.forEach((point, index) => {
+                const item = document.createElement('div');
+                item.className = 'farey-point-item';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = `${point.num}/${point.den}`;
+                input.onchange = (e) => updateFareyPointValue(index, e.target.value);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = '✕';
+                removeBtn.onclick = () => removeFareyPoint(index);
+                
+                item.appendChild(input);
+                item.appendChild(removeBtn);
+                list.appendChild(item);
+            });
+        }
+
+        function addFareyPoint() {
+            state.fareyPoints.push({num: 1, den: 4});
+            updateFareyPointsList();
+            updateAll();
+        }
+
+        function removeFareyPoint(index) {
+            if (state.fareyPoints.length > 1) {
+                state.fareyPoints.splice(index, 1);
+                updateFareyPointsList();
+                updateAll();
             }
-            compute();
         }
-        
-        // Input validation
-        function validateInputs() {
-            const epsilon = parseFloat(document.getElementById('epsilon').value);
-            const errors = [];
-            
-            if (isNaN(epsilon) || epsilon <= 0) {
-                errors.push('Epsilon must be a positive number');
-            }
-            if (epsilon > 0.1) {
-                errors.push('Epsilon too large (max 0.1) - results may be inaccurate');
-            }
-            if (epsilon < 0.00001) {
-                errors.push('Epsilon too small (min 0.00001) - computation may take very long');
-            }
-            
-            if (errors.length > 0) {
-                showError(errors.join('<br>'));
-                return false;
-            }
-            
-            hideError();
-            return true;
-        }
-        
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.innerHTML = `<strong>⚠️ Error:</strong> ${message}`;
-            errorDiv.style.display = 'block';
-        }
-        
-        function hideError() {
-            document.getElementById('error-message').style.display = 'none';
-        }
-        
-        // Progress indicator
-        function updateProgress(percent, message = '') {
-            const container = document.getElementById('progress-container');
-            const bar = document.getElementById('progress-bar');
-            container.style.display = 'block';
-            bar.style.width = percent + '%';
-            bar.textContent = message || percent + '%';
-        }
-        
-        function hideProgress() {
-            document.getElementById('progress-container').style.display = 'none';
-        }
-        
-        // Update formula display
-        function updateFormulaDisplay() {
-            const constantType = document.getElementById('constant').value;
-            const formulaDiv = document.getElementById('formula-display');
-            
-            let formula = '';
-            if (constantType === 'pi') {
-                formula = 'π = √(6 · ∏<sub>p</sub>(1-p<sup>-2</sup>)<sup>-1</sup>)';
-            } else {
-                const n = parseInt(constantType.replace('zeta', '')) / 2;
-                formula = `ζ(${2*n}) = ∏<sub>p</sub>(1-p<sup>-${2*n}</sup>)<sup>-1</sup>`;
-            }
-            
-            formulaDiv.innerHTML = formula;
-        }
-        
-        // Listen for constant change
-        document.getElementById('constant').addEventListener('change', updateFormulaDisplay);
-        
-        // Listen for method change to show/hide modulus control
-        document.getElementById('method').addEventListener('change', function() {
-            const method = this.value;
-            const modulusControl = document.getElementById('modulus-control');
-            
-            if (method === 'residue' || method === 'both') {
-                modulusControl.style.display = 'block';
-                updatePhiInfo();
-            } else {
-                modulusControl.style.display = 'none';
-            }
-        });
-        
-        // Listen for modulus change
-        document.getElementById('modulus').addEventListener('input', updatePhiInfo);
-        
-        // Update phi(k) information
-        function updatePhiInfo() {
-            const k = parseInt(document.getElementById('modulus').value);
-            const phi = eulerPhi(k);
-            const coprimes = getCoprimesTo(k);
-            
-            document.getElementById('phi-info').innerHTML = 
-                `φ(${k}) = ${phi} residue classes: {${coprimes.slice(0, 10).join(', ')}${coprimes.length > 10 ? ', ...' : ''}}`;
-        }
-        
-        // Compute Euler's totient function φ(n)
-        function eulerPhi(n) {
-            let result = n;
-            let p = 2;
-            
-            while (p * p <= n) {
-                if (n % p === 0) {
-                    while (n % p === 0) {
-                        n = Math.floor(n / p);
-                    }
-                    result -= Math.floor(result / p);
-                }
-                p++;
-            }
-            
-            if (n > 1) {
-                result -= Math.floor(result / n);
-            }
-            
-            return result;
-        }
-        
-        // Get all numbers coprime to k
-        function getCoprimesTo(k) {
-            const coprimes = [];
-            for (let a = 1; a < k; a++) {
-                if (gcd(a, k) === 1) {
-                    coprimes.push(a);
+
+        function updateFareyPointValue(index, value) {
+            const parts = value.split('/');
+            if (parts.length === 2) {
+                const num = parseInt(parts[0]);
+                const den = parseInt(parts[1]);
+                if (!isNaN(num) && !isNaN(den) && den > 0) {
+                    state.fareyPoints[index] = {num, den};
+                    updateAll();
                 }
             }
-            return coprimes;
         }
-        
-        // Greatest common divisor
-        function gcd(a, b) {
-            while (b !== 0) {
-                const temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
+
+        function setupEventListeners() {
+            // Phase slider
+            document.getElementById('phaseSlider').addEventListener('input', e => {
+                state.phase = parseFloat(e.target.value);
+                document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+                if (!state.animationId) updateAll();
+            });
+
+            // Modulus input
+            document.getElementById('modulusInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val > 0) {
+                    state.modulus = val;
+                    document.getElementById('modulusDisplay').textContent = val;
+                    updateAll();
+                }
+            });
+
+            // Prime inputs
+            document.getElementById('primesInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val >= 0) {
+                    state.numPrimes = val;
+                    document.getElementById('primesDisplay').textContent = val;
+                    updateAll();
+                }
+            });
+
+            document.getElementById('primeLimitInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val >= 100) {
+                    state.primeLimit = val;
+                    document.getElementById('primeLimitDisplay').textContent = val;
+                }
+            });
+
+            // Speed slider
+            document.getElementById('speedSlider').addEventListener('input', e => {
+                state.animSpeed = parseFloat(e.target.value);
+                document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
+            });
+
+            // Ring inputs
+            document.getElementById('minRingInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val > 0) {
+                    state.minRing = val;
+                    document.getElementById('minRingDisplay').textContent = val;
+                    updateAll();
+                }
+            });
+
+            document.getElementById('maxRingInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val >= state.minRing) {
+                    state.maxRing = val;
+                    document.getElementById('maxRingDisplay').textContent = val;
+                    updateAll();
+                }
+            });
+
+            // Spacing slider
+            document.getElementById('spacingSlider').addEventListener('input', e => {
+                state.ringSpacing = parseFloat(e.target.value);
+                document.getElementById('spacingValue').textContent = state.ringSpacing.toFixed(1);
+                if (!state.animationId) updateAll();
+            });
+
+            // Connection controls
+            document.getElementById('connectionMode').addEventListener('change', e => {
+                state.connectionMode = e.target.value;
+                updateAll();
+            });
+
+            document.getElementById('connectionThicknessSlider').addEventListener('input', e => {
+                state.connectionThickness = parseFloat(e.target.value);
+                document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(1);
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('connectionOpacitySlider').addEventListener('input', e => {
+                state.connectionOpacity = parseFloat(e.target.value);
+                document.getElementById('connectionOpacityValue').textContent = state.connectionOpacity.toFixed(2);
+                if (!state.animationId) updateAll();
+            });
+
+            // Label controls
+            document.getElementById('labelMode').addEventListener('change', e => {
+                state.labelMode = e.target.value;
+                updateAll();
+            });
+
+            document.getElementById('labelSizeSlider').addEventListener('input', e => {
+                state.labelSize = parseInt(e.target.value);
+                document.getElementById('labelSizeValue').textContent = state.labelSize;
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('labelFreqInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val > 0) {
+                    state.labelFreq = val;
+                    document.getElementById('labelFreqValue').textContent = val;
+                    updateAll();
+                }
+            });
+
+            // Animation toggle
+            document.getElementById('toggleAnimate').addEventListener('change', e => {
+                if (e.target.checked) {
+                    startAnimation();
+                } else {
+                    stopAnimation();
+                }
+            });
+
+            // Display toggles
+            ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels', 
+             'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updateAll);
+            });
         }
-        // Sieve of Eratosthenes optimized for our needs
-        function sieveOfEratosthenes(limit) {
-            if (limit < 2) return [];
-            
+
+        // ============================================================
+        // MATHEMATICAL FUNCTIONS
+        // ============================================================
+
+        function sieve(limit) {
             const isPrime = new Array(limit + 1).fill(true);
             isPrime[0] = isPrime[1] = false;
             
@@ -901,520 +1217,811 @@
                 }
             }
             
-            const primes = [];
-            for (let i = 2; i <= limit; i++) {
-                if (isPrime[i]) primes.push(i);
-            }
-            return primes;
+            return isPrime.map((v, i) => v ? i : null).filter(v => v !== null);
         }
-        
-        // Compute gap classes: gap = p_next - p_current
-        function computeGapClasses(primes) {
-            const gapClasses = {};
-            
-            for (let i = 0; i < primes.length - 1; i++) {
-                const gap = primes[i + 1] - primes[i];
-                if (!gapClasses[gap]) gapClasses[gap] = [];
-                // Store the current prime (the one before the gap)
-                gapClasses[gap].push(primes[i]);
-            }
-            
-            // Add the last prime to a special category since it has no gap after it
-            const lastPrime = primes[primes.length - 1];
-            if (!gapClasses['last']) gapClasses['last'] = [];
-            gapClasses['last'].push(lastPrime);
-            
-            return gapClasses;
+
+        function regeneratePrimes() {
+            state.primes = sieve(state.primeLimit);
+            updateAll();
         }
-        
-        // Compute residue channels for any modulus k
-        function computeResidueChannels(primes, modulus) {
-            const coprimes = getCoprimesTo(modulus);
-            const channels = {};
-            
-            // Initialize channels
-            coprimes.forEach(a => channels[a] = []);
-            
-            // Get small primes that divide the modulus (need special handling)
-            const smallPrimes = [];
-            let tempMod = modulus;
-            for (let p = 2; p <= modulus; p++) {
-                if (tempMod % p === 0) {
-                    smallPrimes.push(p);
-                    while (tempMod % p === 0) {
-                        tempMod = Math.floor(tempMod / p);
-                    }
+
+        function gcd(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b) [a, b] = [b, a % b];
+            return a;
+        }
+
+        function eulerPhi(n) {
+            let result = n;
+            for (let p = 2; p * p <= n; p++) {
+                if (n % p === 0) {
+                    while (n % p === 0) n /= p;
+                    result -= result / p;
                 }
             }
-            
-            // Classify primes by residue
-            primes.forEach(p => {
-                if (!smallPrimes.includes(p)) {
-                    const residue = p % modulus;
-                    if (channels[residue] !== undefined) {
-                        channels[residue].push(p);
-                    }
-                }
-            });
-            
-            return {
-                channels: channels,
-                smallPrimes: smallPrimes.filter(p => primes.includes(p)),
-                coprimes: coprimes
-            };
+            if (n > 1) result -= result / n;
+            return Math.round(result);
         }
-        
-        // Compute Y cutoff for given epsilon and constant type
-        function computeCutoff(epsilon, constantType) {
-            if (constantType === 'pi') {
-                return Math.ceil(1 + 1 / Math.log(1 + epsilon));
-            } else {
-                const n = parseInt(constantType.replace('zeta', '')) / 2;
-                const power = 1 / (2 * n - 1);
-                return Math.ceil(Math.pow(2 / ((2 * n - 1) * Math.log(1 + epsilon)), power));
-            }
-        }
-        
-        // Compute truncated product
-        function computeTruncatedProduct(primes, exponent) {
-            let product = 1;
-            for (const p of primes) {
-                product *= 1 / (1 - Math.pow(p, -exponent));
-            }
-            return product;
-        }
-        
-        // Exact values for reference
-        const exactValues = {
-            'pi': Math.PI,
-            'zeta4': Math.PI ** 4 / 90,
-            'zeta6': Math.PI ** 6 / 945,
-            'zeta8': Math.PI ** 8 / 9450,
-            'zeta10': Math.PI ** 10 / 93555
-        };
-        
-        function compute() {
-            const epsilon = parseFloat(document.getElementById('epsilon').value);
-            const constantType = document.getElementById('constant').value;
-            const method = document.getElementById('method').value;
+
+        function cayleyTransform(z) {
+            const numRe = 1 + z.re;
+            const numIm = z.im;
+            const denRe = 1 - z.re;
+            const denIm = -z.im;
             
-            // Show loading
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('computed-value').innerHTML = '<div class="loading">Computing...</div>';
+            const denMagSq = denRe * denRe + denIm * denIm;
             
-            setTimeout(() => {
-                try {
-                    // Compute required cutoff
-                    const Y = computeCutoff(epsilon, constantType);
-                    const primes = sieveOfEratosthenes(Y - 1);
-                    
-                    let computedValue;
-                    let intermediateValue;
-                    let analysisHtml = '';
-                    
-                    if (constantType === 'pi') {
-                        // π = √(6 * ζ(2))
-                        const zetaProduct = computeTruncatedProduct(primes, 2);
-                        intermediateValue = zetaProduct;
-                        computedValue = Math.sqrt(6 * zetaProduct);
-                        
-                        // Show intermediate structure
-                        showIntermediateStructure(zetaProduct, primes, constantType);
-                    } else {
-                        // ζ(2n) = ∏(1-p^-2n)^-1
-                        const n = parseInt(constantType.replace('zeta', '')) / 2;
-                        computedValue = computeTruncatedProduct(primes, 2 * n);
-                        intermediateValue = computedValue;
-                        
-                        showIntermediateStructure(computedValue, primes, constantType);
-                    }
-                    
-                    // Display results
-                    document.getElementById('computed-value').textContent = computedValue.toFixed(12);
-                    document.getElementById('exact-value').textContent = exactValues[constantType].toFixed(12);
-                    
-                    const actualError = Math.abs(computedValue - exactValues[constantType]) / exactValues[constantType];
-                    document.getElementById('actual-error').innerHTML = `Actual relative error: ${(actualError * 100).toFixed(6)}%`;
-                    document.getElementById('error-bound').innerHTML = `Guaranteed error ≤ ${(epsilon * 100).toFixed(4)}%`;
-                    document.getElementById('prime-count').innerHTML = `Using ${primes.length} primes up to ${Y-1}`;
-                    
-                    // Method-specific analysis
-                    if (method === 'gap' || method === 'both') {
-                        showGapAnalysis(primes, constantType);
-                    } else {
-                        document.getElementById('gap-analysis').style.display = 'none';
-                    }
-                    
-                    if (method === 'residue' || method === 'both') {
-                        showResidueAnalysis(primes, constantType);
-                    } else {
-                        document.getElementById('channel-analysis').style.display = 'none';
-                        document.getElementById('chart-section').style.display = 'none';
-                    }
-                    
-                } catch (error) {
-                    document.getElementById('computed-value').innerHTML = `<span style="color: #ff6b6b;">Error: ${error.message}</span>`;
-                }
-            }, 100);
-        }
-        
-        function showGapAnalysis(primes, constantType) {
-            const gapClasses = computeGapClasses(primes);
-            const exponent = constantType === 'pi' ? 2 : parseInt(constantType.replace('zeta', ''));
-            
-            let html = '';
-            const sortedGaps = Object.keys(gapClasses)
-                .filter(g => g !== 'last')
-                .map(Number)
-                .sort((a, b) => a - b);
-            
-            // Show gap 1 separately (only prime 2)
-            if (gapClasses[1]) {
-                const gap1Primes = gapClasses[1];
-                const contribution = computeTruncatedProduct(gap1Primes, exponent);
-                const logContrib = Math.log(contribution);
-                
-                html += `
-                    <div class="gap-item" style="background: rgba(255, 215, 0, 0.2); border: 2px solid #ffd700;">
-                        <div><strong>Gap 1</strong></div>
-                        <div style="font-size: 0.85em; color: #ffd700;">Only prime 2 → 3</div>
-                        <div class="gap-value">R₁ = ${contribution.toFixed(6)}</div>
-                        <div style="font-size: 0.8em; opacity: 0.8;">${gap1Primes.length} prime: [${gap1Primes.join(', ')}]</div>
-                        <div style="font-size: 0.8em; opacity: 0.8;">log R = ${logContrib.toFixed(4)}</div>
-                    </div>
-                `;
+            if (denMagSq < 1e-10) {
+                return { re: 0, im: 1e10 };
             }
             
-            // Show even gaps
-            for (const gap of sortedGaps.filter(g => g !== 1).slice(0, 11)) {
-                const gapPrimes = gapClasses[gap];
-                const contribution = computeTruncatedProduct(gapPrimes, exponent);
-                const logContrib = Math.log(contribution);
-                
-                // Show first few primes in this gap class
-                const samplePrimes = gapPrimes.slice(0, 5);
-                const primeList = samplePrimes.join(', ') + (gapPrimes.length > 5 ? ', ...' : '');
-                
-                html += `
-                    <div class="gap-item">
-                        <div><strong>Gap ${gap}</strong></div>
-                        <div style="font-size: 0.75em; opacity: 0.7; margin: 3px 0;">p where p' - p = ${gap}</div>
-                        <div class="gap-value">R_${gap} = ${contribution.toFixed(6)}</div>
-                        <div style="font-size: 0.8em; opacity: 0.8;">${gapPrimes.length} primes</div>
-                        <div style="font-size: 0.75em; opacity: 0.6; margin-top: 3px;">[${primeList}]</div>
-                        <div style="font-size: 0.8em; opacity: 0.8;">log R = ${logContrib.toFixed(4)}</div>
-                    </div>
-                `;
-            }
+            const quotRe = (numRe * denRe + numIm * denIm) / denMagSq;
+            const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
             
-            document.getElementById('gap-grid').innerHTML = html;
-            document.getElementById('gap-analysis').style.display = 'block';
+            return { re: -quotIm, im: quotRe };
         }
-        
-        function showIntermediateStructure(intermediateValue, primes, constantType) {
-            document.getElementById('intermediate-section').style.display = 'block';
-            document.getElementById('intermediate-product').textContent = intermediateValue.toFixed(12);
+
+        function generateColors(n) {
+            const colors = [];
+            const goldenRatio = 0.618033988749895;
+            for (let i = 0; i < n; i++) {
+                const hue = (i * goldenRatio * 360) % 360;
+                colors.push(`hsla(${hue}, 85%, 65%, 0.9)`);
+            }
+            return colors;
+        }
+
+        function getGCDColor(g, m) {
+            if (g === 1) return CONFIG.colors.farey;
+            if (g === m) return '#e74c3c';
+            if (g === 2) return '#00ffff';
+            if (g === 3) return '#9b59b6';
             
-            let formulaHtml = '';
-            let explanationHtml = '';
-            
-            if (constantType === 'pi') {
-                // For pi, show ζ(2) approximation
-                const primeList = primes.length <= 5 ? 
-                    `{${primes.join(', ')}}` : 
-                    `{${primes.slice(0, 3).join(', ')}, ..., ${primes[primes.length-1]}}`;
-                
-                formulaHtml = `<strong>ζ(2) ≈ ∏<sub>p∈${primeList}</sub> (1-p<sup>-2</sup>)<sup>-1</sup></strong>`;
-                
-                // Calculate what this equals exactly for small cases
-                if (primes.length === 1 && primes[0] === 2) {
-                    const exactForm = '4/3';
-                    explanationHtml = `
-                        With only prime <strong>p=2</strong>:<br>
-                        ζ(2) ≈ 1/(1-2<sup>-2</sup>) = 1/(1-1/4) = <strong>${exactForm}</strong><br>
-                        Therefore: π ≈ √(6 · 4/3) = √8 = <strong>2√2</strong>
-                    `;
-                } else if (primes.length === 2 && primes[0] === 2 && primes[1] === 3) {
-                    const product1 = 1/(1-1/4);
-                    const product2 = 1/(1-1/9);
-                    const total = product1 * product2;
-                    explanationHtml = `
-                        With primes <strong>{2, 3}</strong>:<br>
-                        ζ(2) ≈ [1/(1-1/4)] · [1/(1-1/9)] = (4/3) · (9/8) = <strong>${total.toFixed(6)}</strong><br>
-                        Therefore: π ≈ √(6 · ${total.toFixed(4)}) ≈ <strong>${Math.sqrt(6*total).toFixed(6)}</strong>
-                    `;
-                } else {
-                    explanationHtml = `
-                        Using ${primes.length} primes up to ${primes[primes.length-1]}, the truncated Euler product gives:<br>
-                        ζ(2) ≈ <strong>${intermediateValue.toFixed(12)}</strong><br>
-                        Then: π = √(6 · ζ(2)) ≈ √(6 · ${intermediateValue.toFixed(6)}) ≈ <strong>${Math.sqrt(6*intermediateValue).toFixed(12)}</strong>
-                    `;
-                }
-            } else {
-                // For ζ(2n)
-                const n = parseInt(constantType.replace('zeta', ''));
-                const primeList = primes.length <= 5 ? 
-                    `{${primes.join(', ')}}` : 
-                    `{${primes.slice(0, 3).join(', ')}, ..., ${primes[primes.length-1]}}`;
-                
-                formulaHtml = `<strong>ζ(${n}) ≈ ∏<sub>p∈${primeList}</sub> (1-p<sup>-${n}</sup>)<sup>-1</sup></strong>`;
-                
-                if (primes.length === 1 && primes[0] === 2) {
-                    const denom = 1 - Math.pow(2, -n);
-                    explanationHtml = `
-                        With only prime <strong>p=2</strong>:<br>
-                        ζ(${n}) ≈ 1/(1-2<sup>-${n}</sup>) = <strong>${intermediateValue.toFixed(12)}</strong>
-                    `;
-                } else {
-                    explanationHtml = `
-                        Using ${primes.length} primes, the truncated Euler product directly gives:<br>
-                        ζ(${n}) ≈ <strong>${intermediateValue.toFixed(12)}</strong>
-                    `;
+            const hue = (g * 60) % 360;
+            return `hsla(${hue}, 70%, 60%, 0.85)`;
+        }
+
+        // ============================================================
+        // DRAWING FUNCTIONS
+        // ============================================================
+
+        function drawDisk() {
+            const canvas = canvases.disk;
+            const ctx = canvases.diskCtx;
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+            const cx = w / 2;
+            const cy = h / 2;
+            const r = Math.min(w, h) * CONFIG.diskRadius;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid
+            if (document.getElementById('toggleGrid').checked) {
+                ctx.strokeStyle = CONFIG.colors.grid;
+                ctx.lineWidth = 0.5;
+                for (let i = -10; i <= 10; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx + i * r / 5, 0);
+                    ctx.lineTo(cx + i * r / 5, h);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, cy + i * r / 5);
+                    ctx.lineTo(w, cy + i * r / 5);
+                    ctx.stroke();
                 }
             }
-            
-            document.getElementById('intermediate-formula').innerHTML = formulaHtml;
-            document.getElementById('intermediate-explanation').innerHTML = explanationHtml;
-        }
-        
-        function showResidueAnalysis(primes, constantType) {
-            const modulus = parseInt(document.getElementById('modulus').value);
-            const exponent = constantType === 'pi' ? 2 : parseInt(constantType.replace('zeta', ''));
-            
-            const result = computeResidueChannels(primes, modulus);
-            const channels = result.channels;
-            const smallPrimes = result.smallPrimes;
-            const coprimes = result.coprimes;
-            
-            // Update titles
-            document.getElementById('channel-title').textContent = `Residue Channels (mod ${modulus})`;
-            document.getElementById('chart-title').textContent = `Residue Channel Contributions ℤ_a(s;${modulus})`;
-            
-            let html = '';
-            const channelData = [];
-            
-            // Handle small primes that divide the modulus
-            if (smallPrimes.length > 0) {
-                const smallProduct = computeTruncatedProduct(smallPrimes, exponent);
-                const gridSpan = Math.min(coprimes.length, 4);
-                
-                html += `
-                    <div class="channel-item" style="grid-column: span ${gridSpan}; background: rgba(255, 215, 0, 0.2);">
-                        <div>Prime Divisors of ${modulus}</div>
-                        <div style="font-weight: bold;">${smallProduct.toFixed(6)}</div>
-                        <div style="font-size: 0.8em;">{${smallPrimes.join(', ')}}</div>
-                    </div>
-                `;
-            }
-            
-            // Display each residue channel
-            for (const a of coprimes) {
-                const channelPrimes = channels[a];
-                let contribution = 1;
-                
-                if (channelPrimes.length > 0) {
-                    contribution = computeTruncatedProduct(channelPrimes, exponent);
+
+            // Axes
+            ctx.strokeStyle = CONFIG.colors.axes;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(w, cy);
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, h);
+            ctx.stroke();
+
+            // Unit circle
+            ctx.strokeStyle = CONFIG.colors.disk;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = CONFIG.colors.disk;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            const phase = state.phase * Math.PI / 180;
+            const showPrimes = document.getElementById('togglePrimes').checked;
+            const showChannels = document.getElementById('toggleChannels').checked;
+            const showFarey = document.getElementById('toggleFarey').checked;
+
+            // Primes
+            if (showPrimes) {
+                const colors = generateColors(state.modulus);
+                const displayPrimes = state.primes.slice(0, state.numPrimes);
+
+                displayPrimes.forEach(p => {
+                    if (showChannels && gcd(p, state.modulus) !== 1) return;
+
+                    const angle = 2 * Math.PI * p / state.modulus + phase;
+                    const x = cx + r * Math.cos(angle);
+                    const y = cy + r * Math.sin(angle);
+
+                    const color = showChannels ? colors[p % state.modulus] : CONFIG.colors.prime;
                     
-                    // Show sample primes for this channel
-                    const sampleSize = 3;
-                    const samplePrimes = channelPrimes.slice(0, sampleSize);
-                    const primeDisplay = samplePrimes.join(', ') + 
-                        (channelPrimes.length > sampleSize ? ', ...' : '');
-                    
-                    html += `
-                        <div class="channel-item">
-                            <div>≡ ${a} (mod ${modulus})</div>
-                            <div style="font-weight: bold; color: #4ecdc4;">${contribution.toFixed(6)}</div>
-                            <div style="font-size: 0.75em;">${channelPrimes.length} primes</div>
-                            <div style="font-size: 0.7em; opacity: 0.6; margin-top: 3px;">[${primeDisplay}]</div>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="channel-item" style="opacity: 0.5;">
-                            <div>≡ ${a} (mod ${modulus})</div>
-                            <div>1.0000</div>
-                            <div style="font-size: 0.8em;">0 primes</div>
-                        </div>
-                    `;
-                }
-                
-                channelData.push({
-                    residue: a,
-                    contribution: contribution,
-                    primeCount: channelPrimes.length,
-                    logContribution: Math.log(contribution)
+                    ctx.fillStyle = color;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
                 });
             }
-            
-            document.getElementById('channel-grid').innerHTML = html;
-            document.getElementById('channel-analysis').style.display = 'block';
-            
-            // Create chart
-            const smallProduct = smallPrimes.length > 0 ? 
-                computeTruncatedProduct(smallPrimes, exponent) : null;
-            createChannelChart(channelData, smallProduct, modulus, smallPrimes);
+
+            // Farey triangle
+            if (showFarey && state.fareyPoints.length >= 2) {
+                const fareyPoints = state.fareyPoints.map(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    return {
+                        x: cx + r * Math.cos(angle),
+                        y: cy + r * Math.sin(angle),
+                        frac: frac,
+                        label: `${fp.num}/${fp.den}`
+                    };
+                });
+
+                // Fill
+                if (fareyPoints.length >= 3) {
+                    ctx.fillStyle = CONFIG.colors.fareyFill;
+                    ctx.beginPath();
+                    ctx.moveTo(fareyPoints[0].x, fareyPoints[0].y);
+                    for (let i = 1; i < fareyPoints.length; i++) {
+                        ctx.lineTo(fareyPoints[i].x, fareyPoints[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                }
+
+                // Edges
+                ctx.strokeStyle = CONFIG.colors.farey;
+                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = CONFIG.colors.farey;
+                ctx.beginPath();
+                ctx.moveTo(fareyPoints[0].x, fareyPoints[0].y);
+                for (let i = 1; i < fareyPoints.length; i++) {
+                    ctx.lineTo(fareyPoints[i].x, fareyPoints[i].y);
+                }
+                if (fareyPoints.length >= 3) ctx.closePath();
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                // Vertices
+                fareyPoints.forEach(p => {
+                    ctx.fillStyle = CONFIG.colors.farey;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = CONFIG.colors.farey;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 8, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    // Labels
+                    if (state.labelMode !== 'none') {
+                        const angle = 2 * Math.PI * p.frac + phase;
+                        const labelR = r + 35;
+                        const lx = cx + labelR * Math.cos(angle);
+                        const ly = cy + labelR * Math.sin(angle);
+
+                        ctx.fillStyle = CONFIG.colors.farey;
+                        ctx.font = `bold ${state.labelSize + 6}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(p.label, lx, ly);
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Title
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 20px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillText('Unit Disk 𝔻', cx, 35);
+            ctx.shadowBlur = 0;
         }
-        
-        let channelChart = null;
-        
-        function createChannelChart(channelData, smallPrimesContrib, modulus, smallPrimes) {
-            const ctx = document.getElementById('channelChart').getContext('2d');
-            
-            // Destroy existing chart if it exists
-            if (channelChart) {
-                channelChart.destroy();
-            }
-            
-            // Prepare data for chart
-            const labels = [];
-            const contributions = [];
-            const logContributions = [];
-            const primeCounts = [];
-            
-            // Add small primes if they exist
-            if (smallPrimesContrib !== null && smallPrimesContrib !== 1) {
-                labels.push(`Divisors of ${modulus} (${smallPrimes.join(',')})`);
-                contributions.push(smallPrimesContrib);
-                logContributions.push(Math.log(smallPrimesContrib));
-                primeCounts.push(smallPrimes.length);
-            }
-            
-            // Add residue channels
-            channelData.forEach(d => {
-                labels.push(`≡ ${d.residue} (mod ${modulus})`);
-                contributions.push(d.contribution);
-                logContributions.push(d.logContribution);
-                primeCounts.push(d.primeCount);
-            });
-            
-            // Create gradient colors - more colors for larger moduli
-            const numColors = labels.length;
-            const colors = [];
-            
-            for (let i = 0; i < numColors; i++) {
-                if (i === 0 && smallPrimesContrib !== null && smallPrimesContrib !== 1) {
-                    colors.push('rgba(255, 215, 0, 0.8)'); // Gold for small primes
-                } else {
-                    const hue = (i * 360 / numColors) % 360;
-                    colors.push(`hsla(${hue}, 70%, 60%, 0.8)`);
+
+        function drawCayley() {
+            const canvas = canvases.cayley;
+            const ctx = canvases.cayleyCtx;
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+            const cx = w / 2;
+            const cy = h * 0.7;
+            const scale = Math.min(w, h) * CONFIG.halfPlaneScale;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid
+            if (document.getElementById('toggleGrid').checked) {
+                ctx.strokeStyle = CONFIG.colors.grid;
+                ctx.lineWidth = 0.5;
+                for (let i = -15; i <= 15; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx + i * scale / 3, 0);
+                    ctx.lineTo(cx + i * scale / 3, h);
+                    ctx.stroke();
+                    const y = cy - i * scale / 3;
+                    if (y >= 0 && y <= h) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y);
+                        ctx.lineTo(w, y);
+                        ctx.stroke();
+                    }
                 }
             }
-            
-            channelChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Channel Contribution',
-                        data: contributions,
-                        backgroundColor: colors,
-                        borderColor: colors.map(c => c.replace('0.8', '1')),
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 2.5,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: 'rgba(255, 255, 255, 0.3)',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    const idx = context.dataIndex;
-                                    const contrib = contributions[idx];
-                                    const logContrib = logContributions[idx];
-                                    const count = primeCounts[idx];
-                                    
-                                    return [
-                                        `Contribution: ${contrib.toFixed(6)}`,
-                                        `log(Contribution): ${logContrib.toFixed(4)}`,
-                                        `Prime count: ${count}`
-                                    ];
-                                }
+
+            // Axes
+            ctx.strokeStyle = CONFIG.colors.axes;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = CONFIG.colors.axes;
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(w, cy);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            ctx.strokeStyle = CONFIG.colors.axes;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, h);
+            ctx.stroke();
+
+            const phase = state.phase * Math.PI / 180;
+            const showGeodesic = document.getElementById('toggleGeodesic').checked;
+            const showCusps = document.getElementById('toggleCusps').checked;
+            const showPrimes = document.getElementById('togglePrimes').checked;
+            const showChannels = document.getElementById('toggleChannels').checked;
+            const showFarey = document.getElementById('toggleFarey').checked;
+
+            // Geodesic
+            if (showGeodesic && state.fareyPoints.length >= 2) {
+                // Calculate geodesic for custom Farey points
+                const transformedPoints = state.fareyPoints.map(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const w = cayleyTransform(z);
+                    return { x: cx + w.re * scale, y: cy - w.im * scale, w: w };
+                });
+
+                // Calculate geodesic circle parameters
+                if (transformedPoints.length >= 2) {
+                    const p1 = transformedPoints[0];
+                    const p2 = transformedPoints[1];
+                    const midX = (p1.x + p2.x) / 2;
+                    const geodR = Math.sqrt((p1.x - p2.x) ** 2 / 4 + (cy - midX) ** 2);
+
+                    ctx.strokeStyle = CONFIG.colors.geodesic;
+                    ctx.lineWidth = 4;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = CONFIG.colors.geodesic;
+                    ctx.beginPath();
+                    ctx.arc(midX, cy, geodR, Math.PI, 0, false);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+                }
+            }
+
+            // Cusps
+            if (showCusps && state.fareyPoints.length > 0) {
+                state.fareyPoints.forEach(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const w = cayleyTransform(z);
+                    const x = cx + w.re * scale;
+
+                    ctx.fillStyle = CONFIG.colors.cusp;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = CONFIG.colors.cusp;
+                    ctx.beginPath();
+                    ctx.arc(x, cy, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+
+                    if (state.labelMode !== 'none') {
+                        ctx.fillStyle = CONFIG.colors.cusp;
+                        ctx.font = `${state.labelSize + 3}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(`${fp.num}/${fp.den}`, x, cy + 22);
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Transformed primes
+            if (showPrimes) {
+                const colors = generateColors(state.modulus);
+                const displayPrimes = state.primes.slice(0, state.numPrimes);
+
+                displayPrimes.forEach(p => {
+                    if (showChannels && gcd(p, state.modulus) !== 1) return;
+
+                    const angle = 2 * Math.PI * p / state.modulus + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const w = cayleyTransform(z);
+
+                    if (Math.abs(w.im) < 15 && Math.abs(w.re) < 15 && w.im > 0.01) {
+                        const x = cx + w.re * scale;
+                        const y = cy - w.im * scale;
+
+                        const color = showChannels ? colors[p % state.modulus] : CONFIG.colors.prime;
+                        
+                        ctx.fillStyle = color;
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = color;
+                        ctx.beginPath();
+                        ctx.arc(x, y, 3.5, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Farey triangle (transformed)
+            if (showFarey && state.fareyPoints.length >= 2) {
+                const transformedPoints = state.fareyPoints.map(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const w = cayleyTransform(z);
+                    return {
+                        x: cx + w.re * scale,
+                        y: cy - w.im * scale,
+                        w: w,
+                        label: `${fp.num}/${fp.den}`
+                    };
+                });
+
+                // Edges
+                ctx.strokeStyle = CONFIG.colors.farey;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 4]);
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = CONFIG.colors.farey;
+                ctx.beginPath();
+                ctx.moveTo(transformedPoints[0].x, transformedPoints[0].y);
+                for (let i = 1; i < transformedPoints.length; i++) {
+                    ctx.lineTo(transformedPoints[i].x, transformedPoints[i].y);
+                }
+                if (transformedPoints.length >= 3) ctx.closePath();
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.shadowBlur = 0;
+
+                // Vertices
+                transformedPoints.forEach(p => {
+                    ctx.fillStyle = CONFIG.colors.farey;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = CONFIG.colors.farey;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 8, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    if (state.labelMode !== 'none') {
+                        ctx.fillStyle = CONFIG.colors.farey;
+                        ctx.font = `bold ${state.labelSize + 3}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(p.label, p.x, p.y - 20);
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Title
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 20px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillText('Upper Half-Plane ℍ', cx, 35);
+            ctx.shadowBlur = 0;
+        }
+
+        function drawNested() {
+            const canvas = canvases.nested;
+            const ctx = canvases.nestedCtx;
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxRadius = Math.min(w, h) * 0.42;
+            const baseRadius = maxRadius * 0.15;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid
+            if (document.getElementById('toggleGrid').checked) {
+                ctx.strokeStyle = CONFIG.colors.grid;
+                ctx.lineWidth = 0.5;
+                for (let i = -10; i <= 10; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx + i * maxRadius / 5, 0);
+                    ctx.lineTo(cx + i * maxRadius / 5, h);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(0, cy + i * maxRadius / 5);
+                    ctx.lineTo(w, cy + i * maxRadius / 5);
+                    ctx.stroke();
+                }
+            }
+
+            // Axes
+            ctx.strokeStyle = CONFIG.colors.axes;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(w, cy);
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, h);
+            ctx.stroke();
+
+            const phase = state.phase * Math.PI / 180;
+            const showRings = document.getElementById('toggleRings').checked;
+            const showGCD = document.getElementById('toggleGCD').checked;
+
+            const allPoints = [];
+            const numRings = state.maxRing - state.minRing + 1;
+
+            for (let m = state.minRing; m <= state.maxRing; m++) {
+                const ringIndex = m - state.minRing;
+                const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
+
+                // Ring circle
+                if (showRings) {
+                    ctx.strokeStyle = `rgba(255, 255, 255, 0.15)`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, ringRadius, 0, 2 * Math.PI);
+                    ctx.stroke();
+
+                    // Ring label
+                    if ((state.labelMode === 'rings' || state.labelMode === 'everything') && m % state.labelFreq === 0) {
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                        ctx.font = `${state.labelSize}px "Fira Code"`;
+                        ctx.textAlign = 'left';
+                        ctx.fillText(`m=${m}`, cx + ringRadius + 10, cy);
+                    }
+                }
+
+                // Points for each k
+                for (let k = 0; k < m; k++) {
+                    const g = gcd(k, m);
+                    const angle = 2 * Math.PI * k / m + phase;
+                    const x = cx + ringRadius * Math.cos(angle);
+                    const y = cy + ringRadius * Math.sin(angle);
+
+                    allPoints.push({ x, y, k, m, g, angle, radius: ringRadius, frac: k/m });
+
+                    // Draw point
+                    if (showGCD) {
+                        const color = getGCDColor(g, m);
+                        const size = g === 1 ? 4 : 3;
+                        
+                        ctx.fillStyle = color;
+                        ctx.shadowBlur = g === 1 ? 8 : 4;
+                        ctx.shadowColor = color;
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+
+                    // Labels
+                    const shouldLabel = 
+                        (state.labelMode === 'all') ||
+                        (state.labelMode === 'coprime' && g === 1) ||
+                        (state.labelMode === 'everything');
+
+                    if (shouldLabel && m % state.labelFreq === 0) {
+                        ctx.fillStyle = g === 1 ? CONFIG.colors.farey : 'rgba(255, 255, 255, 0.6)';
+                        ctx.font = `${state.labelSize - 2}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`${k}/${m}`, x, y + 15);
+                    }
+                }
+            }
+
+            // Connections
+            if (state.connectionMode !== 'none') {
+                ctx.globalAlpha = state.connectionOpacity;
+                ctx.lineWidth = state.connectionThickness;
+
+                switch (state.connectionMode) {
+                    case 'farey':
+                        // Connect all Farey points (gcd=1)
+                        const fareyPts = allPoints.filter(p => p.g === 1);
+                        ctx.strokeStyle = CONFIG.colors.farey;
+                        for (let i = 0; i < fareyPts.length - 1; i++) {
+                            for (let j = i + 1; j < fareyPts.length; j++) {
+                                ctx.beginPath();
+                                ctx.moveTo(fareyPts[i].x, fareyPts[i].y);
+                                ctx.lineTo(fareyPts[j].x, fareyPts[j].y);
+                                ctx.stroke();
                             }
                         }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: '#fff',
-                                maxRotation: 90,
-                                minRotation: 45,
-                                font: {
-                                    size: labels.length > 30 ? 7 : (labels.length > 20 ? 8 : 10)
-                                },
-                                autoSkip: labels.length > 50,
-                                maxTicksLimit: labels.length > 50 ? 50 : undefined
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#fff',
-                                callback: function(value) {
-                                    return value.toFixed(3);
-                                }
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            title: {
-                                display: true,
-                                text: `ℤₐ(s;${modulus}) Contribution`,
-                                color: '#fff',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
+                        break;
+
+                    case 'mod':
+                        // Connect points on same ring
+                        for (let m = state.minRing; m <= state.maxRing; m++) {
+                            const ringPts = allPoints.filter(p => p.m === m);
+                            ctx.strokeStyle = getGCDColor(2, m);
+                            for (let i = 0; i < ringPts.length; i++) {
+                                const next = ringPts[(i + 1) % ringPts.length];
+                                ctx.beginPath();
+                                ctx.moveTo(ringPts[i].x, ringPts[i].y);
+                                ctx.lineTo(next.x, next.y);
+                                ctx.stroke();
                             }
                         }
-                    },
-                    animation: {
-                        duration: 1500,
-                        easing: 'easeOutQuart'
+                        break;
+
+                    case 'angle':
+                        // Connect points with similar angles
+                        const angleGroups = {};
+                        allPoints.forEach(p => {
+                            const key = Math.floor(p.angle * 100);
+                            if (!angleGroups[key]) angleGroups[key] = [];
+                            angleGroups[key].push(p);
+                        });
+
+                        ctx.strokeStyle = CONFIG.colors.cyan;
+                        Object.values(angleGroups).forEach(group => {
+                            if (group.length >= 2) {
+                                group.sort((a, b) => a.radius - b.radius);
+                                for (let i = 0; i < group.length - 1; i++) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(group[i].x, group[i].y);
+                                    ctx.lineTo(group[i + 1].x, group[i + 1].y);
+                                    ctx.stroke();
+                                }
+                            }
+                        });
+                        break;
+
+                    case 'gcd':
+                        // Connect points with same GCD
+                        const gcdGroups = {};
+                        allPoints.forEach(p => {
+                            if (!gcdGroups[p.g]) gcdGroups[p.g] = [];
+                            gcdGroups[p.g].push(p);
+                        });
+
+                        Object.entries(gcdGroups).forEach(([g, group]) => {
+                            ctx.strokeStyle = getGCDColor(parseInt(g), state.maxRing);
+                            for (let i = 0; i < group.length - 1; i++) {
+                                ctx.beginPath();
+                                ctx.moveTo(group[i].x, group[i].y);
+                                ctx.lineTo(group[i + 1].x, group[i + 1].y);
+                                ctx.stroke();
+                            }
+                        });
+                        break;
+
+                    case 'fraction':
+                        // Connect points with same fraction value
+                        const fracGroups = {};
+                        allPoints.forEach(p => {
+                            const key = Math.floor(p.frac * 10000);
+                            if (!fracGroups[key]) fracGroups[key] = [];
+                            fracGroups[key].push(p);
+                        });
+
+                        ctx.strokeStyle = CONFIG.colors.geodesic;
+                        Object.values(fracGroups).forEach(group => {
+                            if (group.length >= 2) {
+                                for (let i = 0; i < group.length - 1; i++) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(group[i].x, group[i].y);
+                                    ctx.lineTo(group[i + 1].x, group[i + 1].y);
+                                    ctx.stroke();
+                                }
+                            }
+                        });
+                        break;
+                }
+
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Highlight custom Farey points if they exist in range
+            state.fareyPoints.forEach(fp => {
+                if (fp.den >= state.minRing && fp.den <= state.maxRing) {
+                    const m = fp.den;
+                    const k = fp.num % m;
+                    const ringIndex = m - state.minRing;
+                    const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
+                    const angle = 2 * Math.PI * k / m + phase;
+                    const x = cx + ringRadius * Math.cos(angle);
+                    const y = cy + ringRadius * Math.sin(angle);
+
+                    ctx.strokeStyle = '#ff6b6b';
+                    ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = '#ff6b6b';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    if (state.labelMode !== 'none') {
+                        ctx.fillStyle = '#ff6b6b';
+                        ctx.font = `bold ${state.labelSize + 2}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+                        ctx.fillText(`${fp.num}/${fp.den}`, x, y - 18);
+                        ctx.shadowBlur = 0;
                     }
                 }
             });
-            
-            // Show chart section
-            document.getElementById('chart-section').style.display = 'block';
-            
-            // Create legend
-            createChartLegend(labels, colors, primeCounts);
+
+            // Title
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 20px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillText('Nested Modular Rings', cx, 35);
+            ctx.font = '12px "Fira Code"';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillText(`m = ${state.minRing} to ${state.maxRing}`, cx, 55);
+            ctx.shadowBlur = 0;
         }
-        
-        function createChartLegend(labels, colors, primeCounts) {
-            let legendHtml = '';
-            
-            for (let i = 0; i < labels.length; i++) {
-                legendHtml += `
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: ${colors[i]};"></div>
-                        <span>${labels[i]} (${primeCounts[i]} primes)</span>
-                    </div>
-                `;
+
+        function updateAll() {
+            drawDisk();
+            drawCayley();
+            drawNested();
+        }
+
+        // ============================================================
+        // ANIMATION
+        // ============================================================
+
+        function startAnimation() {
+            if (state.animationId !== null) return;
+
+            function animate() {
+                state.phase = (state.phase + state.animSpeed * 0.5) % 360;
+                document.getElementById('phaseSlider').value = state.phase;
+                document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+                updateAll();
+                state.animationId = requestAnimationFrame(animate);
             }
-            
-            document.getElementById('chartLegend').innerHTML = legendHtml;
+
+            animate();
         }
-        
-        // Initialize with default computation
-        window.onload = () => {
-            compute();
-        };
+
+        function stopAnimation() {
+            if (state.animationId !== null) {
+                cancelAnimationFrame(state.animationId);
+                state.animationId = null;
+            }
+        }
+
+        // ============================================================
+        // UI CONTROLS
+        // ============================================================
+
+        function resetDefaults() {
+            state = {
+                phase: 0,
+                modulus: 30,
+                numPrimes: 150,
+                primeLimit: 10000,
+                animSpeed: 1.0,
+                minRing: 1,
+                maxRing: 12,
+                ringSpacing: 1.0,
+                connectionMode: 'none',
+                connectionThickness: 1.0,
+                connectionOpacity: 0.3,
+                labelMode: 'farey',
+                labelSize: 10,
+                labelFreq: 1,
+                fareyPoints: [
+                    {num: 1, den: 3},
+                    {num: 1, den: 2},
+                    {num: 2, den: 3}
+                ],
+                primes: state.primes,
+                animationId: null
+            };
+
+            // Reset UI
+            document.getElementById('phaseSlider').value = 0;
+            document.getElementById('modulusInput').value = 30;
+            document.getElementById('primesInput').value = 150;
+            document.getElementById('primeLimitInput').value = 10000;
+            document.getElementById('speedSlider').value = 1;
+            document.getElementById('minRingInput').value = 1;
+            document.getElementById('maxRingInput').value = 12;
+            document.getElementById('spacingSlider').value = 1;
+            document.getElementById('connectionMode').value = 'none';
+            document.getElementById('connectionThicknessSlider').value = 1;
+            document.getElementById('connectionOpacitySlider').value = 0.3;
+            document.getElementById('labelMode').value = 'farey';
+            document.getElementById('labelSizeSlider').value = 10;
+            document.getElementById('labelFreqInput').value = 1;
+            document.getElementById('toggleAnimate').checked = false;
+
+            document.getElementById('phaseValue').textContent = '0°';
+            document.getElementById('modulusDisplay').textContent = '30';
+            document.getElementById('primesDisplay').textContent = '150';
+            document.getElementById('primeLimitDisplay').textContent = '10000';
+            document.getElementById('speedValue').textContent = '1.0×';
+            document.getElementById('minRingDisplay').textContent = '1';
+            document.getElementById('maxRingDisplay').textContent = '12';
+            document.getElementById('spacingValue').textContent = '1.0';
+            document.getElementById('connectionThicknessValue').textContent = '1.0';
+            document.getElementById('connectionOpacityValue').textContent = '0.30';
+            document.getElementById('labelSizeValue').textContent = '10';
+            document.getElementById('labelFreqValue').textContent = '1';
+
+            stopAnimation();
+            updateFareyPointsList();
+            updateAll();
+        }
+
+        function exportVisualization() {
+            const tempCanvas = document.createElement('canvas');
+            const dpr = window.devicePixelRatio || 1;
+            const w1 = canvases.disk.width / dpr;
+            const h1 = canvases.disk.height / dpr;
+            
+            tempCanvas.width = w1 * 3;
+            tempCanvas.height = h1;
+            
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            tempCtx.fillStyle = '#0a0e27';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            
+            tempCtx.drawImage(canvases.disk, 0, 0, w1, h1);
+            tempCtx.drawImage(canvases.cayley, w1, 0, w1, h1);
+            tempCtx.drawImage(canvases.nested, w1 * 2, 0, w1, h1);
+            
+            const link = document.createElement('a');
+            link.download = `farey-unlimited-${Date.now()}.png`;
+            link.href = tempCanvas.toDataURL('image/png');
+            link.click();
+        }
     </script>
 </body>
 </html>
