@@ -1022,6 +1022,34 @@
                     </div>
                 </div>
 
+                <!-- Zoom Controls -->
+                <div class="section-header">🔍 Canvas Zoom Controls</div>
+                <div class="control-row">
+                    <div class="control-item" data-tooltip="Zoom in or out on the Unit Disk visualization. 1.0 = default view.">
+                        <div class="control-label">
+                            <span>Unit Disk Zoom</span>
+                            <span class="control-value" id="diskZoomValue">1.00×</span>
+                        </div>
+                        <input type="range" id="diskZoomSlider" min="0.1" max="5" value="1" step="0.05">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Zoom in or out on the Cayley/Upper Half-Plane view. 1.0 = default view.">
+                        <div class="control-label">
+                            <span>Cayley Plane Zoom</span>
+                            <span class="control-value" id="cayleyZoomValue">1.00×</span>
+                        </div>
+                        <input type="range" id="cayleyZoomSlider" min="0.1" max="5" value="1" step="0.05">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Zoom in or out on the Nested Rings visualization. 1.0 = default view.">
+                        <div class="control-label">
+                            <span>Nested Rings Zoom</span>
+                            <span class="control-value" id="nestedZoomValue">1.00×</span>
+                        </div>
+                        <input type="range" id="nestedZoomSlider" min="0.1" max="5" value="1" step="0.05">
+                    </div>
+                </div>
+
                 <!-- Cayley View Controls -->
                 <div class="section-header">🔭 Cayley Plane View Range</div>
                 <div class="control-row">
@@ -1343,6 +1371,9 @@
             cayleyVOffset: 0,
             cayleyGridDensity: 1,
             useAlternateCayley: false,
+            diskZoom: 1.0,
+            cayleyZoom: 1.0,
+            nestedZoom: 1.0,
             fareyPoints: [
                 {num: 1, den: 3},
                 {num: 1, den: 2},
@@ -1503,6 +1534,25 @@
             document.getElementById('speedSlider').addEventListener('input', e => {
                 state.animSpeed = parseFloat(e.target.value);
                 document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
+            });
+
+            // Zoom sliders
+            document.getElementById('diskZoomSlider').addEventListener('input', e => {
+                state.diskZoom = parseFloat(e.target.value);
+                document.getElementById('diskZoomValue').textContent = state.diskZoom.toFixed(2) + '×';
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('cayleyZoomSlider').addEventListener('input', e => {
+                state.cayleyZoom = parseFloat(e.target.value);
+                document.getElementById('cayleyZoomValue').textContent = state.cayleyZoom.toFixed(2) + '×';
+                if (!state.animationId) updateAll();
+            });
+
+            document.getElementById('nestedZoomSlider').addEventListener('input', e => {
+                state.nestedZoom = parseFloat(e.target.value);
+                document.getElementById('nestedZoomValue').textContent = state.nestedZoom.toFixed(2) + '×';
+                if (!state.animationId) updateAll();
             });
 
             // Ring inputs
@@ -1734,7 +1784,7 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
             const cx = w / 2;
             const cy = h / 2;
-            const r = Math.min(w, h) * CONFIG.diskRadius;
+            const r = Math.min(w, h) * CONFIG.diskRadius * state.diskZoom;
 
             ctx.clearRect(0, 0, w, h);
 
@@ -1893,10 +1943,10 @@
 
             // Coordinate conversion functions for Cayley plane
             function mathToScreen(wp) {
-                const reMin = -state.cayleyHRange / 2;
-                const reMax = state.cayleyHRange / 2;
+                const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
                 const imMin = state.cayleyVOffset;
-                const imMax = state.cayleyVRange + state.cayleyVOffset;
+                const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
                 
                 const x = ((wp.re - reMin) / (reMax - reMin)) * w;
                 const y = (1 - (wp.im - imMin) / (imMax - imMin)) * h;
@@ -1921,10 +1971,10 @@
                 ctx.lineWidth = 1;
 
                 const spacing = 0.5 / state.cayleyGridDensity;
-                const reMin = -state.cayleyHRange / 2;
-                const reMax = state.cayleyHRange / 2;
+                const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
                 const imMin = state.cayleyVOffset;
-                const imMax = state.cayleyVRange + state.cayleyVOffset;
+                const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
 
                 // Vertical lines
                 for (let re = Math.ceil(reMin / spacing) * spacing; re <= reMax; re += spacing) {
@@ -1970,8 +2020,8 @@
             }
 
             // Real axis (boundary of ℍ)
-            const axisP1 = mathToScreen({ re: -state.cayleyHRange / 2, im: 0 });
-            const axisP2 = mathToScreen({ re: state.cayleyHRange / 2, im: 0 });
+            const axisP1 = mathToScreen({ re: -state.cayleyHRange / (2 * state.cayleyZoom), im: 0 });
+            const axisP2 = mathToScreen({ re: state.cayleyHRange / (2 * state.cayleyZoom), im: 0 });
             
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.lineWidth = 3;
@@ -1985,7 +2035,7 @@
 
             // Imaginary axis
             const iAxisP1 = mathToScreen({ re: 0, im: state.cayleyVOffset });
-            const iAxisP2 = mathToScreen({ re: 0, im: state.cayleyVRange + state.cayleyVOffset });
+            const iAxisP2 = mathToScreen({ re: 0, im: (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset });
             
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
             ctx.lineWidth = 2;
@@ -2001,7 +2051,7 @@
                 ctx.setLineDash([5, 5]);
 
                 // Left boundary: Re = -1/2
-                const leftTop = mathToScreen({ re: -0.5, im: state.cayleyVRange + state.cayleyVOffset });
+                const leftTop = mathToScreen({ re: -0.5, im: (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset });
                 const leftBot = mathToScreen({ re: -0.5, im: Math.max(0, Math.sqrt(1 - 0.25)) });
                 ctx.beginPath();
                 ctx.moveTo(leftBot.x, leftBot.y);
@@ -2009,7 +2059,7 @@
                 ctx.stroke();
 
                 // Right boundary: Re = 1/2
-                const rightTop = mathToScreen({ re: 0.5, im: state.cayleyVRange + state.cayleyVOffset });
+                const rightTop = mathToScreen({ re: 0.5, im: (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset });
                 const rightBot = mathToScreen({ re: 0.5, im: Math.max(0, Math.sqrt(1 - 0.25)) });
                 ctx.beginPath();
                 ctx.moveTo(rightBot.x, rightBot.y);
@@ -2067,9 +2117,12 @@
                 ctx.strokeStyle = 'rgba(155, 89, 182, 0.3)';
                 ctx.lineWidth = 1;
                 
-                for (let re = Math.ceil(-state.cayleyHRange / 2); re <= state.cayleyHRange / 2; re++) {
+                const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
+                
+                for (let re = Math.ceil(reMin); re <= reMax; re++) {
                     const p1 = mathToScreen({ re, im: state.cayleyVOffset });
-                    const p2 = mathToScreen({ re, im: state.cayleyVRange + state.cayleyVOffset });
+                    const p2 = mathToScreen({ re, im: (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset });
                     
                     ctx.beginPath();
                     ctx.moveTo(p1.x, p1.y);
@@ -2136,10 +2189,10 @@
                 const colors = generateColors(state.modulus);
                 const displayPrimes = state.primes.slice(0, state.numPrimes);
 
-                const reMin = -state.cayleyHRange / 2;
-                const reMax = state.cayleyHRange / 2;
+                const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
                 const imMin = state.cayleyVOffset;
-                const imMax = state.cayleyVRange + state.cayleyVOffset;
+                const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
 
                 displayPrimes.forEach(p => {
                     if (showChannels && gcd(p, state.modulus) !== 1) return;
@@ -2265,7 +2318,7 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
             const cx = w / 2;
             const cy = h / 2;
-            const maxRadius = Math.min(w, h) * 0.42;
+            const maxRadius = Math.min(w, h) * 0.42 * state.nestedZoom;
             const baseRadius = maxRadius * 0.15;
 
             ctx.clearRect(0, 0, w, h);
@@ -2761,6 +2814,9 @@
                 cayleyVOffset: 0,
                 cayleyGridDensity: 1,
                 useAlternateCayley: false,
+                diskZoom: 1.0,
+                cayleyZoom: 1.0,
+                nestedZoom: 1.0,
                 fareyPoints: [
                     {num: 1, den: 3},
                     {num: 1, den: 2},
@@ -2822,6 +2878,9 @@
             document.getElementById('connectionOpacityValue').textContent = '0.30';
             document.getElementById('labelSizeValue').textContent = '10';
             document.getElementById('labelFreqValue').textContent = '1';
+            document.getElementById('diskZoomValue').textContent = '1.00×';
+            document.getElementById('cayleyZoomValue').textContent = '1.00×';
+            document.getElementById('nestedZoomValue').textContent = '1.00×';
 
             stopAnimation();
             updateFareyPointsList();
@@ -3457,23 +3516,24 @@
             });
             
             console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
-            console.log('  Current Transform:', state.useAlternateCayley ? 'w = i(1+z)/(1-z)' : 'w = i(1-z)/(1+z)');
-            console.log('  Standard Cayley maps unit disk 𝔻 to upper half-plane ℍ');
+            console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
+            console.log('  Standard Formula: w = i(1-z)/(1+z)');
+            console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
             console.log('  Inverse: z = (i-w)/(i+w)');
-            console.log('  Properties: Conformal, preserves angles');
+            console.log('  Preserves angles (conformal)');
             
             // Test a few points
             const testPoints = [
-                { re: 1, im: 0, label: 'z = 1' },
-                { re: -1, im: 0, label: 'z = -1' },
-                { re: 0, im: 1, label: 'z = i' },
-                { re: 0, im: 0, label: 'z = 0' }
+                { re: 1, im: 0, label: '1 → ∞' },
+                { re: -1, im: 0, label: '-1 → 0' },
+                { re: 0, im: 1, label: 'i → i' },
+                { re: 0, im: 0, label: '0 → i' }
             ];
             
             console.log('\n  Test transformations:');
             testPoints.forEach(z => {
                 const w = cayleyTransform(z, state.useAlternateCayley);
-                console.log(`    ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
+                console.log(`    z = (${z.re}, ${z.im}) ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
             });
             
             console.log('\n=====================================================');
