@@ -674,6 +674,181 @@
             color: var(--text-dim);
             letter-spacing: 2px;
         }
+
+        .export-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .export-dialog-content {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-mid) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .export-dialog-header {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(0, 255, 255, 0.2));
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .export-dialog-header h3 {
+            font-family: 'Fira Code', monospace;
+            color: var(--gold);
+            font-size: 1.4em;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold);
+        }
+
+        .export-dialog-body {
+            padding: 30px;
+        }
+
+        .export-section {
+            margin-bottom: 25px;
+        }
+
+        .export-section h4 {
+            font-family: 'Fira Code', monospace;
+            color: var(--cyan);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .export-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .export-radio {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .export-radio:hover {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .export-radio input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .export-radio input[type="radio"]:checked + span {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .export-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .export-checkbox:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 255, 255, 0.05);
+        }
+
+        .export-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .legend-container {
+            position: absolute;
+            background: rgba(10, 14, 39, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Fira Code', monospace;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+
+        .legend-title {
+            font-size: 1.2em;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-symbol {
+            width: 30px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .legend-text {
+            color: var(--text);
+        }
     </style>
 </head>
 <body>
@@ -816,7 +991,7 @@
             </div>
             <div class="controls-body">
                 <!-- Basic Parameters -->
-                <div class="section-header">Basic Parameters</div>
+                <div class="section-header">🎯 Basic Parameters</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Rotates all visualizations by this angle. Animated when auto-rotate is enabled.">
                         <div class="control-label">
@@ -845,7 +1020,7 @@
                 </div>
 
                 <!-- Cayley View Controls -->
-                <div class="section-header">Cayley Plane View Range</div>
+                <div class="section-header">🔭 Cayley Plane View Range</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Width of the visible window in the upper half-plane. Increase to see more of the real axis.">
                         <div class="control-label">
@@ -885,7 +1060,7 @@
                 </div>
 
                 <!-- Prime Distribution -->
-                <div class="section-header">Prime Distribution</div>
+                <div class="section-header">🔢 Prime Distribution</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="How many prime numbers to display. More primes = denser visualization but slower rendering.">
                         <div class="control-label">
@@ -907,7 +1082,7 @@
                 </div>
 
                 <!-- Nested Rings Parameters -->
-                <div class="section-header">Nested Rings Configuration</div>
+                <div class="section-header">⊚ Nested Rings Configuration</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Starting modulus for the innermost ring. Usually 1 or 2.">
                         <div class="control-label">
@@ -924,100 +1099,6 @@
                         </div>
                         <input type="number" id="maxRingInput" value="12" min="1" step="1">
                         <div class="help-text">Unlimited - 100+ rings possible</div>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Controls how spread out the rings are. Higher = more space between rings.">
-                        <div class="control-label">
-                            <span>Ring Spacing Factor</span>
-                            <span class="control-value" id="spacingValue">1.0</span>
-                        </div>
-                        <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
-                    </div>
-                </div>
-
-                <!-- Custom Farey Points -->
-                <div class="section-header">Custom Farey Points</div>
-                <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Define specific rational fractions to highlight. These form the vertices of the Farey triangle.">
-                        <div class="control-label">
-                            <span>Farey Points (Fractions)</span>
-                        </div>
-                        <div id="fareyPointsList" class="farey-point-list"></div>
-                        <button class="add-btn" onclick="addFareyPoint()">+ Add Farey Point</button>
-                        <div class="help-text">Format: numerator/denominator (e.g., 1/3, 2/5, 3/7)</div>
-                    </div>
-                </div>
-
-                <!-- Connection Options -->
-                <div class="section-header">Connection Options</div>
-                <div class="control-row">
-                    <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
-                        <div class="control-label">
-                            <span>Connect Points By</span>
-                        </div>
-                        <select id="connectionMode">
-                            <option value="none">No Connections</option>
-                            <option value="farey">Farey Points Only</option>
-                            <option value="mod">Same Modulus</option>
-                            <option value="angle">Same Angle</option>
-                            <option value="gcd">Same GCD</option>
-                            <option value="fraction">Same Fraction Value</option>
-                        </select>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
-                        <div class="control-label">
-                            <span>Connection Thickness</span>
-                            <span class="control-value" id="connectionThicknessValue">1.0</span>
-                        </div>
-                        <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
-                    </div>
-
-                    <div class="control-item" data-tooltip="Transparency of connection lines. Lower = more transparent, easier to see overlapping patterns.">
-                        <div class="control-label">
-                            <span>Connection Opacity</span>
-                            <span class="control-value" id="connectionOpacityValue">0.3</span>
-                        </div>
-                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.05">
-                    </div>
-                </div>
-
-                <!-- Label Options -->
-                <div class="section-header">Label Options</div>
-                <div class="control-row">
-                    <div class="control-item" data-tooltip="Choose which elements get text labels. 'Everything' can be cluttered for large visualizations.">
-                        <div class="control-label">
-                            <span>Label Mode</span>
-                        </div>
-                        <select id="labelMode">
-                            <option value="none">No Labels</option>
-                            <option value="farey">Farey Points Only</option>
-                            <option value="all">All Points</option>
-                            <option value="coprime">Coprime Only</option>
-                            <option value="rings">Ring Numbers Only</option>
-                            <option value="everything">Everything</option>
-                        </select>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Font size for labels in pixels.">
-                        <div class="control-label">
-                            <span>Label Size</span>
-                            <span class="control-value" id="labelSizeValue">10</span>
-                        </div>
-                        <input type="range" id="labelSizeSlider" min="6" max="24" value="10" step="1">
-                    </div>
-
-                    <div class="control-item" data-tooltip="Label only every Nth ring to reduce clutter. Set to 1 to label all rings.">
-                        <div class="control-label">
-                            <span>Label Every Nth Ring</span>
-                            <span class="control-value" id="labelFreqValue">1</span>
-                        </div>
-                        <input type="number" id="labelFreqInput" value="1" min="1" step="1">
-                    </div>
-                </div>
-
-                <!-- Toggles -->
-                <div class="section-header">Display Options</div> rings possible</div>
                     </div>
 
                     <div class="control-item" data-tooltip="Controls how spread out the rings are. Higher = more space between rings.">
@@ -2553,26 +2634,65 @@
         }
         
         function syncUIWithState() {
+            document.getElementById('phaseSlider').value = state.phase;
+            document.getElementById('phaseInput').value = state.phase;
+            document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+            
+            document.getElementById('modulusSlider').value = Math.min(state.modulus, 100);
             document.getElementById('modulusInput').value = state.modulus;
             document.getElementById('modulusDisplay').textContent = state.modulus;
+            
+            document.getElementById('speedSlider').value = state.animSpeed;
+            document.getElementById('speedInput').value = state.animSpeed;
+            document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
+            
             document.getElementById('primesInput').value = state.numPrimes;
             document.getElementById('primesDisplay').textContent = state.numPrimes;
+            
             document.getElementById('minRingInput').value = state.minRing;
             document.getElementById('minRingDisplay').textContent = state.minRing;
+            
             document.getElementById('maxRingInput').value = state.maxRing;
             document.getElementById('maxRingDisplay').textContent = state.maxRing;
+            
+            document.getElementById('spacingSlider').value = state.ringSpacing;
+            document.getElementById('spacingInput').value = state.ringSpacing;
+            document.getElementById('spacingValue').textContent = state.ringSpacing.toFixed(1);
+            
             document.getElementById('connectionMode').value = state.connectionMode;
+            
+            document.getElementById('connectionThicknessSlider').value = state.connectionThickness;
+            document.getElementById('connectionThicknessInput').value = state.connectionThickness;
+            document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(1);
+            
             document.getElementById('connectionOpacitySlider').value = state.connectionOpacity;
+            document.getElementById('connectionOpacityInput').value = state.connectionOpacity;
             document.getElementById('connectionOpacityValue').textContent = state.connectionOpacity.toFixed(2);
+            
             document.getElementById('labelMode').value = state.labelMode;
+            
+            document.getElementById('labelSizeSlider').value = state.labelSize;
+            document.getElementById('labelSizeInput').value = state.labelSize;
+            document.getElementById('labelSizeValue').textContent = state.labelSize;
+            
             document.getElementById('labelFreqInput').value = state.labelFreq;
             document.getElementById('labelFreqValue').textContent = state.labelFreq;
+            
             document.getElementById('cayleyHRangeSlider').value = state.cayleyHRange;
+            document.getElementById('cayleyHRangeInput').value = state.cayleyHRange;
             document.getElementById('cayleyHRangeValue').textContent = state.cayleyHRange.toFixed(1);
+            
             document.getElementById('cayleyVRangeSlider').value = state.cayleyVRange;
+            document.getElementById('cayleyVRangeInput').value = state.cayleyVRange;
             document.getElementById('cayleyVRangeValue').textContent = state.cayleyVRange.toFixed(1);
+            
             document.getElementById('cayleyVOffsetSlider').value = state.cayleyVOffset;
+            document.getElementById('cayleyVOffsetInput').value = state.cayleyVOffset;
             document.getElementById('cayleyVOffsetValue').textContent = state.cayleyVOffset.toFixed(1);
+            
+            document.getElementById('cayleyGridDensitySlider').value = state.cayleyGridDensity;
+            document.getElementById('cayleyGridDensityInput').value = state.cayleyGridDensity;
+            document.getElementById('cayleyGridDensityValue').textContent = state.cayleyGridDensity.toFixed(1);
         }
 
         function resetDefaults() {
@@ -2606,22 +2726,33 @@
 
             // Reset UI
             document.getElementById('phaseSlider').value = 0;
+            document.getElementById('phaseInput').value = 0;
+            document.getElementById('modulusSlider').value = 30;
             document.getElementById('modulusInput').value = 30;
             document.getElementById('primesInput').value = 150;
             document.getElementById('primeLimitInput').value = 10000;
             document.getElementById('speedSlider').value = 1;
+            document.getElementById('speedInput').value = 1;
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
+            document.getElementById('spacingInput').value = 1;
             document.getElementById('cayleyHRangeSlider').value = 6;
+            document.getElementById('cayleyHRangeInput').value = 6;
             document.getElementById('cayleyVRangeSlider').value = 4;
+            document.getElementById('cayleyVRangeInput').value = 4;
             document.getElementById('cayleyVOffsetSlider').value = 0;
+            document.getElementById('cayleyVOffsetInput').value = 0;
             document.getElementById('cayleyGridDensitySlider').value = 1;
+            document.getElementById('cayleyGridDensityInput').value = 1;
             document.getElementById('connectionMode').value = 'none';
             document.getElementById('connectionThicknessSlider').value = 1;
+            document.getElementById('connectionThicknessInput').value = 1;
             document.getElementById('connectionOpacitySlider').value = 0.3;
+            document.getElementById('connectionOpacityInput').value = 0.3;
             document.getElementById('labelMode').value = 'farey';
             document.getElementById('labelSizeSlider').value = 10;
+            document.getElementById('labelSizeInput').value = 10;
             document.getElementById('labelFreqInput').value = 1;
             document.getElementById('toggleAnimate').checked = false;
             document.getElementById('toggleFundDomain').checked = false;
@@ -2651,27 +2782,183 @@
         }
 
         function exportVisualization() {
+            showExportDialog();
+        }
+
+        function showExportDialog() {
+            document.getElementById('exportDialog').style.display = 'flex';
+        }
+
+        function closeExportDialog() {
+            document.getElementById('exportDialog').style.display = 'none';
+        }
+
+        function performExport() {
+            const canvasSelection = document.querySelector('input[name="canvas"]:checked').value;
+            const resolution = document.querySelector('input[name="resolution"]:checked').value;
+            const includeLegend = document.getElementById('includeLegend').checked;
+
+            let width, height;
+            switch(resolution) {
+                case '1080':
+                    width = 1920;
+                    height = 1080;
+                    break;
+                case '1440':
+                    width = 2560;
+                    height = 1440;
+                    break;
+                case '4k':
+                    width = 3840;
+                    height = 2160;
+                    break;
+                case '8k':
+                    width = 7680;
+                    height = 4320;
+                    break;
+            }
+
             const tempCanvas = document.createElement('canvas');
-            const dpr = window.devicePixelRatio || 1;
-            const w1 = canvases.disk.width / dpr;
-            const h1 = canvases.disk.height / dpr;
-            
-            tempCanvas.width = w1 * 3;
-            tempCanvas.height = h1;
-            
             const tempCtx = tempCanvas.getContext('2d');
-            
-            tempCtx.fillStyle = '#0a0e27';
-            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-            
-            tempCtx.drawImage(canvases.disk, 0, 0, w1, h1);
-            tempCtx.drawImage(canvases.cayley, w1, 0, w1, h1);
-            tempCtx.drawImage(canvases.nested, w1 * 2, 0, w1, h1);
-            
+
+            if (canvasSelection === 'all') {
+                tempCanvas.width = width;
+                tempCanvas.height = height;
+                
+                tempCtx.fillStyle = '#0a0e27';
+                tempCtx.fillRect(0, 0, width, height);
+
+                const singleWidth = width / 3;
+                const sourceCanvases = [canvases.disk, canvases.cayley, canvases.nested];
+                
+                sourceCanvases.forEach((canvas, idx) => {
+                    tempCtx.drawImage(canvas, idx * singleWidth, 0, singleWidth, height);
+                });
+
+                if (includeLegend) {
+                    drawLegend(tempCtx, width, height, 'all');
+                }
+            } else {
+                tempCanvas.width = width;
+                tempCanvas.height = height;
+
+                tempCtx.fillStyle = '#0a0e27';
+                tempCtx.fillRect(0, 0, width, height);
+
+                let sourceCanvas;
+                switch(canvasSelection) {
+                    case 'disk':
+                        sourceCanvas = canvases.disk;
+                        break;
+                    case 'cayley':
+                        sourceCanvas = canvases.cayley;
+                        break;
+                    case 'nested':
+                        sourceCanvas = canvases.nested;
+                        break;
+                }
+
+                tempCtx.drawImage(sourceCanvas, 0, 0, width, height);
+
+                if (includeLegend) {
+                    drawLegend(tempCtx, width, height, canvasSelection);
+                }
+            }
+
             const link = document.createElement('a');
-            link.download = `farey-unlimited-${Date.now()}.png`;
+            link.download = `farey-${canvasSelection}-${resolution}-${Date.now()}.png`;
             link.href = tempCanvas.toDataURL('image/png');
             link.click();
+
+            closeExportDialog();
+        }
+
+        function drawLegend(ctx, width, height, canvasType) {
+            const scale = width / 1920; // Scale legend based on resolution
+            const legendWidth = 280 * scale;
+            const legendX = width - legendWidth - 30 * scale;
+            const legendY = 30 * scale;
+            const fontSize = 12 * scale;
+            const titleSize = 16 * scale;
+            const itemHeight = 28 * scale;
+            const symbolSize = 20 * scale;
+
+            // Background
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.95)';
+            ctx.strokeStyle = CONFIG.colors.farey;
+            ctx.lineWidth = 2 * scale;
+            
+            let items = [];
+            
+            if (canvasType === 'disk' || canvasType === 'all') {
+                items = [
+                    { color: CONFIG.colors.farey, text: 'Farey Points' },
+                    { color: CONFIG.colors.disk, text: 'Unit Circle' },
+                    { color: CONFIG.colors.prime, text: 'Prime Numbers' },
+                    { color: CONFIG.colors.fareyFill, text: 'Farey Triangle' }
+                ];
+            } else if (canvasType === 'cayley') {
+                items = [
+                    { color: CONFIG.colors.farey, text: 'Farey Points' },
+                    { color: CONFIG.colors.geodesic, text: 'Geodesic Arcs' },
+                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
+                    { color: CONFIG.colors.prime, text: 'Transformed Primes' },
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (∂ℍ)' }
+                ];
+            } else if (canvasType === 'nested') {
+                items = [
+                    { color: CONFIG.colors.farey, text: 'GCD = 1 (Coprime)' },
+                    { color: '#e74c3c', text: 'GCD = m' },
+                    { color: '#00ffff', text: 'GCD = 2' },
+                    { color: '#9b59b6', text: 'GCD = 3' },
+                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' }
+                ];
+            } else if (canvasType === 'all') {
+                items = [
+                    { color: CONFIG.colors.farey, text: 'Farey Points/Coprime' },
+                    { color: CONFIG.colors.geodesic, text: 'Geodesics' },
+                    { color: CONFIG.colors.cusp, text: 'Cusps' },
+                    { color: CONFIG.colors.prime, text: 'Primes' },
+                    { color: CONFIG.colors.disk, text: 'Unit Circle' },
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes/Boundaries' }
+                ];
+            }
+
+            const legendHeight = 60 * scale + items.length * itemHeight;
+
+            ctx.fillRect(legendX, legendY, legendWidth, legendHeight);
+            ctx.strokeRect(legendX, legendY, legendWidth, legendHeight);
+
+            // Title
+            ctx.fillStyle = CONFIG.colors.farey;
+            ctx.font = `bold ${titleSize}px "Fira Code"`;
+            ctx.fillText('LEGEND', legendX + 15 * scale, legendY + 30 * scale);
+
+            // Items
+            ctx.font = `${fontSize}px "Fira Code"`;
+            items.forEach((item, idx) => {
+                const itemY = legendY + 60 * scale + idx * itemHeight;
+                
+                // Symbol
+                ctx.fillStyle = item.color;
+                ctx.fillRect(legendX + 15 * scale, itemY, symbolSize, symbolSize);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1 * scale;
+                ctx.strokeRect(legendX + 15 * scale, itemY, symbolSize, symbolSize);
+
+                // Text
+                ctx.fillStyle = '#e8f1f5';
+                ctx.fillText(item.text, legendX + 45 * scale, itemY + 15 * scale);
+            });
+
+            // Add parameter info
+            const paramY = legendY + legendHeight + 20 * scale;
+            ctx.font = `${fontSize * 0.9}px "Fira Code"`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillText(`m = ${state.modulus}`, legendX + 15 * scale, paramY);
+            if (state.numPrimes > 0) {
+                ctx.fillText(`Primes: ${state.numPrimes}`, legendX + 15 * scale, paramY + 20 * scale);
+            }
         }
 
         function printDiagnostics() {
