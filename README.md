@@ -994,7 +994,7 @@
             </div>
             <div class="controls-body">
                 <!-- Basic Parameters -->
-                <div class="section-header">🎯 Basic Parameters</div>
+                <div class="section-header"> Basic Parameters</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Rotates all visualizations by this angle. Animated when auto-rotate is enabled.">
                         <div class="control-label">
@@ -1023,7 +1023,7 @@
                 </div>
 
                 <!-- Zoom Controls -->
-                <div class="section-header">🔍 Canvas Zoom Controls</div>
+                <div class="section-header"> Canvas Zoom Controls</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Zoom in or out on the Unit Disk visualization. 1.0 = default view.">
                         <div class="control-label">
@@ -1051,7 +1051,7 @@
                 </div>
 
                 <!-- Cayley View Controls -->
-                <div class="section-header">🔭 Cayley Plane View Range</div>
+                <div class="section-header"> Cayley Plane View Range</div>
                 <div class="control-row">
                     <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Switch between standard Cayley transform and alternative transformation">
                         <div class="control-label">
@@ -1102,7 +1102,7 @@
                 </div>
 
                 <!-- Prime Distribution -->
-                <div class="section-header">🔢 Prime Distribution</div>
+                <div class="section-header"> Prime Distribution</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="How many prime numbers to display. More primes = denser visualization but slower rendering.">
                         <div class="control-label">
@@ -1153,7 +1153,7 @@
                 </div>
 
                 <!-- Custom Farey Points -->
-                <div class="section-header">🎯 Custom Farey Points</div>
+                <div class="section-header"> Custom Farey Points</div>
                 <div class="control-row">
                     <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Define specific rational fractions to highlight. These form the vertices of the Farey triangle.">
                         <div class="control-label">
@@ -1166,7 +1166,7 @@
                 </div>
 
                 <!-- Connection Options -->
-                <div class="section-header">🔗 Connection Options</div>
+                <div class="section-header"> Connection Options</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
                         <div class="control-label">
@@ -1200,7 +1200,7 @@
                 </div>
 
                 <!-- Label Options -->
-                <div class="section-header">🏷️ Label Options</div>
+                <div class="section-header"> Label Options</div>
                 <div class="control-row">
                     <div class="control-item" data-tooltip="Choose which elements get text labels. 'Everything' can be cluttered for large visualizations.">
                         <div class="control-label">
@@ -1234,7 +1234,7 @@
                 </div>
 
                 <!-- Toggles -->
-                <div class="section-header">⚡ Display Options</div>
+                <div class="section-header"> Display Options</div>
                 <div class="toggle-grid">
                     <input type="checkbox" id="toggleFarey" checked>
                     <label for="toggleFarey" class="toggle-item">
@@ -1312,19 +1312,19 @@
                 <!-- Action Buttons -->
                 <div class="action-bar">
                     <button class="btn btn-primary" onclick="updateAll()">
-                        <span>🔄 Update All</span>
+                        <span> Update All</span>
                     </button>
                     <button class="btn btn-secondary" onclick="regeneratePrimes()">
-                        <span>🔢 Regenerate Primes</span>
+                        <span> Regenerate Primes</span>
                     </button>
                     <button class="btn btn-accent" onclick="resetDefaults()">
-                        <span>🔁 Reset to Defaults</span>
+                        <span> Reset to Defaults</span>
                     </button>
                     <button class="btn btn-secondary" onclick="exportVisualization()">
-                        <span>💾 Export PNG</span>
+                        <span> Export PNG</span>
                     </button>
                     <button class="btn btn-secondary" onclick="printDiagnostics()">
-                        <span>🔍 Print Diagnostics</span>
+                        <span> Print Diagnostics</span>
                     </button>
                 </div>
             </div>
@@ -2966,7 +2966,8 @@
                         
                         <div class="action-bar">
                             <button class="btn btn-primary" onclick="performExport()">
-                                <span>💾 Export PNG</span>
+                                <span>
+                                    Export PNG</span>
                             </button>
                             <button class="btn btn-secondary" onclick="closeExportDialog()">
                                 <span>Cancel</span>
@@ -3456,12 +3457,12 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('\n BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('\n CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -3472,7 +3473,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n🎯 FAREY POINTS:');
+            console.log('\n FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -3485,7 +3486,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('\n PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -3494,15 +3495,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('\n CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('\n LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n📊 DISPLAY TOGGLES:');
+            console.log('\n DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -3515,7 +3516,7 @@
                 }
             });
             
-            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
