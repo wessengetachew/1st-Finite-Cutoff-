@@ -2782,7 +2782,95 @@
         }
 
         function exportVisualization() {
+            // Create export dialog if it doesn't exist
+            if (!document.getElementById('exportDialog')) {
+                createExportDialog();
+            }
             showExportDialog();
+        }
+
+        function createExportDialog() {
+            const dialog = document.createElement('div');
+            dialog.id = 'exportDialog';
+            dialog.className = 'export-dialog';
+            dialog.style.display = 'none';
+            
+            dialog.innerHTML = `
+                <div class="export-dialog-content">
+                    <div class="export-dialog-header">
+                        <h3>Export Visualization</h3>
+                        <button class="close-btn" onclick="closeExportDialog()">✕</button>
+                    </div>
+                    <div class="export-dialog-body">
+                        <div class="export-section">
+                            <h4>Select Canvas</h4>
+                            <div class="export-radio-group">
+                                <label class="export-radio">
+                                    <input type="radio" name="canvas" value="disk" checked>
+                                    <span>Unit Disk Only</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="canvas" value="cayley">
+                                    <span>Upper Half-Plane Only</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="canvas" value="nested">
+                                    <span>Nested Rings Only</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="canvas" value="all">
+                                    <span>All Three Canvases</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="export-section">
+                            <h4>Resolution</h4>
+                            <div class="export-radio-group">
+                                <label class="export-radio">
+                                    <input type="radio" name="resolution" value="1080" checked>
+                                    <span>Full HD (1920×1080)</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="resolution" value="1440">
+                                    <span>2K (2560×1440)</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="resolution" value="4k">
+                                    <span>4K UHD (3840×2160)</span>
+                                </label>
+                                <label class="export-radio">
+                                    <input type="radio" name="resolution" value="8k">
+                                    <span>8K UHD (7680×4320)</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="export-section">
+                            <h4>Options</h4>
+                            <label class="export-checkbox">
+                                <input type="checkbox" id="includeLegend" checked>
+                                <span>Include Detailed Legend</span>
+                            </label>
+                            <label class="export-checkbox">
+                                <input type="checkbox" id="includeWatermark" checked>
+                                <span>Include Watermark (Wessen Getachew)</span>
+                            </label>
+                        </div>
+                        
+                        <div class="action-bar">
+                            <button class="btn btn-primary" onclick="performExport()">
+                                <span>💾 Export PNG</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="closeExportDialog()">
+                                <span>Cancel</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(dialog);
         }
 
         function showExportDialog() {
@@ -2797,6 +2885,7 @@
             const canvasSelection = document.querySelector('input[name="canvas"]:checked').value;
             const resolution = document.querySelector('input[name="resolution"]:checked').value;
             const includeLegend = document.getElementById('includeLegend').checked;
+            const includeWatermark = document.getElementById('includeWatermark').checked;
 
             let width, height;
             switch(resolution) {
@@ -2865,100 +2954,290 @@
                 }
             }
 
+            // Add watermark if requested
+            if (includeWatermark) {
+                drawWatermark(tempCtx, width, height);
+            }
+
             const link = document.createElement('a');
-            link.download = `farey-${canvasSelection}-${resolution}-${Date.now()}.png`;
+            link.download = `farey-cayley-${canvasSelection}-${resolution}-${Date.now()}.png`;
             link.href = tempCanvas.toDataURL('image/png');
             link.click();
 
             closeExportDialog();
         }
 
-        function drawLegend(ctx, width, height, canvasType) {
-            const scale = width / 1920; // Scale legend based on resolution
-            const legendWidth = 280 * scale;
-            const legendX = width - legendWidth - 30 * scale;
-            const legendY = 30 * scale;
-            const fontSize = 12 * scale;
-            const titleSize = 16 * scale;
-            const itemHeight = 28 * scale;
-            const symbolSize = 20 * scale;
+        function drawWatermark(ctx, width, height) {
+            const scale = width / 1920;
+            const fontSize = 18 * scale;
+            const padding = 25 * scale;
 
-            // Background
-            ctx.fillStyle = 'rgba(10, 14, 39, 0.95)';
-            ctx.strokeStyle = CONFIG.colors.farey;
+            ctx.save();
+            
+            // Watermark background
+            const textMetrics = ctx.measureText('Wessen Getachew');
+            const watermarkWidth = textMetrics.width + 40 * scale;
+            const watermarkHeight = 50 * scale;
+            const watermarkX = width - watermarkWidth - padding;
+            const watermarkY = height - watermarkHeight - padding;
+
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.85)';
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
             ctx.lineWidth = 2 * scale;
             
-            let items = [];
+            // Rounded rectangle
+            const radius = 8 * scale;
+            ctx.beginPath();
+            ctx.moveTo(watermarkX + radius, watermarkY);
+            ctx.lineTo(watermarkX + watermarkWidth - radius, watermarkY);
+            ctx.quadraticCurveTo(watermarkX + watermarkWidth, watermarkY, watermarkX + watermarkWidth, watermarkY + radius);
+            ctx.lineTo(watermarkX + watermarkWidth, watermarkY + watermarkHeight - radius);
+            ctx.quadraticCurveTo(watermarkX + watermarkWidth, watermarkY + watermarkHeight, watermarkX + watermarkWidth - radius, watermarkY + watermarkHeight);
+            ctx.lineTo(watermarkX + radius, watermarkY + watermarkHeight);
+            ctx.quadraticCurveTo(watermarkX, watermarkY + watermarkHeight, watermarkX, watermarkY + watermarkHeight - radius);
+            ctx.lineTo(watermarkX, watermarkY + radius);
+            ctx.quadraticCurveTo(watermarkX, watermarkY, watermarkX + radius, watermarkY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Main watermark text
+            ctx.fillStyle = '#ffd700';
+            ctx.font = `bold ${fontSize}px "Fira Code"`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 10 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            ctx.fillText('Wessen Getachew', watermarkX + watermarkWidth / 2, watermarkY + watermarkHeight / 2);
             
-            if (canvasType === 'disk' || canvasType === 'all') {
+            ctx.restore();
+        }
+
+        function drawLegend(ctx, width, height, canvasType) {
+            const scale = width / 1920;
+            const legendWidth = 350 * scale;
+            const legendX = 30 * scale;
+            const legendY = 30 * scale;
+            const fontSize = 13 * scale;
+            const titleSize = 18 * scale;
+            const sectionTitleSize = 14 * scale;
+            const itemHeight = 32 * scale;
+            const symbolSize = 22 * scale;
+            const padding = 20 * scale;
+
+            let items = [];
+            let parameters = [];
+            
+            if (canvasType === 'disk') {
                 items = [
-                    { color: CONFIG.colors.farey, text: 'Farey Points' },
-                    { color: CONFIG.colors.disk, text: 'Unit Circle' },
+                    { type: 'section', text: 'Unit Disk Elements' },
+                    { color: CONFIG.colors.disk, text: 'Unit Circle Boundary' },
+                    { color: CONFIG.colors.farey, text: 'Farey Triangle Vertices' },
+                    { color: CONFIG.colors.fareyFill, text: 'Farey Triangle Fill' },
                     { color: CONFIG.colors.prime, text: 'Prime Numbers' },
-                    { color: CONFIG.colors.fareyFill, text: 'Farey Triangle' }
+                    { type: 'section', text: 'Structure' },
+                    { color: CONFIG.colors.axes, text: 'Coordinate Axes' },
+                    { color: CONFIG.colors.grid, text: 'Grid Lines' }
+                ];
+                parameters = [
+                    `Modulus m = ${state.modulus}`,
+                    `Primes displayed: ${Math.min(state.numPrimes, state.primes.length)}`,
+                    `Farey points: ${state.fareyPoints.length}`,
+                    `Phase: ${state.phase.toFixed(1)}°`
                 ];
             } else if (canvasType === 'cayley') {
                 items = [
-                    { color: CONFIG.colors.farey, text: 'Farey Points' },
-                    { color: CONFIG.colors.geodesic, text: 'Geodesic Arcs' },
-                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
+                    { type: 'section', text: 'Upper Half-Plane ℍ' },
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (Boundary ∂ℍ)' },
+                    { color: CONFIG.colors.farey, text: 'Transformed Farey Points' },
+                    { color: CONFIG.colors.geodesic, text: 'Hyperbolic Geodesics' },
+                    { color: CONFIG.colors.cusp, text: 'Cusp Points on ℝ' },
+                    { type: 'section', text: 'Prime Distribution' },
                     { color: CONFIG.colors.prime, text: 'Transformed Primes' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (∂ℍ)' }
+                    { type: 'section', text: 'Geometry' },
+                    { color: 'rgba(230, 126, 34, 0.5)', text: 'Fundamental Domain' },
+                    { color: 'rgba(155, 89, 182, 0.3)', text: 'Vertical Geodesics' },
+                    { color: 'rgba(231, 76, 60, 0.4)', text: 'Unit Disk Outline' }
+                ];
+                parameters = [
+                    `View range: [${(-state.cayleyHRange/2).toFixed(1)}, ${(state.cayleyHRange/2).toFixed(1)}] × [${state.cayleyVOffset.toFixed(1)}, ${(state.cayleyVRange + state.cayleyVOffset).toFixed(1)}i]`,
+                    `Modulus m = ${state.modulus}`,
+                    `Transform: w = i(1-z)/(1+z)`,
+                    `Primes: ${Math.min(state.numPrimes, state.primes.length)}`
                 ];
             } else if (canvasType === 'nested') {
                 items = [
-                    { color: CONFIG.colors.farey, text: 'GCD = 1 (Coprime)' },
-                    { color: '#e74c3c', text: 'GCD = m' },
-                    { color: '#00ffff', text: 'GCD = 2' },
-                    { color: '#9b59b6', text: 'GCD = 3' },
-                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' }
+                    { type: 'section', text: 'GCD Coloring' },
+                    { color: CONFIG.colors.farey, text: 'GCD(k,m) = 1 (Coprime)' },
+                    { color: '#e74c3c', text: 'GCD(k,m) = m (Divisible)' },
+                    { color: '#00ffff', text: 'GCD(k,m) = 2' },
+                    { color: '#9b59b6', text: 'GCD(k,m) = 3' },
+                    { color: 'hsla(240, 70%, 60%, 0.85)', text: 'GCD(k,m) = 4' },
+                    { color: 'hsla(300, 70%, 60%, 0.85)', text: 'GCD(k,m) = 5+' },
+                    { type: 'section', text: 'Structure' },
+                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles (mod m)' },
+                    { color: '#ff6b6b', text: 'Highlighted Farey Points' }
+                ];
+                parameters = [
+                    `Ring range: m = ${state.minRing} to ${state.maxRing}`,
+                    `Total rings: ${state.maxRing - state.minRing + 1}`,
+                    `Ring spacing: ${state.ringSpacing.toFixed(2)}`,
+                    `Connection mode: ${state.connectionMode}`,
+                    `Phase: ${state.phase.toFixed(1)}°`
                 ];
             } else if (canvasType === 'all') {
                 items = [
-                    { color: CONFIG.colors.farey, text: 'Farey Points/Coprime' },
-                    { color: CONFIG.colors.geodesic, text: 'Geodesics' },
-                    { color: CONFIG.colors.cusp, text: 'Cusps' },
-                    { color: CONFIG.colors.prime, text: 'Primes' },
+                    { type: 'section', text: 'Fundamental Elements' },
+                    { color: CONFIG.colors.farey, text: 'Farey Points & Coprime' },
+                    { color: CONFIG.colors.geodesic, text: 'Hyperbolic Geodesics' },
+                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
+                    { color: CONFIG.colors.prime, text: 'Prime Distribution' },
+                    { type: 'section', text: 'Boundaries' },
                     { color: CONFIG.colors.disk, text: 'Unit Circle' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes/Boundaries' }
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes & Real Line' },
+                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' },
+                    { type: 'section', text: 'GCD Colors' },
+                    { color: CONFIG.colors.farey, text: 'Coprime (GCD=1)' },
+                    { color: '#e74c3c', text: 'Divisible (GCD=m)' }
+                ];
+                parameters = [
+                    `Modulus m = ${state.modulus}`,
+                    `Primes: ${Math.min(state.numPrimes, state.primes.length)} of ${state.primeLimit}`,
+                    `Rings: ${state.minRing} to ${state.maxRing}`,
+                    `Farey points: ${state.fareyPoints.map(fp => `${fp.num}/${fp.den}`).join(', ')}`,
+                    `Phase rotation: ${state.phase.toFixed(1)}°`
                 ];
             }
 
-            const legendHeight = 60 * scale + items.length * itemHeight;
+            const legendHeight = (items.length * itemHeight) + (parameters.length * itemHeight * 0.8) + (padding * 5);
 
-            ctx.fillRect(legendX, legendY, legendWidth, legendHeight);
-            ctx.strokeRect(legendX, legendY, legendWidth, legendHeight);
+            // Background with gradient
+            const gradient = ctx.createLinearGradient(legendX, legendY, legendX, legendY + legendHeight);
+            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.98)');
+            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.98)');
+            ctx.fillStyle = gradient;
+            
+            ctx.strokeStyle = CONFIG.colors.farey;
+            ctx.lineWidth = 3 * scale;
+            ctx.shadowBlur = 20 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            
+            // Rounded rectangle
+            const radius = 12 * scale;
+            ctx.beginPath();
+            ctx.moveTo(legendX + radius, legendY);
+            ctx.lineTo(legendX + legendWidth - radius, legendY);
+            ctx.quadraticCurveTo(legendX + legendWidth, legendY, legendX + legendWidth, legendY + radius);
+            ctx.lineTo(legendX + legendWidth, legendY + legendHeight - radius);
+            ctx.quadraticCurveTo(legendX + legendWidth, legendY + legendHeight, legendX + legendWidth - radius, legendY + legendHeight);
+            ctx.lineTo(legendX + radius, legendY + legendHeight);
+            ctx.quadraticCurveTo(legendX, legendY + legendHeight, legendX, legendY + legendHeight - radius);
+            ctx.lineTo(legendX, legendY + radius);
+            ctx.quadraticCurveTo(legendX, legendY, legendX + radius, legendY);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0;
 
             // Title
             ctx.fillStyle = CONFIG.colors.farey;
             ctx.font = `bold ${titleSize}px "Fira Code"`;
-            ctx.fillText('LEGEND', legendX + 15 * scale, legendY + 30 * scale);
+            ctx.textAlign = 'left';
+            ctx.shadowBlur = 10 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
+            ctx.fillText('LEGEND', legendX + padding, legendY + padding * 1.8);
+            ctx.shadowBlur = 0;
+
+            // Separator line after title
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.moveTo(legendX + padding, legendY + padding * 2.5);
+            ctx.lineTo(legendX + legendWidth - padding, legendY + padding * 2.5);
+            ctx.stroke();
 
             // Items
-            ctx.font = `${fontSize}px "Fira Code"`;
+            let currentY = legendY + padding * 3.5;
+            
             items.forEach((item, idx) => {
-                const itemY = legendY + 60 * scale + idx * itemHeight;
-                
-                // Symbol
-                ctx.fillStyle = item.color;
-                ctx.fillRect(legendX + 15 * scale, itemY, symbolSize, symbolSize);
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.lineWidth = 1 * scale;
-                ctx.strokeRect(legendX + 15 * scale, itemY, symbolSize, symbolSize);
+                if (item.type === 'section') {
+                    // Section header
+                    currentY += itemHeight * 0.3;
+                    ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
+                    ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
+                    ctx.fillText(item.text, legendX + padding, currentY);
+                    
+                    // Underline
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                    ctx.lineWidth = 1 * scale;
+                    ctx.beginPath();
+                    ctx.moveTo(legendX + padding, currentY + 5 * scale);
+                    ctx.lineTo(legendX + legendWidth - padding, currentY + 5 * scale);
+                    ctx.stroke();
+                    
+                    currentY += itemHeight * 0.5;
+                } else {
+                    // Regular item with color symbol
+                    ctx.fillStyle = item.color;
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.lineWidth = 1.5 * scale;
+                    
+                    // Symbol (rounded rectangle)
+                    const symbolRadius = 4 * scale;
+                    const symX = legendX + padding;
+                    const symY = currentY - symbolSize * 0.7;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(symX + symbolRadius, symY);
+                    ctx.lineTo(symX + symbolSize - symbolRadius, symY);
+                    ctx.quadraticCurveTo(symX + symbolSize, symY, symX + symbolSize, symY + symbolRadius);
+                    ctx.lineTo(symX + symbolSize, symY + symbolSize - symbolRadius);
+                    ctx.quadraticCurveTo(symX + symbolSize, symY + symbolSize, symX + symbolSize - symbolRadius, symY + symbolSize);
+                    ctx.lineTo(symX + symbolRadius, symY + symbolSize);
+                    ctx.quadraticCurveTo(symX, symY + symbolSize, symX, symY + symbolSize - symbolRadius);
+                    ctx.lineTo(symX, symY + symbolRadius);
+                    ctx.quadraticCurveTo(symX, symY, symX + symbolRadius, symY);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
 
-                // Text
-                ctx.fillStyle = '#e8f1f5';
-                ctx.fillText(item.text, legendX + 45 * scale, itemY + 15 * scale);
+                    // Text
+                    ctx.fillStyle = '#e8f1f5';
+                    ctx.font = `${fontSize}px "Fira Code"`;
+                    ctx.fillText(item.text, legendX + padding + symbolSize + 12 * scale, currentY);
+                    
+                    currentY += itemHeight;
+                }
             });
 
-            // Add parameter info
-            const paramY = legendY + legendHeight + 20 * scale;
-            ctx.font = `${fontSize * 0.9}px "Fira Code"`;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            ctx.fillText(`m = ${state.modulus}`, legendX + 15 * scale, paramY);
-            if (state.numPrimes > 0) {
-                ctx.fillText(`Primes: ${state.numPrimes}`, legendX + 15 * scale, paramY + 20 * scale);
-            }
+            // Parameters section
+            currentY += itemHeight * 0.5;
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
+            ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
+            ctx.fillText('Parameters', legendX + padding, currentY);
+            
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.lineWidth = 1 * scale;
+            ctx.beginPath();
+            ctx.moveTo(legendX + padding, currentY + 5 * scale);
+            ctx.lineTo(legendX + legendWidth - padding, currentY + 5 * scale);
+            ctx.stroke();
+            
+            currentY += itemHeight * 0.7;
+
+            ctx.font = `${fontSize * 0.95}px "Fira Code"`;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+            parameters.forEach(param => {
+                ctx.fillText('• ' + param, legendX + padding, currentY);
+                currentY += itemHeight * 0.8;
+            });
+
+            // Math notation footer
+            currentY += itemHeight * 0.3;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.font = `italic ${fontSize * 0.85}px "Fira Code"`;
+            ctx.fillText('𝔻 → ℍ via Cayley Transform', legendX + padding, currentY);
+            ctx.fillText('PSL(2,ℤ) Modular Group Action', legendX + padding, currentY + itemHeight * 0.6);
         }
 
         function printDiagnostics() {
