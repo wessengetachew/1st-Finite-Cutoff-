@@ -569,6 +569,52 @@
             margin-top: 5px;
         }
 
+        .control-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--gold);
+            font-size: 0.85em;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            white-space: normal;
+            width: max-content;
+            max-width: 300px;
+            z-index: 1000;
+            pointer-events: none;
+            margin-bottom: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .toggle-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.95);
+            color: var(--cyan);
+            font-size: 0.85em;
+            border: 1px solid var(--cyan);
+            border-radius: 4px;
+            white-space: normal;
+            width: max-content;
+            max-width: 300px;
+            z-index: 1000;
+            pointer-events: none;
+            margin-bottom: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .control-item, .toggle-item {
+            position: relative;
+        }
+
         @media (max-width: 1800px) {
             .viz-grid {
                 grid-template-columns: 1fr 1fr;
@@ -646,6 +692,90 @@
             <p class="subtitle">Unlimited · Unbounded · Fully Customizable</p>
         </header>
 
+        <!-- Introduction Panel -->
+        <div class="controls-section" style="margin-bottom: 20px;">
+            <div class="controls-header" style="cursor: pointer; user-select: none;" onclick="toggleIntro()">
+                <span id="introToggle">▼</span> Mathematical Introduction
+            </div>
+            <div class="controls-body" id="introPanel" style="display: block;">
+                <div style="line-height: 1.8; font-size: 0.95em;">
+                    <h3 style="color: var(--gold); margin-bottom: 15px;">What You're Seeing</h3>
+                    
+                    <p style="margin-bottom: 15px;">This visualization explores the deep connection between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through three perspectives:</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--gold);">
+                            <h4 style="color: var(--gold); margin-bottom: 8px;">Unit Disk (𝔻)</h4>
+                            <p style="font-size: 0.9em;">The <strong>Farey triangle</strong> connects rational fractions on the unit circle. Prime numbers are distributed according to their residue classes modulo <em>m</em>.</p>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
+                            <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane (ℍ)</h4>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> maps the disk to the half-plane, revealing geodesics as semicircles. The modular group PSL(2,ℤ) acts here naturally.</p>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
+                            <h4 style="color: var(--geodesic); margin-bottom: 8px;">Nested Rings</h4>
+                            <p style="font-size: 0.9em;">Each ring represents residues mod <em>m</em>. Points are colored by their <strong>GCD</strong> with <em>m</em>, revealing beautiful symmetries in modular arithmetic.</p>
+                        </div>
+                    </div>
+                    
+                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Key Mathematical Concepts</h3>
+                    
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Farey Sequence:</strong> Rational numbers p/q in lowest terms between 0 and 1, ordered by denominator. Adjacent fractions satisfy <em>|pq' - p'q| = 1</em>.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Cayley Transform:</strong> The map <em>w = i(1-z)/(1+z)</em> sends the unit disk to the upper half-plane, preserving hyperbolic structure.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Modular Group PSL(2,ℤ):</strong> Möbius transformations with integer coefficients. Acts on ℍ via <em>z → (az+b)/(cz+d)</em> where <em>ad-bc=1</em>.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Geodesics:</strong> In the hyperbolic plane, straight lines become semicircles perpendicular to the real axis.
+                        </li>
+                    </ul>
+                    
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; margin-top: 20px; border-radius: 4px;">
+                        <strong style="color: var(--gold);">Quick Start:</strong> Try the preset buttons below, hover over controls for tooltips, or explore the examples section for interesting configurations!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Presets Bar -->
+        <div class="controls-section" style="margin-bottom: 20px;">
+            <div class="controls-header">
+                Quick Presets
+            </div>
+            <div class="controls-body">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="applyPreset('minimal')">
+                        <span>Minimal</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="applyPreset('default')">
+                        <span>Default</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="applyPreset('maximum')">
+                        <span>Maximum Detail</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="applyPreset('fundamental')">
+                        <span>Fundamental Domain</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="applyPreset('primes')">
+                        <span>Prime Focus</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="applyPreset('rings')">
+                        <span>Ring Explorer</span>
+                    </button>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.85em; color: var(--text-dim); font-style: italic;">
+                    Each preset optimizes different aspects of the visualization for specific mathematical insights.
+                </p>
+            </div>
+        </div>
+
         <!-- Visualization Canvases -->
         <div class="viz-grid">
             <div class="canvas-panel">
@@ -671,7 +801,7 @@
             <div class="canvas-panel">
                 <div class="panel-header">
                     <div>
-                        <div class="panel-title">Nested Modular Rings</div>
+                        <div class="panel-title">⊚ Nested Modular Rings</div>
                         <div class="panel-subtitle">Unlimited GCD Structure</div>
                     </div>
                 </div>
@@ -688,39 +818,36 @@
                 <!-- Basic Parameters -->
                 <div class="section-header">Basic Parameters</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Rotates all visualizations by this angle. Animated when auto-rotate is enabled.">
                         <div class="control-label">
                             <span>Phase Rotation θ</span>
                             <span class="control-value" id="phaseValue">0°</span>
                         </div>
                         <input type="range" id="phaseSlider" min="0" max="360" value="0" step="0.1">
-                        <input type="number" id="phaseInput" value="0" min="0" max="360" step="0.1" style="margin-top: 5px;">
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="The modulus for residue classes. Affects prime distribution and ring structure. No upper limit!">
                         <div class="control-label">
-                            <span>Modulus m</span>
+                            <span>Modulus m (Any Integer)</span>
                             <span class="control-value" id="modulusDisplay">30</span>
                         </div>
-                        <input type="range" id="modulusSlider" min="1" max="200" value="30" step="1">
                         <input type="number" id="modulusInput" value="30" min="1" step="1">
-                        <div class="help-text">No upper limit</div>
+                        <div class="help-text">No upper limit - enter any positive integer</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Controls how fast the visualization rotates when auto-rotate is enabled.">
                         <div class="control-label">
                             <span>Animation Speed</span>
                             <span class="control-value" id="speedValue">1.0×</span>
                         </div>
                         <input type="range" id="speedSlider" min="0.1" max="20" value="1" step="0.1">
-                        <input type="number" id="speedInput" value="1" min="0.1" max="100" step="0.1" style="margin-top: 5px;">
                     </div>
                 </div>
 
                 <!-- Cayley View Controls -->
                 <div class="section-header">Cayley Plane View Range</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Width of the visible window in the upper half-plane. Increase to see more of the real axis.">
                         <div class="control-label">
                             <span>Horizontal Range (Re)</span>
                             <span class="control-value" id="cayleyHRangeValue">6.0</span>
@@ -729,7 +856,7 @@
                         <div class="help-text">Width of visible area in ℍ</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Height of the visible window. Increase to see more of the upper half-plane.">
                         <div class="control-label">
                             <span>Vertical Range (Im)</span>
                             <span class="control-value" id="cayleyVRangeValue">4.0</span>
@@ -738,7 +865,7 @@
                         <div class="help-text">Height of visible area in ℍ</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Shifts the viewing window up or down. Useful for focusing on different regions.">
                         <div class="control-label">
                             <span>Vertical Offset</span>
                             <span class="control-value" id="cayleyVOffsetValue">0.0</span>
@@ -747,7 +874,7 @@
                         <div class="help-text">Shift view up/down</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Controls spacing between grid lines. Lower values = more grid lines.">
                         <div class="control-label">
                             <span>Grid Density</span>
                             <span class="control-value" id="cayleyGridDensityValue">1.0</span>
@@ -760,7 +887,7 @@
                 <!-- Prime Distribution -->
                 <div class="section-header">Prime Distribution</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="How many prime numbers to display. More primes = denser visualization but slower rendering.">
                         <div class="control-label">
                             <span>Number of Primes</span>
                             <span class="control-value" id="primesDisplay">150</span>
@@ -769,7 +896,7 @@
                         <div class="help-text">No limit - computation may slow with >5000</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Generate all primes up to this value using the Sieve of Eratosthenes.">
                         <div class="control-label">
                             <span>Prime Upper Limit</span>
                             <span class="control-value" id="primeLimitDisplay">10000</span>
@@ -782,7 +909,7 @@
                 <!-- Nested Rings Parameters -->
                 <div class="section-header">Nested Rings Configuration</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Starting modulus for the innermost ring. Usually 1 or 2.">
                         <div class="control-label">
                             <span>Min Ring (m_start)</span>
                             <span class="control-value" id="minRingDisplay">1</span>
@@ -790,7 +917,7 @@
                         <input type="number" id="minRingInput" value="1" min="1" step="1">
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Ending modulus for the outermost ring. No limit - try 50+ for impressive patterns!">
                         <div class="control-label">
                             <span>Max Ring (m_end)</span>
                             <span class="control-value" id="maxRingDisplay">12</span>
@@ -799,7 +926,7 @@
                         <div class="help-text">Unlimited - 100+ rings possible</div>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Controls how spread out the rings are. Higher = more space between rings.">
                         <div class="control-label">
                             <span>Ring Spacing Factor</span>
                             <span class="control-value" id="spacingValue">1.0</span>
@@ -811,7 +938,7 @@
                 <!-- Custom Farey Points -->
                 <div class="section-header">Custom Farey Points</div>
                 <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;">
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Define specific rational fractions to highlight. These form the vertices of the Farey triangle.">
                         <div class="control-label">
                             <span>Farey Points (Fractions)</span>
                         </div>
@@ -824,7 +951,7 @@
                 <!-- Connection Options -->
                 <div class="section-header">Connection Options</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
                         <div class="control-label">
                             <span>Connect Points By</span>
                         </div>
@@ -838,7 +965,7 @@
                         </select>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
                         <div class="control-label">
                             <span>Connection Thickness</span>
                             <span class="control-value" id="connectionThicknessValue">1.0</span>
@@ -846,7 +973,7 @@
                         <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Transparency of connection lines. Lower = more transparent, easier to see overlapping patterns.">
                         <div class="control-label">
                             <span>Connection Opacity</span>
                             <span class="control-value" id="connectionOpacityValue">0.3</span>
@@ -858,7 +985,7 @@
                 <!-- Label Options -->
                 <div class="section-header">Label Options</div>
                 <div class="control-row">
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Choose which elements get text labels. 'Everything' can be cluttered for large visualizations.">
                         <div class="control-label">
                             <span>Label Mode</span>
                         </div>
@@ -872,7 +999,7 @@
                         </select>
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Font size for labels in pixels.">
                         <div class="control-label">
                             <span>Label Size</span>
                             <span class="control-value" id="labelSizeValue">10</span>
@@ -880,7 +1007,7 @@
                         <input type="range" id="labelSizeSlider" min="6" max="24" value="10" step="1">
                     </div>
 
-                    <div class="control-item">
+                    <div class="control-item" data-tooltip="Label only every Nth ring to reduce clutter. Set to 1 to label all rings.">
                         <div class="control-label">
                             <span>Label Every Nth Ring</span>
                             <span class="control-value" id="labelFreqValue">1</span>
@@ -890,7 +1017,101 @@
                 </div>
 
                 <!-- Toggles -->
-                <div class="section-header">Display Options</div>
+                <div class="section-header">Display Options</div> rings possible</div>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Controls how spread out the rings are. Higher = more space between rings.">
+                        <div class="control-label">
+                            <span>Ring Spacing Factor</span>
+                            <span class="control-value" id="spacingValue">1.0</span>
+                        </div>
+                        <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
+                    </div>
+                </div>
+
+                <!-- Custom Farey Points -->
+                <div class="section-header">🎯 Custom Farey Points</div>
+                <div class="control-row">
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Define specific rational fractions to highlight. These form the vertices of the Farey triangle.">
+                        <div class="control-label">
+                            <span>Farey Points (Fractions)</span>
+                        </div>
+                        <div id="fareyPointsList" class="farey-point-list"></div>
+                        <button class="add-btn" onclick="addFareyPoint()">+ Add Farey Point</button>
+                        <div class="help-text">Format: numerator/denominator (e.g., 1/3, 2/5, 3/7)</div>
+                    </div>
+                </div>
+
+                <!-- Connection Options -->
+                <div class="section-header">🔗 Connection Options</div>
+                <div class="control-row">
+                    <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
+                        <div class="control-label">
+                            <span>Connect Points By</span>
+                        </div>
+                        <select id="connectionMode">
+                            <option value="none">No Connections</option>
+                            <option value="farey">Farey Points Only</option>
+                            <option value="mod">Same Modulus</option>
+                            <option value="angle">Same Angle</option>
+                            <option value="gcd">Same GCD</option>
+                            <option value="fraction">Same Fraction Value</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
+                        <div class="control-label">
+                            <span>Connection Thickness</span>
+                            <span class="control-value" id="connectionThicknessValue">1.0</span>
+                        </div>
+                        <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Transparency of connection lines. Lower = more transparent, easier to see overlapping patterns.">
+                        <div class="control-label">
+                            <span>Connection Opacity</span>
+                            <span class="control-value" id="connectionOpacityValue">0.3</span>
+                        </div>
+                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.05">
+                    </div>
+                </div>
+
+                <!-- Label Options -->
+                <div class="section-header">🏷️ Label Options</div>
+                <div class="control-row">
+                    <div class="control-item" data-tooltip="Choose which elements get text labels. 'Everything' can be cluttered for large visualizations.">
+                        <div class="control-label">
+                            <span>Label Mode</span>
+                        </div>
+                        <select id="labelMode">
+                            <option value="none">No Labels</option>
+                            <option value="farey">Farey Points Only</option>
+                            <option value="all">All Points</option>
+                            <option value="coprime">Coprime Only</option>
+                            <option value="rings">Ring Numbers Only</option>
+                            <option value="everything">Everything</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Font size for labels in pixels.">
+                        <div class="control-label">
+                            <span>Label Size</span>
+                            <span class="control-value" id="labelSizeValue">10</span>
+                        </div>
+                        <input type="range" id="labelSizeSlider" min="6" max="24" value="10" step="1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Label only every Nth ring to reduce clutter. Set to 1 to label all rings.">
+                        <div class="control-label">
+                            <span>Label Every Nth Ring</span>
+                            <span class="control-value" id="labelFreqValue">1</span>
+                        </div>
+                        <input type="number" id="labelFreqInput" value="1" min="1" step="1">
+                    </div>
+                </div>
+
+                <!-- Toggles -->
+                <div class="section-header">⚡ Display Options</div>
                 <div class="toggle-grid">
                     <input type="checkbox" id="toggleFarey" checked>
                     <label for="toggleFarey" class="toggle-item">
@@ -968,19 +1189,19 @@
                 <!-- Action Buttons -->
                 <div class="action-bar">
                     <button class="btn btn-primary" onclick="updateAll()">
-                        <span>Update All</span>
+                        <span>🔄 Update All</span>
                     </button>
                     <button class="btn btn-secondary" onclick="regeneratePrimes()">
-                        <span>Regenerate Primes</span>
+                        <span>🔢 Regenerate Primes</span>
                     </button>
                     <button class="btn btn-accent" onclick="resetDefaults()">
-                        <span>Reset to Defaults</span>
+                        <span>🔁 Reset to Defaults</span>
                     </button>
                     <button class="btn btn-secondary" onclick="exportVisualization()">
-                        <span>Export PNG</span>
+                        <span>💾 Export PNG</span>
                     </button>
                     <button class="btn btn-secondary" onclick="printDiagnostics()">
-                        <span>Print Diagnostics</span>
+                        <span>🔍 Print Diagnostics</span>
                     </button>
                 </div>
             </div>
@@ -1147,63 +1368,20 @@
         }
 
         function setupEventListeners() {
-            // Phase controls (both slider and input)
+            // Phase slider
             document.getElementById('phaseSlider').addEventListener('input', e => {
                 state.phase = parseFloat(e.target.value);
                 document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
-                document.getElementById('phaseInput').value = state.phase.toFixed(1);
                 if (!state.animationId) updateAll();
             });
 
-            document.getElementById('phaseInput').addEventListener('change', e => {
-                let val = parseFloat(e.target.value);
-                if (!isNaN(val)) {
-                    val = val % 360;
-                    if (val < 0) val += 360;
-                    state.phase = val;
-                    document.getElementById('phaseSlider').value = val;
-                    document.getElementById('phaseValue').textContent = val.toFixed(1) + '°';
-                    e.target.value = val.toFixed(1);
-                    updateAll();
-                }
-            });
-
-            // Modulus controls (both slider and input)
-            document.getElementById('modulusSlider').addEventListener('input', e => {
-                const val = parseInt(e.target.value);
-                state.modulus = val;
-                document.getElementById('modulusInput').value = val;
-                document.getElementById('modulusDisplay').textContent = val;
-                if (!state.animationId) updateAll();
-            });
-
+            // Modulus input
             document.getElementById('modulusInput').addEventListener('change', e => {
                 const val = parseInt(e.target.value);
                 if (val > 0) {
                     state.modulus = val;
-                    if (val <= 200) {
-                        document.getElementById('modulusSlider').value = val;
-                    }
                     document.getElementById('modulusDisplay').textContent = val;
                     updateAll();
-                }
-            });
-
-            // Speed controls (both slider and input)
-            document.getElementById('speedSlider').addEventListener('input', e => {
-                state.animSpeed = parseFloat(e.target.value);
-                document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
-                document.getElementById('speedInput').value = state.animSpeed.toFixed(1);
-            });
-
-            document.getElementById('speedInput').addEventListener('change', e => {
-                const val = parseFloat(e.target.value);
-                if (val >= 0.1) {
-                    state.animSpeed = val;
-                    if (val <= 20) {
-                        document.getElementById('speedSlider').value = val;
-                    }
-                    document.getElementById('speedValue').textContent = val.toFixed(1) + '×';
                 }
             });
 
@@ -1261,28 +1439,24 @@
             document.getElementById('cayleyHRangeSlider').addEventListener('input', e => {
                 state.cayleyHRange = parseFloat(e.target.value);
                 document.getElementById('cayleyHRangeValue').textContent = state.cayleyHRange.toFixed(1);
-                console.log('Cayley H Range changed to:', state.cayleyHRange);
                 if (!state.animationId) updateAll();
             });
 
             document.getElementById('cayleyVRangeSlider').addEventListener('input', e => {
                 state.cayleyVRange = parseFloat(e.target.value);
                 document.getElementById('cayleyVRangeValue').textContent = state.cayleyVRange.toFixed(1);
-                console.log('Cayley V Range changed to:', state.cayleyVRange);
                 if (!state.animationId) updateAll();
             });
 
             document.getElementById('cayleyVOffsetSlider').addEventListener('input', e => {
                 state.cayleyVOffset = parseFloat(e.target.value);
                 document.getElementById('cayleyVOffsetValue').textContent = state.cayleyVOffset.toFixed(1);
-                console.log('Cayley V Offset changed to:', state.cayleyVOffset);
                 if (!state.animationId) updateAll();
             });
 
             document.getElementById('cayleyGridDensitySlider').addEventListener('input', e => {
                 state.cayleyGridDensity = parseFloat(e.target.value);
                 document.getElementById('cayleyGridDensityValue').textContent = state.cayleyGridDensity.toFixed(1);
-                console.log('Cayley Grid Density changed to:', state.cayleyGridDensity);
                 if (!state.animationId) updateAll();
             });
 
@@ -1955,15 +2129,6 @@
             ctx.shadowBlur = 10;
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
-            
-            // Show current view range
-            ctx.font = '11px "Fira Code"';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            const reMin = -state.cayleyHRange / 2;
-            const reMax = state.cayleyHRange / 2;
-            const imMin = state.cayleyVOffset;
-            const imMax = state.cayleyVRange + state.cayleyVOffset;
-            ctx.fillText(`Re: [${reMin.toFixed(1)}, ${reMax.toFixed(1)}]  Im: [${imMin.toFixed(1)}, ${imMax.toFixed(1)}]`, w/2, 55);
             ctx.shadowBlur = 0;
         }
 
@@ -2256,6 +2421,160 @@
         // UI CONTROLS
         // ============================================================
 
+        function toggleIntro() {
+            const panel = document.getElementById('introPanel');
+            const toggle = document.getElementById('introToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                panel.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        function applyPreset(preset) {
+            stopAnimation();
+            
+            switch(preset) {
+                case 'minimal':
+                    state.modulus = 12;
+                    state.numPrimes = 50;
+                    state.minRing = 1;
+                    state.maxRing = 6;
+                    state.connectionMode = 'none';
+                    state.labelMode = 'farey';
+                    document.getElementById('toggleFarey').checked = true;
+                    document.getElementById('toggleGeodesic').checked = true;
+                    document.getElementById('togglePrimes').checked = false;
+                    document.getElementById('toggleChannels').checked = false;
+                    document.getElementById('toggleCusps').checked = true;
+                    document.getElementById('toggleRings').checked = true;
+                    document.getElementById('toggleGCD').checked = false;
+                    document.getElementById('toggleGrid').checked = false;
+                    document.getElementById('toggleFundDomain').checked = false;
+                    document.getElementById('toggleVerticals').checked = false;
+                    document.getElementById('toggleDiskOutline').checked = false;
+                    break;
+                    
+                case 'default':
+                    resetDefaults();
+                    return;
+                    
+                case 'maximum':
+                    state.modulus = 60;
+                    state.numPrimes = 500;
+                    state.minRing = 1;
+                    state.maxRing = 30;
+                    state.connectionMode = 'gcd';
+                    state.connectionOpacity = 0.15;
+                    state.labelMode = 'rings';
+                    state.labelFreq = 3;
+                    document.getElementById('toggleFarey').checked = true;
+                    document.getElementById('toggleGeodesic').checked = true;
+                    document.getElementById('togglePrimes').checked = true;
+                    document.getElementById('toggleChannels').checked = true;
+                    document.getElementById('toggleCusps').checked = true;
+                    document.getElementById('toggleRings').checked = true;
+                    document.getElementById('toggleGCD').checked = true;
+                    document.getElementById('toggleGrid').checked = true;
+                    document.getElementById('toggleFundDomain').checked = true;
+                    document.getElementById('toggleVerticals').checked = true;
+                    document.getElementById('toggleDiskOutline').checked = true;
+                    break;
+                    
+                case 'fundamental':
+                    state.modulus = 12;
+                    state.numPrimes = 0;
+                    state.cayleyHRange = 3;
+                    state.cayleyVRange = 3;
+                    state.cayleyVOffset = 0;
+                    state.minRing = 1;
+                    state.maxRing = 8;
+                    document.getElementById('toggleFarey').checked = true;
+                    document.getElementById('toggleGeodesic').checked = true;
+                    document.getElementById('togglePrimes').checked = false;
+                    document.getElementById('toggleChannels').checked = false;
+                    document.getElementById('toggleCusps').checked = true;
+                    document.getElementById('toggleRings').checked = false;
+                    document.getElementById('toggleGCD').checked = false;
+                    document.getElementById('toggleGrid').checked = true;
+                    document.getElementById('toggleFundDomain').checked = true;
+                    document.getElementById('toggleVerticals').checked = true;
+                    document.getElementById('toggleDiskOutline').checked = true;
+                    break;
+                    
+                case 'primes':
+                    state.modulus = 24;
+                    state.numPrimes = 1000;
+                    state.primeLimit = 20000;
+                    state.minRing = 1;
+                    state.maxRing = 8;
+                    regeneratePrimes();
+                    document.getElementById('toggleFarey').checked = false;
+                    document.getElementById('toggleGeodesic').checked = false;
+                    document.getElementById('togglePrimes').checked = true;
+                    document.getElementById('toggleChannels').checked = true;
+                    document.getElementById('toggleCusps').checked = false;
+                    document.getElementById('toggleRings').checked = false;
+                    document.getElementById('toggleGCD').checked = false;
+                    document.getElementById('toggleGrid').checked = false;
+                    document.getElementById('toggleFundDomain').checked = false;
+                    document.getElementById('toggleVerticals').checked = false;
+                    document.getElementById('toggleDiskOutline').checked = false;
+                    break;
+                    
+                case 'rings':
+                    state.modulus = 24;
+                    state.numPrimes = 0;
+                    state.minRing = 1;
+                    state.maxRing = 40;
+                    state.connectionMode = 'mod';
+                    state.connectionOpacity = 0.2;
+                    state.labelMode = 'rings';
+                    state.labelFreq = 5;
+                    document.getElementById('toggleFarey').checked = false;
+                    document.getElementById('toggleGeodesic').checked = false;
+                    document.getElementById('togglePrimes').checked = false;
+                    document.getElementById('toggleChannels').checked = false;
+                    document.getElementById('toggleCusps').checked = false;
+                    document.getElementById('toggleRings').checked = true;
+                    document.getElementById('toggleGCD').checked = true;
+                    document.getElementById('toggleGrid').checked = false;
+                    document.getElementById('toggleFundDomain').checked = false;
+                    document.getElementById('toggleVerticals').checked = false;
+                    document.getElementById('toggleDiskOutline').checked = false;
+                    break;
+            }
+            
+            // Sync UI with state
+            syncUIWithState();
+            updateAll();
+        }
+        
+        function syncUIWithState() {
+            document.getElementById('modulusInput').value = state.modulus;
+            document.getElementById('modulusDisplay').textContent = state.modulus;
+            document.getElementById('primesInput').value = state.numPrimes;
+            document.getElementById('primesDisplay').textContent = state.numPrimes;
+            document.getElementById('minRingInput').value = state.minRing;
+            document.getElementById('minRingDisplay').textContent = state.minRing;
+            document.getElementById('maxRingInput').value = state.maxRing;
+            document.getElementById('maxRingDisplay').textContent = state.maxRing;
+            document.getElementById('connectionMode').value = state.connectionMode;
+            document.getElementById('connectionOpacitySlider').value = state.connectionOpacity;
+            document.getElementById('connectionOpacityValue').textContent = state.connectionOpacity.toFixed(2);
+            document.getElementById('labelMode').value = state.labelMode;
+            document.getElementById('labelFreqInput').value = state.labelFreq;
+            document.getElementById('labelFreqValue').textContent = state.labelFreq;
+            document.getElementById('cayleyHRangeSlider').value = state.cayleyHRange;
+            document.getElementById('cayleyHRangeValue').textContent = state.cayleyHRange.toFixed(1);
+            document.getElementById('cayleyVRangeSlider').value = state.cayleyVRange;
+            document.getElementById('cayleyVRangeValue').textContent = state.cayleyVRange.toFixed(1);
+            document.getElementById('cayleyVOffsetSlider').value = state.cayleyVOffset;
+            document.getElementById('cayleyVOffsetValue').textContent = state.cayleyVOffset.toFixed(1);
+        }
+
         function resetDefaults() {
             state = {
                 phase: 0,
@@ -2287,13 +2606,10 @@
 
             // Reset UI
             document.getElementById('phaseSlider').value = 0;
-            document.getElementById('phaseInput').value = 0;
-            document.getElementById('modulusSlider').value = 30;
             document.getElementById('modulusInput').value = 30;
             document.getElementById('primesInput').value = 150;
             document.getElementById('primeLimitInput').value = 10000;
             document.getElementById('speedSlider').value = 1;
-            document.getElementById('speedInput').value = 1;
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
@@ -2360,23 +2676,23 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\nBASIC PARAMETERS:');
+            console.log('\n🎯 BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\nCAYLEY PLANE VIEW:');
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
             console.log('  Grid density:', state.cayleyGridDensity);
             
-            console.log('\nNESTED RINGS:');
+            console.log('\n⊚ NESTED RINGS:');
             console.log('  Ring range: m =', state.minRing, 'to', state.maxRing);
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\nFAREY POINTS:');
+            console.log('\n🎯 FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + state.phase * Math.PI / 180;
@@ -2389,7 +2705,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\nPRIME DISTRIBUTION:');
+            console.log('\n🔢 PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -2398,15 +2714,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\nCONNECTION MODE:', state.connectionMode);
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\nLABEL MODE:', state.labelMode);
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\nDISPLAY TOGGLES:');
+            console.log('\n📊 DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -2419,7 +2735,7 @@
                 }
             });
             
-            console.log('\nCAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Formula: w = i(1-z)/(1+z)');
             console.log('  Inverse: z = (i-w)/(i+w)');
             
