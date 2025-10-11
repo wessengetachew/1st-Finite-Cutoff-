@@ -3015,15 +3015,29 @@
 
         function drawLegend(ctx, width, height, canvasType) {
             const scale = width / 1920;
-            const legendWidth = 350 * scale;
-            const legendX = 30 * scale;
-            const legendY = 30 * scale;
-            const fontSize = 13 * scale;
+            
+            // Adjust legend size based on canvas type - more items need more space
+            let legendWidth = 380 * scale;
+            let legendX, legendY;
+            
+            // Position legend to avoid overlap with main content
+            if (canvasType === 'all') {
+                // For combined view, place in top-left with more width
+                legendX = 30 * scale;
+                legendY = 30 * scale;
+                legendWidth = 420 * scale;
+            } else {
+                // For single canvas, place in top-right corner
+                legendX = width - legendWidth - 30 * scale;
+                legendY = 30 * scale;
+            }
+            
+            const fontSize = 12 * scale;
             const titleSize = 18 * scale;
             const sectionTitleSize = 14 * scale;
-            const itemHeight = 32 * scale;
-            const symbolSize = 22 * scale;
-            const padding = 20 * scale;
+            const itemHeight = 30 * scale;
+            const symbolSize = 20 * scale;
+            const padding = 18 * scale;
 
             let items = [];
             let parameters = [];
@@ -3040,90 +3054,93 @@
                     { color: CONFIG.colors.grid, text: 'Grid Lines' }
                 ];
                 parameters = [
-                    `Modulus m = ${state.modulus}`,
-                    `Primes displayed: ${Math.min(state.numPrimes, state.primes.length)}`,
-                    `Farey points: ${state.fareyPoints.length}`,
-                    `Phase: ${state.phase.toFixed(1)}°`
+                    `m = ${state.modulus}`,
+                    `Primes: ${Math.min(state.numPrimes, state.primes.length)}`,
+                    `Farey pts: ${state.fareyPoints.length}`,
+                    `θ = ${state.phase.toFixed(1)}°`
                 ];
             } else if (canvasType === 'cayley') {
                 items = [
                     { type: 'section', text: 'Upper Half-Plane ℍ' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (Boundary ∂ℍ)' },
-                    { color: CONFIG.colors.farey, text: 'Transformed Farey Points' },
-                    { color: CONFIG.colors.geodesic, text: 'Hyperbolic Geodesics' },
-                    { color: CONFIG.colors.cusp, text: 'Cusp Points on ℝ' },
-                    { type: 'section', text: 'Prime Distribution' },
-                    { color: CONFIG.colors.prime, text: 'Transformed Primes' },
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (∂ℍ)' },
+                    { color: CONFIG.colors.farey, text: 'Farey Points' },
+                    { color: CONFIG.colors.geodesic, text: 'Geodesics' },
+                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
+                    { type: 'section', text: 'Distribution' },
+                    { color: CONFIG.colors.prime, text: 'Primes' },
                     { type: 'section', text: 'Geometry' },
-                    { color: 'rgba(230, 126, 34, 0.5)', text: 'Fundamental Domain' },
-                    { color: 'rgba(155, 89, 182, 0.3)', text: 'Vertical Geodesics' },
-                    { color: 'rgba(231, 76, 60, 0.4)', text: 'Unit Disk Outline' }
+                    { color: 'rgba(230, 126, 34, 0.5)', text: 'Fund. Domain' },
+                    { color: 'rgba(155, 89, 182, 0.3)', text: 'Vert. Geodesics' }
                 ];
                 parameters = [
-                    `View range: [${(-state.cayleyHRange/2).toFixed(1)}, ${(state.cayleyHRange/2).toFixed(1)}] × [${state.cayleyVOffset.toFixed(1)}, ${(state.cayleyVRange + state.cayleyVOffset).toFixed(1)}i]`,
-                    `Modulus m = ${state.modulus}`,
-                    `Transform: w = i(1-z)/(1+z)`,
-                    `Primes: ${Math.min(state.numPrimes, state.primes.length)}`
+                    `Re: [${(-state.cayleyHRange/2).toFixed(1)}, ${(state.cayleyHRange/2).toFixed(1)}]`,
+                    `Im: [${state.cayleyVOffset.toFixed(1)}, ${(state.cayleyVRange + state.cayleyVOffset).toFixed(1)}i]`,
+                    `m = ${state.modulus}`,
+                    `w = i(1-z)/(1+z)`
                 ];
             } else if (canvasType === 'nested') {
                 items = [
                     { type: 'section', text: 'GCD Coloring' },
-                    { color: CONFIG.colors.farey, text: 'GCD(k,m) = 1 (Coprime)' },
-                    { color: '#e74c3c', text: 'GCD(k,m) = m (Divisible)' },
-                    { color: '#00ffff', text: 'GCD(k,m) = 2' },
-                    { color: '#9b59b6', text: 'GCD(k,m) = 3' },
-                    { color: 'hsla(240, 70%, 60%, 0.85)', text: 'GCD(k,m) = 4' },
-                    { color: 'hsla(300, 70%, 60%, 0.85)', text: 'GCD(k,m) = 5+' },
+                    { color: CONFIG.colors.farey, text: 'GCD = 1 (Coprime)' },
+                    { color: '#e74c3c', text: 'GCD = m (Divisible)' },
+                    { color: '#00ffff', text: 'GCD = 2' },
+                    { color: '#9b59b6', text: 'GCD = 3' },
+                    { color: 'hsla(240, 70%, 60%, 0.85)', text: 'GCD = 4' },
                     { type: 'section', text: 'Structure' },
-                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles (mod m)' },
-                    { color: '#ff6b6b', text: 'Highlighted Farey Points' }
+                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' },
+                    { color: '#ff6b6b', text: 'Farey Points' }
                 ];
                 parameters = [
-                    `Ring range: m = ${state.minRing} to ${state.maxRing}`,
-                    `Total rings: ${state.maxRing - state.minRing + 1}`,
-                    `Ring spacing: ${state.ringSpacing.toFixed(2)}`,
-                    `Connection mode: ${state.connectionMode}`,
-                    `Phase: ${state.phase.toFixed(1)}°`
+                    `Rings: m = ${state.minRing}–${state.maxRing}`,
+                    `Count: ${state.maxRing - state.minRing + 1}`,
+                    `Spacing: ${state.ringSpacing.toFixed(2)}`,
+                    `Mode: ${state.connectionMode}`
                 ];
             } else if (canvasType === 'all') {
                 items = [
-                    { type: 'section', text: 'Fundamental Elements' },
-                    { color: CONFIG.colors.farey, text: 'Farey Points & Coprime' },
-                    { color: CONFIG.colors.geodesic, text: 'Hyperbolic Geodesics' },
-                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
-                    { color: CONFIG.colors.prime, text: 'Prime Distribution' },
+                    { type: 'section', text: 'Key Elements' },
+                    { color: CONFIG.colors.farey, text: 'Farey/Coprime' },
+                    { color: CONFIG.colors.geodesic, text: 'Geodesics' },
+                    { color: CONFIG.colors.cusp, text: 'Cusps' },
+                    { color: CONFIG.colors.prime, text: 'Primes' },
                     { type: 'section', text: 'Boundaries' },
                     { color: CONFIG.colors.disk, text: 'Unit Circle' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes & Real Line' },
-                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' },
-                    { type: 'section', text: 'GCD Colors' },
-                    { color: CONFIG.colors.farey, text: 'Coprime (GCD=1)' },
-                    { color: '#e74c3c', text: 'Divisible (GCD=m)' }
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes/Real' },
+                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Rings' },
+                    { type: 'section', text: 'GCD' },
+                    { color: CONFIG.colors.farey, text: 'GCD=1' },
+                    { color: '#e74c3c', text: 'GCD=m' }
                 ];
                 parameters = [
-                    `Modulus m = ${state.modulus}`,
-                    `Primes: ${Math.min(state.numPrimes, state.primes.length)} of ${state.primeLimit}`,
-                    `Rings: ${state.minRing} to ${state.maxRing}`,
-                    `Farey points: ${state.fareyPoints.map(fp => `${fp.num}/${fp.den}`).join(', ')}`,
-                    `Phase rotation: ${state.phase.toFixed(1)}°`
+                    `m = ${state.modulus}`,
+                    `Primes: ${Math.min(state.numPrimes, state.primes.length)}`,
+                    `Rings: ${state.minRing}–${state.maxRing}`,
+                    `Farey: ${state.fareyPoints.map(fp => `${fp.num}/${fp.den}`).join(', ')}`
                 ];
             }
 
-            const legendHeight = (items.length * itemHeight) + (parameters.length * itemHeight * 0.8) + (padding * 5);
+            // Calculate actual legend height based on content
+            const sectionCount = items.filter(i => i.type === 'section').length;
+            const regularItemCount = items.filter(i => !i.type).length;
+            const legendHeight = (padding * 5) + 
+                                (sectionCount * itemHeight * 0.8) + 
+                                (regularItemCount * itemHeight) + 
+                                (parameters.length * itemHeight * 0.7) +
+                                (itemHeight * 1.5); // Extra space for footer
 
             // Background with gradient
             const gradient = ctx.createLinearGradient(legendX, legendY, legendX, legendY + legendHeight);
-            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.98)');
-            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.98)');
+            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.97)');
+            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.97)');
             ctx.fillStyle = gradient;
             
             ctx.strokeStyle = CONFIG.colors.farey;
-            ctx.lineWidth = 3 * scale;
-            ctx.shadowBlur = 20 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            ctx.lineWidth = 2.5 * scale;
+            ctx.shadowBlur = 15 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
             
             // Rounded rectangle
-            const radius = 12 * scale;
+            const radius = 10 * scale;
             ctx.beginPath();
             ctx.moveTo(legendX + radius, legendY);
             ctx.lineTo(legendX + legendWidth - radius, legendY);
@@ -3143,49 +3160,49 @@
             ctx.fillStyle = CONFIG.colors.farey;
             ctx.font = `bold ${titleSize}px "Fira Code"`;
             ctx.textAlign = 'left';
-            ctx.shadowBlur = 10 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.8)';
-            ctx.fillText('LEGEND', legendX + padding, legendY + padding * 1.8);
+            ctx.shadowBlur = 8 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+            ctx.fillText('LEGEND', legendX + padding, legendY + padding * 1.5);
             ctx.shadowBlur = 0;
 
             // Separator line after title
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
-            ctx.lineWidth = 2 * scale;
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+            ctx.lineWidth = 1.5 * scale;
             ctx.beginPath();
-            ctx.moveTo(legendX + padding, legendY + padding * 2.5);
-            ctx.lineTo(legendX + legendWidth - padding, legendY + padding * 2.5);
+            ctx.moveTo(legendX + padding, legendY + padding * 2.2);
+            ctx.lineTo(legendX + legendWidth - padding, legendY + padding * 2.2);
             ctx.stroke();
 
             // Items
-            let currentY = legendY + padding * 3.5;
+            let currentY = legendY + padding * 3;
             
             items.forEach((item, idx) => {
                 if (item.type === 'section') {
                     // Section header
-                    currentY += itemHeight * 0.3;
-                    ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
+                    currentY += itemHeight * 0.2;
+                    ctx.fillStyle = 'rgba(0, 255, 255, 0.85)';
                     ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
                     ctx.fillText(item.text, legendX + padding, currentY);
                     
                     // Underline
-                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
                     ctx.lineWidth = 1 * scale;
                     ctx.beginPath();
-                    ctx.moveTo(legendX + padding, currentY + 5 * scale);
-                    ctx.lineTo(legendX + legendWidth - padding, currentY + 5 * scale);
+                    ctx.moveTo(legendX + padding, currentY + 4 * scale);
+                    ctx.lineTo(legendX + legendWidth - padding, currentY + 4 * scale);
                     ctx.stroke();
                     
-                    currentY += itemHeight * 0.5;
+                    currentY += itemHeight * 0.6;
                 } else {
                     // Regular item with color symbol
                     ctx.fillStyle = item.color;
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                    ctx.lineWidth = 1.5 * scale;
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.lineWidth = 1.2 * scale;
                     
                     // Symbol (rounded rectangle)
-                    const symbolRadius = 4 * scale;
+                    const symbolRadius = 3 * scale;
                     const symX = legendX + padding;
-                    const symY = currentY - symbolSize * 0.7;
+                    const symY = currentY - symbolSize * 0.65;
                     
                     ctx.beginPath();
                     ctx.moveTo(symX + symbolRadius, symY);
@@ -3204,40 +3221,41 @@
                     // Text
                     ctx.fillStyle = '#e8f1f5';
                     ctx.font = `${fontSize}px "Fira Code"`;
-                    ctx.fillText(item.text, legendX + padding + symbolSize + 12 * scale, currentY);
+                    ctx.fillText(item.text, legendX + padding + symbolSize + 10 * scale, currentY);
                     
                     currentY += itemHeight;
                 }
             });
 
             // Parameters section
-            currentY += itemHeight * 0.5;
-            ctx.fillStyle = 'rgba(0, 255, 255, 0.9)';
+            currentY += itemHeight * 0.3;
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.85)';
             ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
             ctx.fillText('Parameters', legendX + padding, currentY);
             
-            ctx.strokeStyle = 'rgba(0, 255, 255, 0.3)';
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
             ctx.lineWidth = 1 * scale;
             ctx.beginPath();
-            ctx.moveTo(legendX + padding, currentY + 5 * scale);
-            ctx.lineTo(legendX + legendWidth - padding, currentY + 5 * scale);
+            ctx.moveTo(legendX + padding, currentY + 4 * scale);
+            ctx.lineTo(legendX + legendWidth - padding, currentY + 4 * scale);
             ctx.stroke();
             
-            currentY += itemHeight * 0.7;
+            currentY += itemHeight * 0.6;
 
             ctx.font = `${fontSize * 0.95}px "Fira Code"`;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
             parameters.forEach(param => {
                 ctx.fillText('• ' + param, legendX + padding, currentY);
-                currentY += itemHeight * 0.8;
+                currentY += itemHeight * 0.7;
             });
 
             // Math notation footer
-            currentY += itemHeight * 0.3;
+            currentY += itemHeight * 0.2;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.font = `italic ${fontSize * 0.85}px "Fira Code"`;
-            ctx.fillText('𝔻 → ℍ via Cayley Transform', legendX + padding, currentY);
-            ctx.fillText('PSL(2,ℤ) Modular Group Action', legendX + padding, currentY + itemHeight * 0.6);
+            ctx.fillText('𝔻 → ℍ via Cayley', legendX + padding, currentY);
+            currentY += itemHeight * 0.55;
+            ctx.fillText('PSL(2,ℤ) Action', legendX + padding, currentY);
         }
 
         function printDiagnostics() {
