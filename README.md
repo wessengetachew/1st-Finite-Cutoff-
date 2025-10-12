@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farey Triangle & Cayley Transform - Wessen Getachew Explorer</title>
+    <title>Farey Triangle & Cayley Transform - Unlimited Explorer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
         
@@ -2756,7 +2756,7 @@
                         
                         <div class="action-bar">
                             <button class="btn btn-primary" onclick="performExport()">
-                                <span> Export PNG</span>
+                                <span>💾 Export PNG</span>
                             </button>
                             <button class="btn btn-secondary" onclick="closeExportDialog()">
                                 <span>Cancel</span>
@@ -3010,123 +3010,110 @@
         function drawLegend(ctx, width, height, canvasType) {
             const scale = Math.min(width, height) / 1920;
             
-            // Adjust legend size and position
-            let legendWidth = 400 * scale;
+            // Adjust legend size and position to avoid all overlap
+            let legendWidth = 420 * scale;
             let legendX, legendY;
             
-            // Position in top-left to avoid overlap
+            // Always position in bottom-left to avoid title/canvas overlap
             legendX = 30 * scale;
-            legendY = 120 * scale; // Lower to avoid title overlap
+            legendY = height - 30 * scale; // Start from bottom
             
-            const fontSize = 13 * scale;
-            const titleSize = 20 * scale;
-            const sectionTitleSize = 15 * scale;
-            const itemHeight = 28 * scale;
-            const symbolSize = 20 * scale;
-            const padding = 20 * scale;
+            const fontSize = 11 * scale;
+            const titleSize = 16 * scale;
+            const sectionTitleSize = 13 * scale;
+            const itemHeight = 24 * scale;
+            const symbolSize = 18 * scale;
+            const padding = 15 * scale;
 
             let items = [];
             let parameters = [];
             
             if (canvasType === 'disk') {
                 items = [
-                    { type: 'section', text: 'Unit Disk Elements' },
-                    { color: CONFIG.colors.disk, text: 'Unit Circle Boundary' },
-                    { color: CONFIG.colors.farey, text: 'Farey Triangle Vertices' },
-                    { color: CONFIG.colors.fareyFill, text: 'Farey Triangle Fill' },
-                    { color: CONFIG.colors.prime, text: 'Prime Numbers' },
-                    { type: 'section', text: 'Structure' },
-                    { color: CONFIG.colors.axes, text: 'Coordinate Axes' },
-                    { color: CONFIG.colors.grid, text: 'Grid Lines' }
+                    { type: 'section', text: 'Unit Disk' },
+                    { color: CONFIG.colors.disk, text: 'Circle Boundary' },
+                    { color: CONFIG.colors.farey, text: 'Farey Vertices' },
+                    { color: CONFIG.colors.prime, text: 'Primes' }
                 ];
                 parameters = [
-                    `m = ${state.modulus}`,
+                    `m=${state.modulus}`,
                     `Primes: ${Math.min(state.numPrimes, state.primes.length)}`,
-                    `Farey pts: ${state.fareyPoints.length}`,
-                    `θ = ${state.phase.toFixed(1)}°`
+                    `θ=${state.phase.toFixed(0)}°`
                 ];
             } else if (canvasType === 'cayley') {
                 items = [
-                    { type: 'section', text: 'Upper Half-Plane ℍ' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis (∂ℍ)' },
+                    { type: 'section', text: 'Half-Plane ℍ' },
+                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Real Axis' },
                     { color: CONFIG.colors.farey, text: 'Farey Points' },
                     { color: CONFIG.colors.geodesic, text: 'Geodesics' },
-                    { color: CONFIG.colors.cusp, text: 'Cusp Points' },
-                    { type: 'section', text: 'Distribution' },
-                    { color: CONFIG.colors.prime, text: 'Primes' },
-                    { type: 'section', text: 'Geometry' },
-                    { color: 'rgba(230, 126, 34, 0.5)', text: 'Fund. Domain' },
-                    { color: 'rgba(155, 89, 182, 0.3)', text: 'Vert. Geodesics' }
+                    { color: CONFIG.colors.cusp, text: 'Cusps' }
                 ];
                 parameters = [
-                    `Re: [${(-state.cayleyHRange/2).toFixed(1)}, ${(state.cayleyHRange/2).toFixed(1)}]`,
-                    `Im: [${state.cayleyVOffset.toFixed(1)}, ${(state.cayleyVRange + state.cayleyVOffset).toFixed(1)}i]`,
-                    `m = ${state.modulus}`,
-                    `w = i(1-z)/(1+z)`
+                    `m=${state.modulus}`,
+                    `Re: [${(-state.cayleyHRange/2).toFixed(1)},${(state.cayleyHRange/2).toFixed(1)}]`,
+                    `Im: [${state.cayleyVOffset.toFixed(1)},${(state.cayleyVRange+state.cayleyVOffset).toFixed(1)}]`
                 ];
             } else if (canvasType === 'nested') {
                 items = [
-                    { type: 'section', text: 'GCD Coloring' },
-                    { color: CONFIG.colors.farey, text: 'GCD = 1 (Coprime)' },
-                    { color: '#e74c3c', text: 'GCD = m (Divisible)' },
-                    { color: '#00ffff', text: 'GCD = 2' },
-                    { color: '#9b59b6', text: 'GCD = 3' },
-                    { color: 'hsla(240, 70%, 60%, 0.85)', text: 'GCD = 4' },
-                    { type: 'section', text: 'Structure' },
-                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Ring Circles' },
-                    { color: '#ff6b6b', text: 'Farey Points' }
+                    { type: 'section', text: 'GCD Colors' },
+                    { color: CONFIG.colors.farey, text: 'GCD=1' },
+                    { color: '#e74c3c', text: 'GCD=m' },
+                    { color: '#00ffff', text: 'GCD=2' },
+                    { color: '#9b59b6', text: 'GCD=3' }
                 ];
                 parameters = [
-                    `Rings: m = ${state.minRing}–${state.maxRing}`,
+                    `Rings: ${state.minRing}–${state.maxRing}`,
                     `Count: ${state.maxRing - state.minRing + 1}`,
-                    `Spacing: ${state.ringSpacing.toFixed(2)}`,
                     `Mode: ${state.connectionMode}`
                 ];
             } else if (canvasType === 'all') {
                 items = [
-                    { type: 'section', text: 'Key Elements' },
+                    { type: 'section', text: 'Elements' },
                     { color: CONFIG.colors.farey, text: 'Farey/Coprime' },
                     { color: CONFIG.colors.geodesic, text: 'Geodesics' },
-                    { color: CONFIG.colors.cusp, text: 'Cusps' },
                     { color: CONFIG.colors.prime, text: 'Primes' },
-                    { type: 'section', text: 'Boundaries' },
-                    { color: CONFIG.colors.disk, text: 'Unit Circle' },
-                    { color: 'rgba(255, 255, 255, 0.5)', text: 'Axes/Real' },
-                    { color: 'rgba(255, 255, 255, 0.15)', text: 'Rings' },
                     { type: 'section', text: 'GCD' },
                     { color: CONFIG.colors.farey, text: 'GCD=1' },
                     { color: '#e74c3c', text: 'GCD=m' }
                 ];
                 parameters = [
-                    `m = ${state.modulus}`,
+                    `m=${state.modulus}`,
                     `Primes: ${Math.min(state.numPrimes, state.primes.length)}`,
-                    `Rings: ${state.minRing}–${state.maxRing}`,
-                    `Farey: ${state.fareyPoints.map(fp => `${fp.num}/${fp.den}`).join(', ')}`
+                    `Rings: ${state.minRing}–${state.maxRing}`
                 ];
             }
 
-            // Calculate actual legend height based on content
+            // Calculate actual legend height
             const sectionCount = items.filter(i => i.type === 'section').length;
             const regularItemCount = items.filter(i => !i.type).length;
-            const legendHeight = (padding * 5) + 
-                                (sectionCount * itemHeight * 0.8) + 
-                                (regularItemCount * itemHeight) + 
-                                (parameters.length * itemHeight * 0.7) +
-                                (itemHeight * 1.5); // Extra space for footer
+            const legendHeight = (padding * 4) + 
+                                (sectionCount * itemHeight * 0.7) + 
+                                (regularItemCount * itemHeight * 0.9) + 
+                                (parameters.length * itemHeight * 0.65) +
+                                (itemHeight * 1.2);
+
+            // Adjust Y position so legend goes UP from bottom
+            legendY = legendY - legendHeight;
+
+            // Ensure legend stays within bounds
+            if (legendY < 30 * scale) legendY = 30 * scale;
+            if (legendX + legendWidth > width - 30 * scale) {
+                legendWidth = width - legendX - 30 * scale;
+            }
 
             // Background with gradient
             const gradient = ctx.createLinearGradient(legendX, legendY, legendX, legendY + legendHeight);
-            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.97)');
-            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.97)');
+            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.95)');
+            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.95)');
             ctx.fillStyle = gradient;
             
             ctx.strokeStyle = CONFIG.colors.farey;
-            ctx.lineWidth = 2.5 * scale;
-            ctx.shadowBlur = 15 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+            ctx.lineWidth = 2 * scale;
+            ctx.shadowBlur = 12 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.3)';
             
             // Rounded rectangle
-            const radius = 10 * scale;
+            const radius = 8 * scale;
             ctx.beginPath();
             ctx.moveTo(legendX + radius, legendY);
             ctx.lineTo(legendX + legendWidth - radius, legendY);
@@ -3142,53 +3129,74 @@
             ctx.stroke();
             ctx.shadowBlur = 0;
 
+            // Clip to legend box to prevent overflow
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(legendX, legendY, legendWidth, legendHeight);
+            ctx.clip();
+
             // Title
             ctx.fillStyle = CONFIG.colors.farey;
             ctx.font = `bold ${titleSize}px "Fira Code"`;
             ctx.textAlign = 'left';
-            ctx.shadowBlur = 8 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+            ctx.shadowBlur = 6 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
             ctx.fillText('LEGEND', legendX + padding, legendY + padding * 1.5);
             ctx.shadowBlur = 0;
 
-            // Separator line after title
+            // Separator line
             ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
-            ctx.lineWidth = 1.5 * scale;
+            ctx.lineWidth = 1 * scale;
             ctx.beginPath();
-            ctx.moveTo(legendX + padding, legendY + padding * 2.2);
-            ctx.lineTo(legendX + legendWidth - padding, legendY + padding * 2.2);
+            ctx.moveTo(legendX + padding, legendY + padding * 2.1);
+            ctx.lineTo(legendX + legendWidth - padding, legendY + padding * 2.1);
             ctx.stroke();
 
             // Items
-            let currentY = legendY + padding * 3;
+            let currentY = legendY + padding * 2.8;
             
             items.forEach((item, idx) => {
                 if (item.type === 'section') {
                     // Section header
-                    currentY += itemHeight * 0.2;
-                    ctx.fillStyle = 'rgba(0, 255, 255, 0.85)';
+                    currentY += itemHeight * 0.15;
+                    ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
                     ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
-                    ctx.fillText(item.text, legendX + padding, currentY);
+                    
+                    // Ensure text fits in legend
+                    const maxTextWidth = legendWidth - padding * 2;
+                    let text = item.text;
+                    let textWidth = ctx.measureText(text).width;
+                    
+                    if (textWidth > maxTextWidth) {
+                        // Truncate text if too long
+                        while (textWidth > maxTextWidth && text.length > 3) {
+                            text = text.slice(0, -1);
+                            textWidth = ctx.measureText(text + '...').width;
+                        }
+                        text = text + '...';
+                    }
+                    
+                    ctx.fillText(text, legendX + padding, currentY);
                     
                     // Underline
-                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
+                    ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
                     ctx.lineWidth = 1 * scale;
                     ctx.beginPath();
-                    ctx.moveTo(legendX + padding, currentY + 4 * scale);
-                    ctx.lineTo(legendX + legendWidth - padding, currentY + 4 * scale);
+                    ctx.moveTo(legendX + padding, currentY + 3 * scale);
+                    ctx.lineTo(legendX + legendWidth - padding, currentY + 3 * scale);
                     ctx.stroke();
                     
-                    currentY += itemHeight * 0.6;
+                    currentY += itemHeight * 0.55;
                 } else {
-                    // Regular item with color symbol
+                    // Regular item
                     ctx.fillStyle = item.color;
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-                    ctx.lineWidth = 1.2 * scale;
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1 * scale;
                     
-                    // Symbol (rounded rectangle)
+                    // Symbol
                     const symbolRadius = 3 * scale;
                     const symX = legendX + padding;
-                    const symY = currentY - symbolSize * 0.65;
+                    const symY = currentY - symbolSize * 0.6;
                     
                     ctx.beginPath();
                     ctx.moveTo(symX + symbolRadius, symY);
@@ -3204,54 +3212,79 @@
                     ctx.fill();
                     ctx.stroke();
 
-                    // Text
+                    // Text with truncation
                     ctx.fillStyle = '#e8f1f5';
                     ctx.font = `${fontSize}px "Fira Code"`;
-                    ctx.fillText(item.text, legendX + padding + symbolSize + 10 * scale, currentY);
                     
-                    currentY += itemHeight;
+                    const maxTextWidth = legendWidth - padding * 2 - symbolSize - 8 * scale;
+                    let text = item.text;
+                    let textWidth = ctx.measureText(text).width;
+                    
+                    if (textWidth > maxTextWidth) {
+                        while (textWidth > maxTextWidth && text.length > 3) {
+                            text = text.slice(0, -1);
+                            textWidth = ctx.measureText(text + '...').width;
+                        }
+                        text = text + '...';
+                    }
+                    
+                    ctx.fillText(text, legendX + padding + symbolSize + 8 * scale, currentY);
+                    
+                    currentY += itemHeight * 0.9;
                 }
             });
 
             // Parameters section
-            currentY += itemHeight * 0.3;
-            ctx.fillStyle = 'rgba(0, 255, 255, 0.85)';
+            currentY += itemHeight * 0.2;
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.8)';
             ctx.font = `bold ${sectionTitleSize}px "Fira Code"`;
-            ctx.fillText('Parameters', legendX + padding, currentY);
+            ctx.fillText('Params', legendX + padding, currentY);
             
-            ctx.strokeStyle = 'rgba(0, 255, 255, 0.25)';
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
             ctx.lineWidth = 1 * scale;
             ctx.beginPath();
-            ctx.moveTo(legendX + padding, currentY + 4 * scale);
-            ctx.lineTo(legendX + legendWidth - padding, currentY + 4 * scale);
+            ctx.moveTo(legendX + padding, currentY + 3 * scale);
+            ctx.lineTo(legendX + legendWidth - padding, currentY + 3 * scale);
             ctx.stroke();
             
-            currentY += itemHeight * 0.6;
+            currentY += itemHeight * 0.55;
 
             ctx.font = `${fontSize * 0.95}px "Fira Code"`;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
             parameters.forEach(param => {
-                ctx.fillText('• ' + param, legendX + padding, currentY);
-                currentY += itemHeight * 0.7;
+                const maxTextWidth = legendWidth - padding * 2.5;
+                let text = param;
+                let textWidth = ctx.measureText('• ' + text).width;
+                
+                if (textWidth > maxTextWidth) {
+                    while (textWidth > maxTextWidth && text.length > 3) {
+                        text = text.slice(0, -1);
+                        textWidth = ctx.measureText('• ' + text + '...').width;
+                    }
+                    text = text + '...';
+                }
+                
+                ctx.fillText('• ' + text, legendX + padding, currentY);
+                currentY += itemHeight * 0.65;
             });
 
             // Math notation footer
-            currentY += itemHeight * 0.2;
+            currentY += itemHeight * 0.15;
             ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
             ctx.font = `italic ${fontSize * 0.85}px "Fira Code"`;
-            ctx.fillText('𝔻 → ℍ via Cayley', legendX + padding, currentY);
-            currentY += itemHeight * 0.55;
-            ctx.fillText('PSL(2,ℤ) Action', legendX + padding, currentY);
+            ctx.fillText('𝔻 → ℍ Cayley', legendX + padding, currentY);
+            
+            ctx.restore(); // Remove clipping
         }
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n BASIC PARAMETERS:');
+            console.log('\n🎯 BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n CAYLEY PLANE VIEW:');
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -3262,7 +3295,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n FAREY POINTS:');
+            console.log('\n🎯 FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -3275,7 +3308,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n PRIME DISTRIBUTION:');
+            console.log('\n🔢 PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -3284,15 +3317,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n CONNECTION MODE:', state.connectionMode);
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n LABEL MODE:', state.labelMode);
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n DISPLAY TOGGLES:');
+            console.log('\n📊 DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
