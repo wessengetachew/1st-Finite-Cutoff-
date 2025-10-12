@@ -890,10 +890,6 @@
                             <li><strong>Export PNG</strong> to save high-resolution images (up to 8K) with automatic watermark</li>
                             <li><strong>Export Diagnostics</strong> to save all your current settings as a text file</li>
                         </ol>
-                        <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid var(--gold);">
-                            <strong style="color: var(--gold);">Dyadic Lifts</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">For base modulus M, each coprime residue r (where gcd(r,M)=1) has exactly two canonical lifts to 2M: the direct lift r→r and the inverse lift r→r+M. Try Exponential mode with m=30, n=3 and enable "Both Lifts" with coprime filter to see the lifting structure!</p>
-                        </div>
                     </div>
 
                     <h3 style="color: var(--gold); margin-bottom: 15px;">What You're Seeing</h3>
@@ -1182,33 +1178,21 @@
                 <!-- Nested Rings Parameters -->
                 <div class="section-header">Nested Rings Configuration</div>
                 <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Choose ring generation pattern: manual range or exponential doubling">
+                    <div class="control-item" data-tooltip="Starting modulus for the innermost ring. Usually 1 or 2.">
                         <div class="control-label">
-                            <span>Ring Generation Mode</span>
-                        </div>
-                        <select id="ringMode">
-                            <option value="manual">Manual Range (m_start to m_end)</option>
-                            <option value="exponential">Exponential Doubling (m×2^n)</option>
-                            <option value="dyadic">Dyadic Lifts (All m×2^i for i≤n)</option>
-                        </select>
-                        <div class="help-text">Exponential: m, 2m, 4m, 8m... | Dyadic: shows all intermediate powers</div>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Starting modulus. For manual: innermost ring. For exponential: base modulus.">
-                        <div class="control-label">
-                            <span>Base Modulus (m)</span>
+                            <span>Min Ring (m_start)</span>
                             <span class="control-value" id="minRingDisplay">1</span>
                         </div>
                         <input type="number" id="minRingInput" value="1" min="1" step="1">
                     </div>
 
-                    <div class="control-item" data-tooltip="For manual mode: ending modulus. For exponential: maximum exponent n in m×2^n.">
+                    <div class="control-item" data-tooltip="Ending modulus for the outermost ring. No limit - try 50+ for impressive patterns!">
                         <div class="control-label">
-                            <span><span id="maxRingLabel">Max Ring (m_end)</span></span>
+                            <span>Max Ring (m_end)</span>
                             <span class="control-value" id="maxRingDisplay">12</span>
                         </div>
                         <input type="number" id="maxRingInput" value="12" min="1" step="1">
-                        <div class="help-text" id="maxRingHelpText">Unlimited - 100+ rings possible</div>
+                        <div class="help-text">Unlimited - 100+ rings possible</div>
                     </div>
 
                     <div class="control-item" data-tooltip="Controls how spread out the rings are. Higher = more space between rings.">
@@ -1217,51 +1201,6 @@
                             <span class="control-value" id="spacingValue">1.0</span>
                         </div>
                         <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
-                    </div>
-                </div>
-
-                <!-- Lift Lines -->
-                <div class="section-header">Lift Line Visualization</div>
-                <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Show lines connecting related points across different moduli">
-                        <div class="control-label">
-                            <span>Lift Line Mode</span>
-                        </div>
-                        <select id="liftMode">
-                            <option value="none">No Lift Lines</option>
-                            <option value="direct">Direct Lift (r → r)</option>
-                            <option value="inverse">Inverse Lift (r → r+m×2^n)</option>
-                            <option value="both">Both Lifts</option>
-                        </select>
-                        <div class="help-text">Direct: same residue in doubled modulus. Inverse: offset by base modulus.</div>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Only show lift lines for residues coprime to the modulus (GCD=1)">
-                        <div class="control-label">
-                            <span>Lift Filter</span>
-                        </div>
-                        <select id="liftFilter">
-                            <option value="all">All Residues</option>
-                            <option value="coprime">Coprime Only (GCD=1)</option>
-                            <option value="gcd2">GCD=2 Only</option>
-                            <option value="gcd3">GCD=3 Only</option>
-                        </select>
-                    </div>
-
-                    <div class="control-item" data-tooltip="Line width for lift connections.">
-                        <div class="control-label">
-                            <span>Lift Line Thickness</span>
-                            <span class="control-value" id="liftThicknessValue">1.5</span>
-                        </div>
-                        <input type="range" id="liftThicknessSlider" min="0.1" max="5" value="1.5" step="0.1">
-                    </div>
-
-                    <div class="control-item" data-tooltip="Transparency of lift lines. Lower = more transparent.">
-                        <div class="control-label">
-                            <span>Lift Line Opacity</span>
-                            <span class="control-value" id="liftOpacityValue">0.4</span>
-                        </div>
-                        <input type="range" id="liftOpacitySlider" min="0" max="1" value="0.4" step="0.05">
                     </div>
                 </div>
 
@@ -1570,15 +1509,10 @@
             animSpeed: 1.0,
             minRing: 1,
             maxRing: 12,
-            ringMode: 'manual',
             ringSpacing: 1.0,
             connectionMode: 'none',
             connectionThickness: 1.0,
             connectionOpacity: 0.3,
-            liftMode: 'none',
-            liftFilter: 'all',
-            liftThickness: 1.5,
-            liftOpacity: 0.4,
             labelMode: 'farey',
             labelSize: 10,
             labelFreq: 1,
@@ -1783,41 +1717,11 @@
 
             document.getElementById('maxRingInput').addEventListener('change', e => {
                 const val = parseInt(e.target.value);
-                if (val >= (state.ringMode === 'manual' ? state.minRing : 0)) {
+                if (val >= state.minRing) {
                     state.maxRing = val;
                     document.getElementById('maxRingDisplay').textContent = val;
                     updateAll();
                 }
-            });
-
-            // Ring mode
-            document.getElementById('ringMode').addEventListener('change', e => {
-                state.ringMode = e.target.value;
-                updateRingModeUI();
-                updateAll();
-            });
-
-            // Lift controls
-            document.getElementById('liftMode').addEventListener('change', e => {
-                state.liftMode = e.target.value;
-                updateAll();
-            });
-
-            document.getElementById('liftFilter').addEventListener('change', e => {
-                state.liftFilter = e.target.value;
-                updateAll();
-            });
-
-            document.getElementById('liftThicknessSlider').addEventListener('input', e => {
-                state.liftThickness = parseFloat(e.target.value);
-                document.getElementById('liftThicknessValue').textContent = state.liftThickness.toFixed(1);
-                if (!state.animationId) updateAll();
-            });
-
-            document.getElementById('liftOpacitySlider').addEventListener('input', e => {
-                state.liftOpacity = parseFloat(e.target.value);
-                document.getElementById('liftOpacityValue').textContent = state.liftOpacity.toFixed(2);
-                if (!state.animationId) updateAll();
             });
 
             // Spacing slider
@@ -2846,61 +2750,6 @@
         // UI CONTROLS
         // ============================================================
 
-        function updateRingModeUI() {
-            const mode = state.ringMode;
-            
-            if (mode === 'exponential') {
-                document.getElementById('maxRingLabel').textContent = 'Max Exponent (n)';
-                document.getElementById('maxRingHelpText').textContent = 'Generates rings: m, m×2, m×4, ..., m×2^n';
-            } else if (mode === 'dyadic') {
-                document.getElementById('maxRingLabel').textContent = 'Max Exponent (n)';
-                document.getElementById('maxRingHelpText').textContent = 'Generates all m×2^i where i=0 to n';
-            } else {
-                document.getElementById('maxRingLabel').textContent = 'Max Ring (m_end)';
-                document.getElementById('maxRingHelpText').textContent = 'Unlimited - 100+ rings possible';
-            }
-        }
-
-        function getRingModuli() {
-            if (state.ringMode === 'exponential') {
-                const moduli = [];
-                const baseM = state.minRing;
-                const maxExp = state.maxRing;
-                
-                for (let n = 0; n <= maxExp; n++) {
-                    moduli.push(baseM * Math.pow(2, n));
-                }
-                return moduli;
-            } else if (state.ringMode === 'dyadic') {
-                const moduli = [];
-                const baseM = state.minRing;
-                const maxExp = state.maxRing;
-                
-                // Generate all m×2^i for each base multiplier up to the largest power
-                const maxValue = baseM * Math.pow(2, maxExp);
-                
-                // Collect all values of form m×2^i where i ranges from 0 to maxExp
-                const values = new Set();
-                for (let multiplier = 1; multiplier <= maxValue / baseM; multiplier++) {
-                    for (let i = 0; i <= maxExp; i++) {
-                        const value = multiplier * Math.pow(2, i);
-                        if (value >= baseM && value <= maxValue) {
-                            values.add(value);
-                        }
-                    }
-                }
-                
-                // Sort and return
-                return Array.from(values).sort((a, b) => a - b);
-            } else {
-                const moduli = [];
-                for (let m = state.minRing; m <= state.maxRing; m++) {
-                    moduli.push(m);
-                }
-                return moduli;
-            }
-        }
-
         function toggleIntro() {
             const panel = document.getElementById('introPanel');
             const toggle = document.getElementById('introToggle');
@@ -2923,15 +2772,10 @@
                 animSpeed: 1.0,
                 minRing: 1,
                 maxRing: 12,
-                ringMode: 'manual',
                 ringSpacing: 1.0,
                 connectionMode: 'none',
                 connectionThickness: 1.0,
                 connectionOpacity: 0.3,
-                liftMode: 'none',
-                liftFilter: 'all',
-                liftThickness: 1.5,
-                liftOpacity: 0.4,
                 labelMode: 'farey',
                 labelSize: 10,
                 labelFreq: 1,
@@ -2982,11 +2826,6 @@
             document.getElementById('labelSizeSlider').value = 10;
             document.getElementById('labelSizeInput').value = 10;
             document.getElementById('labelFreqInput').value = 1;
-            document.getElementById('ringMode').value = 'manual';
-            document.getElementById('liftMode').value = 'none';
-            document.getElementById('liftFilter').value = 'all';
-            document.getElementById('liftThicknessSlider').value = 1.5;
-            document.getElementById('liftOpacitySlider').value = 0.4;
             document.getElementById('toggleAnimate').checked = false;
             document.getElementById('toggleFundDomain').checked = false;
             document.getElementById('toggleVerticals').checked = false;
@@ -3009,14 +2848,11 @@
             document.getElementById('connectionOpacityValue').textContent = '0.30';
             document.getElementById('labelSizeValue').textContent = '10';
             document.getElementById('labelFreqValue').textContent = '1';
-            document.getElementById('liftThicknessValue').textContent = '1.5';
-            document.getElementById('liftOpacityValue').textContent = '0.40';
             document.getElementById('diskZoomValue').textContent = '1.00×';
             document.getElementById('cayleyZoomValue').textContent = '1.00×';
             document.getElementById('nestedZoomValue').textContent = '1.00×';
 
             stopAnimation();
-            updateRingModeUI();
             updateFareyPointsList();
             updateAll();
         }
