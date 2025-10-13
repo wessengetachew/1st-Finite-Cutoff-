@@ -157,9 +157,13 @@
 
         .viz-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
+        }
+        
+        .viz-grid.four-panel {
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .canvas-panel {
@@ -865,9 +869,6 @@
                 <span class="title-main">Farey Triangle & Cayley Transform</span>
             </h1>
             <p class="subtitle">Hyperbolic Geometry · Number Theory · Modular Forms</p>
-            <p class="subtitle" style="margin-top: 10px; font-size: 0.85em; color: rgba(255, 215, 0, 0.8);">
-                By Wessen Getachew | <a href="https://twitter.com/7DView" target="_blank" style="color: var(--cyan); text-decoration: none; transition: all 0.3s;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">@7DView</a>
-            </p>
         </header>
 
         <!-- Introduction Panel -->
@@ -877,21 +878,6 @@
             </div>
             <div class="controls-body" id="introPanel" style="display: block;">
                 <div style="line-height: 1.8; font-size: 0.95em;">
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">Quick Start Guide</h3>
-                    
-                    <div style="background: rgba(26, 188, 156, 0.15); padding: 15px; border-radius: 4px; margin-bottom: 20px; border-left: 4px solid var(--geodesic);">
-                        <p style="margin-bottom: 10px;"><strong>New to this visualization?</strong> Here's how to get started:</p>
-                        <ol style="margin-left: 20px; line-height: 1.8;">
-                            <li><strong>Scroll down</strong> to see the three mathematical visualizations side-by-side</li>
-                            <li><strong>Hover over any control</strong> to see helpful tooltips explaining what it does</li>
-                            <li><strong>Click "Update All"</strong> after changing parameters to refresh all three canvases</li>
-                            <li><strong>Enable "Auto-Rotate"</strong> to animate the phase rotation automatically</li>
-                            <li><strong>Experiment freely</strong> - there's no upper limit on most parameters!</li>
-                            <li><strong>Export PNG</strong> to save high-resolution images (up to 8K) with automatic watermark</li>
-                            <li><strong>Export Diagnostics</strong> to save all your current settings as a text file</li>
-                        </ol>
-                    </div>
-
                     <h3 style="color: var(--gold); margin-bottom: 15px;">What You're Seeing</h3>
                     
                     <p style="margin-bottom: 15px;">This visualization explores the deep connection between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through three perspectives:</p>
@@ -933,72 +919,8 @@
                         </li>
                     </ul>
                     
-                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Tips for Exploration</h3>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;">
-                        <div style="background: rgba(52, 152, 219, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid var(--prime);">
-                            <strong style="color: var(--prime);">Prime Patterns</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">Set m=30 and enable "Residue Channels" to see how primes distribute into channels. Only primes coprime to m appear when this is enabled.</p>
-                        </div>
-                        
-                        <div style="background: rgba(26, 188, 156, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid var(--geodesic);">
-                            <strong style="color: var(--geodesic);">Geodesic Curves</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">In the Cayley view, geodesics connecting Farey points appear as perfect semicircles. Add more Farey points to see the hyperbolic triangle network!</p>
-                        </div>
-                        
-                        <div style="background: rgba(230, 126, 34, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid var(--cusp);">
-                            <strong style="color: var(--cusp);">Ring Structures</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">Try setting Max Ring to 50+ and enable connection mode "Same GCD" to see beautiful symmetrical patterns emerge. Use zoom to explore!</p>
-                        </div>
-                        
-                        <div style="background: rgba(155, 89, 182, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid #9b59b6;">
-                            <strong style="color: #9b59b6;">Visual Modes</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">Toggle "Fundamental Domain" in Cayley view to see the standard region. Try "Vertical Geodesics" to visualize the integer lattice structure.</p>
-                        </div>
-                        
-                        <div style="background: rgba(231, 76, 60, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid #e74c3c;">
-                            <strong style="color: #e74c3c;">Performance Tips</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">Rendering 100+ rings or 5000+ primes may slow down. Start small and increase gradually. Export diagnostics to save interesting configurations!</p>
-                        </div>
-                        
-                        <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 4px; border-left: 3px solid var(--gold);">
-                            <strong style="color: var(--gold);">Animation Mode</strong>
-                            <p style="font-size: 0.9em; margin-top: 5px;">Enable "Auto-Rotate" and adjust animation speed. Watch how prime distributions and geodesics transform as they rotate through the complex plane!</p>
-                        </div>
-                    </div>
-                    
-                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Advanced Features</h3>
-                    
-                    <ul style="list-style: none; padding: 0; line-height: 1.8;">
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Unlimited Parameters:</strong> No artificial limits on modulus, number of rings, or prime count - push the boundaries!
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Custom Farey Points:</strong> Add any fraction you want to study specific parts of the Farey sequence
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Transform Modes:</strong> Switch between Standard and Alternate Cayley transforms to see different geometric interpretations
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Connection Modes:</strong> Visualize relationships by connecting points with same modulus, angle, GCD, or fraction value
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Independent Zoom:</strong> Each canvas has its own zoom control - explore different scales simultaneously
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• High-Res Export:</strong> Export images up to 8K resolution (7680×4320) with optional titles and legends
-                        </li>
-                        <li style="margin-bottom: 10px;">
-                            <strong>• Diagnostic Export:</strong> Save all parameters, coordinates, and settings as a shareable text file
-                        </li>
-                    </ul>
-                    
                     <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; margin-top: 20px; border-radius: 4px;">
-                        <strong style="color: var(--gold);">Educational Use:</strong> This tool is perfect for exploring connections between number theory, modular arithmetic, hyperbolic geometry, and the Riemann sphere. Ideal for students, educators, and researchers studying modular forms, automorphic functions, or geometric group theory.
-                    </div>
-                    
-                    <div style="background: rgba(0, 255, 255, 0.1); padding: 15px; margin-top: 15px; border-radius: 4px;">
-                        <strong style="color: var(--cyan);">Troubleshooting:</strong> If rendering slows down, reduce the number of primes, rings, or disable some display options. Use "Reset to Defaults" to return to optimal settings. All exports include watermark automatically.
+                        <strong style="color: var(--gold);">Quick Start:</strong> Try the preset buttons below, hover over controls for tooltips, or explore the examples section for interesting configurations!
                     </div>
                 </div>
             </div>
@@ -1007,7 +929,7 @@
 
 
         <!-- Visualization Canvases -->
-        <div class="viz-grid">
+        <div class="viz-grid" id="vizGrid">
             <div class="canvas-panel">
                 <div class="panel-header">
                     <div>
@@ -1036,6 +958,16 @@
                     </div>
                 </div>
                 <canvas id="nestedCanvas" width="1000" height="1000"></canvas>
+            </div>
+
+            <div class="canvas-panel" id="fullPlanePanel" style="display: none;">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">ℂ Full Complex Plane</div>
+                        <div class="panel-subtitle">Complete Cayley Transform View</div>
+                    </div>
+                </div>
+                <canvas id="fullPlaneCanvas" width="1000" height="1000"></canvas>
             </div>
         </div>
 
@@ -1205,14 +1137,50 @@
                 </div>
 
                 <!-- Custom Farey Points -->
-                <div class="section-header">Custom Farey Points</div>
+                <div class="section-header">Farey Sequence & Custom Points</div>
                 <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Define specific rational fractions to highlight. These form the vertices of the Farey triangle.">
+                    <div class="control-item" data-tooltip="Generate complete Farey sequence F_n: all reduced fractions p/q with 0 ≤ p ≤ q ≤ n">
                         <div class="control-label">
-                            <span>Farey Points (Fractions)</span>
+                            <span>Generate Farey Sequence F_n</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="fareyOrderInput" value="5" min="1" max="100" style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="generateFareySequence()" style="padding: 8px 20px; margin: 0;">
+                                <span>Generate F_n</span>
+                            </button>
+                        </div>
+                        <div class="help-text">F_n max = current modulus m (currently F_<span id="maxFareyOrder">30</span> available)</div>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Quick preset Farey sequences for common exploration">
+                        <div class="control-label">
+                            <span>Quick Presets</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                            <button class="btn btn-accent" onclick="generateFareySequence(3)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>F₃</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="generateFareySequence(5)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>F₅</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="generateFareySequence(7)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>F₇</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Manually add or remove specific rational fractions. Click ✕ to remove a point.">
+                        <div class="control-label">
+                            <span>Custom Points (Click ✕ to remove)</span>
+                            <span class="control-value" id="fareyCountDisplay">3 points</span>
                         </div>
                         <div id="fareyPointsList" class="farey-point-list"></div>
-                        <button class="add-btn" onclick="addFareyPoint()">+ Add Farey Point</button>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="add-btn" onclick="addFareyPoint()">+ Add Custom Point</button>
+                            <button class="btn btn-secondary" onclick="clearAllFareyPoints()" style="padding: 8px 20px; background: #e74c3c;">
+                                <span>Clear All</span>
+                            </button>
+                        </div>
                         <div class="help-text">Format: numerator/denominator (e.g., 1/3, 2/5, 3/7)</div>
                     </div>
                 </div>
@@ -1354,6 +1322,12 @@
                         <span class="toggle-label">Unit Disk Outline</span>
                     </label>
 
+                    <input type="checkbox" id="toggleFullPlane">
+                    <label for="toggleFullPlane" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Full Complex Plane View</span>
+                    </label>
+
                     <input type="checkbox" id="toggleAnimate">
                     <label for="toggleAnimate" class="toggle-item">
                         <div class="toggle-switch"></div>
@@ -1375,107 +1349,9 @@
                     <button class="btn btn-secondary" onclick="exportVisualization()">
                         <span>Export PNG</span>
                     </button>
-                    <button class="btn btn-secondary" onclick="exportDiagnostics()">
-                        <span>Export Diagnostics</span>
+                    <button class="btn btn-secondary" onclick="printDiagnostics()">
+                        <span>Print Diagnostics</span>
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- References Section -->
-        <div class="controls-section">
-            <div class="controls-header">
-                References & Further Reading
-            </div>
-            <div class="controls-body">
-                <div style="line-height: 1.8; font-size: 0.95em;">
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">Foundational Texts</h3>
-                    
-                    <ol style="margin-left: 20px; line-height: 2;">
-                        <li style="margin-bottom: 12px;">
-                            <strong>Hardy, G. H., & Wright, E. M.</strong> (2008). <em>An Introduction to the Theory of Numbers</em> (6th ed.). Oxford University Press.
-                            <a href="https://global.oup.com/academic/product/an-introduction-to-the-theory-of-numbers-9780199219858" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Classic reference for Farey sequences and their properties.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Apostol, T. M.</strong> (1990). <em>Modular Functions and Dirichlet Series in Number Theory</em> (2nd ed.). Springer-Verlag.
-                            <a href="https://link.springer.com/book/10.1007/978-1-4612-0999-7" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Comprehensive treatment of modular forms and the modular group PSL(2,ℤ).</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Beardon, A. F.</strong> (1983). <em>The Geometry of Discrete Groups</em>. Springer-Verlag.
-                            <a href="https://link.springer.com/book/10.1007/978-1-4612-1146-4" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Essential reference for hyperbolic geometry and Möbius transformations.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Katok, S.</strong> (1992). <em>Fuchsian Groups</em>. University of Chicago Press.
-                            <a href="https://press.uchicago.edu/ucp/books/book/chicago/F/bo3684031.html" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Detailed exploration of the upper half-plane model and fundamental domains.</p>
-                        </li>
-                    </ol>
-                    
-                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Research Papers</h3>
-                    
-                    <ol start="5" style="margin-left: 20px; line-height: 2;">
-                        <li style="margin-bottom: 12px;">
-                            <strong>Hatcher, A., & Thurston, W.</strong> (1980). "A Presentation for the Mapping Class Group of a Closed Orientable Surface." <em>Topology</em>, 19(3), 221-237.
-                            <a href="https://www.sciencedirect.com/science/article/pii/0040938380900099" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Important work on the geometric structure of modular groups.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Series, C.</strong> (1985). "The Geometry of Markoff Numbers." <em>The Mathematical Intelligencer</em>, 7(3), 20-29.
-                            <a href="https://link.springer.com/article/10.1007/BF03025802" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Connects Farey sequences to Diophantine approximation and hyperbolic geometry.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Zagier, D.</strong> (2008). "Elliptic Modular Forms and Their Applications." In <em>The 1-2-3 of Modular Forms</em> (pp. 1-103). Springer.
-                            <a href="https://link.springer.com/chapter/10.1007/978-3-540-74119-0_1" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Modern introduction to modular forms with geometric insights.</p>
-                        </li>
-                    </ol>
-                    
-                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Online Resources</h3>
-                    
-                    <ul style="list-style: none; padding: 0; margin-left: 20px; line-height: 2;">
-                        <li style="margin-bottom: 12px;">
-                            <strong>OEIS Foundation.</strong> "Farey Sequence." <em>The On-Line Encyclopedia of Integer Sequences</em>.
-                            <a href="https://oeis.org/A006842" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Comprehensive database of Farey sequence properties and related sequences.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Weisstein, Eric W.</strong> "Cayley Transform." <em>MathWorld--A Wolfram Web Resource</em>.
-                            <a href="https://mathworld.wolfram.com/CayleyTransform.html" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Mathematical reference for the Cayley transform and its properties.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Weisstein, Eric W.</strong> "Modular Group." <em>MathWorld--A Wolfram Web Resource</em>.
-                            <a href="https://mathworld.wolfram.com/ModularGroup.html" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Overview of PSL(2,ℤ) and its action on the upper half-plane.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Mumford, D., Series, C., & Wright, D.</strong> (2002). <em>Indra's Pearls: The Vision of Felix Klein</em>. Cambridge University Press.
-                            <a href="https://www.cambridge.org/core/books/indras-pearls/EC770334DA385729C3BA500DF53FEEB2" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Beautiful visual exploration of Möbius transformations and limit sets.</p>
-                        </li>
-                        
-                        <li style="margin-bottom: 12px;">
-                            <strong>Strogatz, S.</strong> (2015). "Primes in the Spiral." <em>The New York Times - Numberplay</em>.
-                            <a href="https://www.nytimes.com/2015/03/23/science/primes-in-the-spiral.html" target="_blank" style="color: var(--cyan); text-decoration: none; margin-left: 10px;">[Link]</a>
-                            <p style="font-size: 0.9em; color: var(--text-dim); margin-top: 5px;">Accessible introduction to prime number distribution patterns and modular arithmetic.</p>
-                        </li>
-                    </ul>
-                    
-                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; margin-top: 25px; border-radius: 4px; border-left: 4px solid var(--gold);">
-                        <strong style="color: var(--gold);">Note:</strong> This visualization tool combines concepts from these works to provide an interactive exploration of the relationships between number theory, hyperbolic geometry, and modular forms. All references are provided for educational purposes.
-                    </div>
                 </div>
             </div>
         </div>
@@ -1537,9 +1413,11 @@
             disk: null,
             cayley: null,
             nested: null,
+            fullPlane: null,
             diskCtx: null,
             cayleyCtx: null,
-            nestedCtx: null
+            nestedCtx: null,
+            fullPlaneCtx: null
         };
 
         // ============================================================
@@ -1574,10 +1452,11 @@
             canvases.disk = document.getElementById('diskCanvas');
             canvases.cayley = document.getElementById('cayleyCanvas');
             canvases.nested = document.getElementById('nestedCanvas');
+            canvases.fullPlane = document.getElementById('fullPlaneCanvas');
             
             const dpr = window.devicePixelRatio || 1;
             
-            [canvases.disk, canvases.cayley, canvases.nested].forEach(canvas => {
+            [canvases.disk, canvases.cayley, canvases.nested, canvases.fullPlane].forEach(canvas => {
                 const rect = canvas.getBoundingClientRect();
                 canvas.width = canvas.width * dpr;
                 canvas.height = canvas.height * dpr;
@@ -1588,6 +1467,7 @@
             canvases.diskCtx = canvases.disk.getContext('2d');
             canvases.cayleyCtx = canvases.cayley.getContext('2d');
             canvases.nestedCtx = canvases.nested.getContext('2d');
+            canvases.fullPlaneCtx = canvases.fullPlane.getContext('2d');
         }
 
         function initFareyPointsUI() {
@@ -1616,6 +1496,65 @@
                 item.appendChild(removeBtn);
                 list.appendChild(item);
             });
+            
+            // Update count display
+            document.getElementById('fareyCountDisplay').textContent = `${state.fareyPoints.length} point${state.fareyPoints.length !== 1 ? 's' : ''}`;
+        }
+
+        function generateFareySequence(n) {
+            // If called with a number argument, use it; otherwise read from input
+            const order = n || parseInt(document.getElementById('fareyOrderInput').value);
+            
+            // Limit to current modulus
+            const maxOrder = state.modulus;
+            const actualOrder = Math.min(order, maxOrder);
+            
+            if (actualOrder < 1) {
+                alert('Farey order must be at least 1');
+                return;
+            }
+            
+            if (order > maxOrder) {
+                alert(`Farey order limited to current modulus m=${maxOrder}. Generating F_${actualOrder} instead.`);
+            }
+            
+            // Generate Farey sequence F_n
+            const fareySeq = [];
+            
+            // Algorithm: Generate all fractions p/q where 0 ≤ p ≤ q ≤ n and gcd(p,q)=1
+            for (let q = 1; q <= actualOrder; q++) {
+                for (let p = 0; p <= q; p++) {
+                    if (gcd(p, q) === 1) {
+                        fareySeq.push({ num: p, den: q });
+                    }
+                }
+            }
+            
+            // Sort by value
+            fareySeq.sort((a, b) => (a.num / a.den) - (b.num / b.den));
+            
+            // Remove duplicates (0/1 appears as both 0/1 and 0/any)
+            const uniqueFarey = [];
+            const seen = new Set();
+            fareySeq.forEach(f => {
+                const val = f.num / f.den;
+                if (!seen.has(val)) {
+                    seen.add(val);
+                    uniqueFarey.push(f);
+                }
+            });
+            
+            state.fareyPoints = uniqueFarey;
+            updateFareyPointsList();
+            updateAll();
+        }
+
+        function clearAllFareyPoints() {
+            if (confirm('Clear all Farey points? This will remove all current points.')) {
+                state.fareyPoints = [];
+                updateFareyPointsList();
+                updateAll();
+            }
         }
 
         function addFareyPoint() {
@@ -1625,11 +1564,9 @@
         }
 
         function removeFareyPoint(index) {
-            if (state.fareyPoints.length > 1) {
-                state.fareyPoints.splice(index, 1);
-                updateFareyPointsList();
-                updateAll();
-            }
+            state.fareyPoints.splice(index, 1);
+            updateFareyPointsList();
+            updateAll();
         }
 
         function updateFareyPointValue(index, value) {
@@ -1815,6 +1752,27 @@
              'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
              'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline'].forEach(id => {
                 document.getElementById(id).addEventListener('change', updateAll);
+            });
+            
+            // Full plane toggle
+            document.getElementById('toggleFullPlane').addEventListener('change', e => {
+                const panel = document.getElementById('fullPlanePanel');
+                const vizGrid = document.getElementById('vizGrid');
+                
+                if (e.target.checked) {
+                    panel.style.display = 'block';
+                    vizGrid.classList.add('four-panel');
+                } else {
+                    panel.style.display = 'none';
+                    vizGrid.classList.remove('four-panel');
+                }
+                
+                updateAll();
+            });
+            
+            // Update max Farey order display when modulus changes
+            document.getElementById('modulusInput').addEventListener('change', () => {
+                document.getElementById('maxFareyOrder').textContent = state.modulus;
             });
         }
 
@@ -2925,18 +2883,18 @@
                         <div class="export-section">
                             <h4>Options</h4>
                             <label class="export-checkbox">
-                                <input type="checkbox" id="includeTitle" checked>
-                                <span>Include Title</span>
+                                <input type="checkbox" id="includeLegend" checked>
+                                <span>Include Detailed Legend</span>
                             </label>
                             <label class="export-checkbox">
-                                <input type="checkbox" id="includeLegend" checked>
-                                <span>Include Legend</span>
+                                <input type="checkbox" id="includeWatermark" checked>
+                                <span>Include Watermark (Wessen Getachew)</span>
                             </label>
                         </div>
                         
                         <div class="action-bar">
                             <button class="btn btn-primary" onclick="performExport()">
-                                <span>Export PNG</span>
+                                <span>💾 Export PNG</span>
                             </button>
                             <button class="btn btn-secondary" onclick="closeExportDialog()">
                                 <span>Cancel</span>
@@ -2960,8 +2918,8 @@
         function performExport() {
             const canvasSelection = document.querySelector('input[name="canvas"]:checked').value;
             const resolution = document.querySelector('input[name="resolution"]:checked').value;
-            const includeTitle = document.getElementById('includeTitle').checked;
             const includeLegend = document.getElementById('includeLegend').checked;
+            const includeWatermark = document.getElementById('includeWatermark').checked;
 
             let width, height;
             switch(resolution) {
@@ -3010,10 +2968,8 @@
                         destX, offsetY, destWidth, canvasSize);
                 });
 
-                // Add titles for each canvas if requested
-                if (includeTitle) {
-                    drawCanvasTitles(tempCtx, width, height, canvasSize, offsetY);
-                }
+                // Add titles for each canvas
+                drawCanvasTitles(tempCtx, width, height, canvasSize, offsetY);
 
                 if (includeLegend) {
                     drawLegend(tempCtx, width, height, 'all');
@@ -3048,18 +3004,18 @@
                 // Draw canvas maintaining square aspect ratio
                 tempCtx.drawImage(sourceCanvas, 0, 0, size, size);
 
-                // Add title if requested
-                if (includeTitle) {
-                    drawMainTitle(tempCtx, size, title);
-                }
+                // Add title
+                drawMainTitle(tempCtx, size, title);
 
                 if (includeLegend) {
                     drawLegend(tempCtx, size, size, canvasSelection);
                 }
             }
 
-            // Always add watermark
-            drawWatermark(tempCtx, tempCanvas.width, tempCanvas.height);
+            // Add watermark if requested (should be visible now)
+            if (includeWatermark) {
+                drawWatermark(tempCtx, tempCanvas.width, tempCanvas.height);
+            }
 
             const link = document.createElement('a');
             link.download = `farey-cayley-${canvasSelection}-${resolution}-${Date.now()}.png`;
@@ -3075,9 +3031,6 @@
             const padding = 30 * scale;
 
             ctx.save();
-            
-            // Set font first to measure properly
-            ctx.font = `bold ${fontSize}px "Fira Code"`;
             
             // Title background
             const textMetrics = ctx.measureText(titleText);
@@ -3462,64 +3415,55 @@
             ctx.restore(); // Remove clipping
         }
 
-        function exportDiagnostics() {
-            const phase = state.phase * Math.PI / 180;
-            let diagnosticText = '';
+        function printDiagnostics() {
+            console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
+            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('  Modulus m:', state.modulus);
+            console.log('  Phase rotation:', state.phase, 'degrees');
+            console.log('  Animation speed:', state.animSpeed + '×');
             
-            diagnosticText += '=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===\n';
-            diagnosticText += 'Created by: Wessen Getachew\n';
-            diagnosticText += `Generated: ${new Date().toLocaleString()}\n`;
-            diagnosticText += '\n🎯 BASIC PARAMETERS:\n';
-            diagnosticText += `  Modulus m: ${state.modulus}\n`;
-            diagnosticText += `  Phase rotation: ${state.phase} degrees\n`;
-            diagnosticText += `  Animation speed: ${state.animSpeed}×\n`;
-            diagnosticText += `  Disk zoom: ${state.diskZoom}×\n`;
-            diagnosticText += `  Cayley zoom: ${state.cayleyZoom}×\n`;
-            diagnosticText += `  Nested zoom: ${state.nestedZoom}×\n`;
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
+            console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
+            console.log('  Vertical offset:', state.cayleyVOffset);
+            console.log('  Grid density:', state.cayleyGridDensity);
             
-            diagnosticText += '\n🔭 CAYLEY PLANE VIEW:\n';
-            diagnosticText += `  Horizontal range (Re): ${(-state.cayleyHRange / 2).toFixed(2)} to ${(state.cayleyHRange / 2).toFixed(2)}\n`;
-            diagnosticText += `  Vertical range (Im): ${state.cayleyVOffset.toFixed(2)} to ${(state.cayleyVRange + state.cayleyVOffset).toFixed(2)}\n`;
-            diagnosticText += `  Vertical offset: ${state.cayleyVOffset}\n`;
-            diagnosticText += `  Grid density: ${state.cayleyGridDensity}\n`;
-            diagnosticText += `  Transform mode: ${state.useAlternateCayley ? 'ALTERNATE' : 'STANDARD'}\n`;
+            console.log('\n⊚ NESTED RINGS:');
+            console.log('  Ring range: m =', state.minRing, 'to', state.maxRing);
+            console.log('  Ring spacing factor:', state.ringSpacing);
+            console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            diagnosticText += '\n⊚ NESTED RINGS:\n';
-            diagnosticText += `  Ring range: m = ${state.minRing} to ${state.maxRing}\n`;
-            diagnosticText += `  Ring spacing factor: ${state.ringSpacing}\n`;
-            diagnosticText += `  Total rings: ${state.maxRing - state.minRing + 1}\n`;
-            
-            diagnosticText += '\n🎯 FAREY POINTS:\n';
+            console.log('\n🎯 FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
                 const z = { re: Math.cos(angle), im: Math.sin(angle) };
                 const w = cayleyTransform(z, state.useAlternateCayley);
-                diagnosticText += `  ${idx + 1}. ${fp.num}/${fp.den} = ${frac.toFixed(6)}\n`;
-                diagnosticText += `     Unit Disk: z = ${z.re.toFixed(6)} + ${z.im.toFixed(6)}i\n`;
-                diagnosticText += `     Upper Half-Plane: w = ${w.re.toFixed(6)} + ${w.im.toFixed(6)}i\n`;
-                diagnosticText += `     |z| = ${Math.sqrt(z.re*z.re + z.im*z.im).toFixed(6)}\n`;
-                diagnosticText += `     Im(w) = ${w.im.toFixed(6)}\n`;
+                console.log(`  ${idx + 1}. ${fp.num}/${fp.den} = ${frac.toFixed(6)}`);
+                console.log(`     Unit Disk:     z = ${z.re.toFixed(6)} + ${z.im.toFixed(6)}i`);
+                console.log(`     Upper Half-Plane: w = ${w.re.toFixed(6)} + ${w.im.toFixed(6)}i`);
+                console.log(`     |z| = ${Math.sqrt(z.re*z.re + z.im*z.im).toFixed(6)}`);
+                console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            diagnosticText += '\n🔢 PRIME DISTRIBUTION:\n';
-            diagnosticText += `  Total primes available: ${state.primes.length}\n`;
-            diagnosticText += `  Displaying: ${Math.min(state.numPrimes, state.primes.length)}\n`;
-            diagnosticText += `  Prime limit: ${state.primeLimit}\n`;
+            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('  Total primes available:', state.primes.length);
+            console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
+            console.log('  Prime limit:', state.primeLimit);
             if (state.primes.length > 0) {
-                diagnosticText += `  First 10 primes: ${state.primes.slice(0, 10).join(', ')}\n`;
-                diagnosticText += `  Last 10 primes: ${state.primes.slice(-10).join(', ')}\n`;
+                console.log('  First 10 primes:', state.primes.slice(0, 10).join(', '));
+                console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            diagnosticText += '\n🔗 CONNECTION MODE: ' + state.connectionMode + '\n';
-            diagnosticText += `  Thickness: ${state.connectionThickness}\n`;
-            diagnosticText += `  Opacity: ${state.connectionOpacity}\n`;
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('  Thickness:', state.connectionThickness);
+            console.log('  Opacity:', state.connectionOpacity);
             
-            diagnosticText += '\n🏷️ LABEL MODE: ' + state.labelMode + '\n';
-            diagnosticText += `  Size: ${state.labelSize}px\n`;
-            diagnosticText += `  Frequency: every ${state.labelFreq} ring(s)\n`;
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('  Size:', state.labelSize + 'px');
+            console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            diagnosticText += '\n📊 DISPLAY TOGGLES:\n';
+            console.log('\n📊 DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -3528,16 +3472,16 @@
             toggles.forEach(id => {
                 const elem = document.getElementById(id);
                 if (elem) {
-                    diagnosticText += `  ${id.replace('toggle', '')}: ${elem.checked ? '✓' : '✗'}\n`;
+                    console.log('  ' + id.replace('toggle', '') + ':', elem.checked ? '✓' : '✗');
                 }
             });
             
-            diagnosticText += '\n🔬 CAYLEY TRANSFORM VERIFICATION:\n';
-            diagnosticText += `  Current Mode: ${state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)'}\n`;
-            diagnosticText += '  Standard Formula: w = i(1-z)/(1+z)\n';
-            diagnosticText += '  Maps unit disk 𝔻 to upper half-plane ℍ\n';
-            diagnosticText += '  Inverse: z = (i-w)/(i+w)\n';
-            diagnosticText += '  Preserves angles (conformal)\n';
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
+            console.log('  Standard Formula: w = i(1-z)/(1+z)');
+            console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
+            console.log('  Inverse: z = (i-w)/(i+w)');
+            console.log('  Preserves angles (conformal)');
             
             // Test a few points
             const testPoints = [
@@ -3547,24 +3491,13 @@
                 { re: 0, im: 0, label: '0 → i' }
             ];
             
-            diagnosticText += '\n  Test transformations:\n';
+            console.log('\n  Test transformations:');
             testPoints.forEach(z => {
                 const w = cayleyTransform(z, state.useAlternateCayley);
-                diagnosticText += `    z = (${z.re}, ${z.im}) ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i\n`;
+                console.log(`    z = (${z.re}, ${z.im}) ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
             });
             
-            diagnosticText += '\n=====================================================\n';
-            
-            // Create and download file
-            const blob = new Blob([diagnosticText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `farey-cayley-diagnostics-${Date.now()}.txt`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+            console.log('\n=====================================================');
         }
     </script>
 </body>
