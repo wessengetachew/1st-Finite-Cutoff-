@@ -1258,6 +1258,15 @@
                         </div>
                         <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
                     </div>
+
+                    <div class="control-item" data-tooltip="Rotate each individual ring by this angle. Creates spiraling patterns.">
+                        <div class="control-label">
+                            <span>Per-Ring Rotation</span>
+                            <span class="control-value" id="ringRotationValue">0°</span>
+                        </div>
+                        <input type="range" id="ringRotationSlider" min="0" max="360" value="0" step="1">
+                        <input type="number" id="ringRotationInput" value="0" min="0" max="360" step="1" style="margin-top: 8px;" placeholder="Degrees per ring">
+                    </div>
                 </div>
 
                 <!-- Custom Farey Points -->
@@ -1457,6 +1466,18 @@
                         <div class="toggle-switch"></div>
                         <span class="toggle-label">Auto-Rotate</span>
                     </label>
+
+                    <input type="checkbox" id="toggleInvertRings">
+                    <label for="toggleInvertRings" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Invert Ring Order (Outer↔Inner)</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleInvertAll">
+                    <label for="toggleInvertAll" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Invert All Canvases</span>
+                    </label>
                 </div>
 
                 <!-- Action Buttons -->
@@ -1510,6 +1531,7 @@
             minRing: 1,
             maxRing: 12,
             ringSpacing: 1.0,
+            ringRotation: 0,
             connectionMode: 'none',
             connectionThickness: 1.0,
             connectionOpacity: 0.3,
@@ -1810,6 +1832,24 @@
                 if (!state.animationId) updateAll();
             });
 
+            // Ring rotation slider
+            document.getElementById('ringRotationSlider').addEventListener('input', e => {
+                state.ringRotation = parseFloat(e.target.value);
+                document.getElementById('ringRotationValue').textContent = state.ringRotation.toFixed(0) + '°';
+                document.getElementById('ringRotationInput').value = state.ringRotation.toFixed(0);
+                if (!state.animationId) updateAll();
+            });
+
+            // Ring rotation input
+            document.getElementById('ringRotationInput').addEventListener('change', e => {
+                let val = parseFloat(e.target.value);
+                val = ((val % 360) + 360) % 360;
+                state.ringRotation = val;
+                document.getElementById('ringRotationSlider').value = val;
+                document.getElementById('ringRotationValue').textContent = val.toFixed(0) + '°';
+                if (!state.animationId) updateAll();
+            });
+
             // Cayley view controls
             document.getElementById('cayleyHRangeSlider').addEventListener('input', e => {
                 state.cayleyHRange = parseFloat(e.target.value);
@@ -1918,7 +1958,8 @@
             // Display toggles
             ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels', 
              'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
-             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline'].forEach(id => {
+             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline', 
+             'toggleInvertRings', 'toggleInvertAll'].forEach(id => {
                 document.getElementById(id).addEventListener('change', updateAll);
             });
             
@@ -2123,6 +2164,15 @@
 
             ctx.clearRect(0, 0, w, h);
 
+            // Apply inversion if enabled
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(-1, -1);
+                ctx.translate(-cx, -cy);
+            }
+
             // Grid
             if (document.getElementById('toggleGrid').checked) {
                 ctx.strokeStyle = CONFIG.colors.grid;
@@ -2266,6 +2316,11 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Unit Disk 𝔻', cx, 35);
             ctx.shadowBlur = 0;
+
+            // Restore context if inverted
+            if (invertAll) {
+                ctx.restore();
+            }
         }
 
         function drawCayley() {
@@ -2275,6 +2330,15 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
 
             ctx.clearRect(0, 0, w, h);
+
+            // Apply inversion if enabled
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(w / 2, h / 2);
+                ctx.scale(-1, -1);
+                ctx.translate(-w / 2, -h / 2);
+            }
 
             // Coordinate conversion functions for Cayley plane
             function mathToScreen(wp) {
@@ -2644,6 +2708,11 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
             ctx.shadowBlur = 0;
+
+            // Restore context if inverted
+            if (invertAll) {
+                ctx.restore();
+            }
         }
 
         function drawFullPlane() {
@@ -2653,6 +2722,15 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
 
             ctx.clearRect(0, 0, w, h);
+
+            // Apply inversion if enabled
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(w / 2, h / 2);
+                ctx.scale(-1, -1);
+                ctx.translate(-w / 2, -h / 2);
+            }
 
             // Coordinate conversion - full complex plane view
             function mathToScreen(wp) {
@@ -2847,6 +2925,11 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Full Complex Plane ℂ', w/2, 35);
             ctx.shadowBlur = 0;
+
+            // Restore context if inverted
+            if (invertAll) {
+                ctx.restore();
+            }
         }
 
         function drawNested() {
@@ -2860,6 +2943,15 @@
             const baseRadius = maxRadius * 0.15;
 
             ctx.clearRect(0, 0, w, h);
+
+            // Apply inversion if enabled
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(-1, -1);
+                ctx.translate(-cx, -cy);
+            }
 
             // Grid
             if (document.getElementById('toggleGrid').checked) {
@@ -2890,13 +2982,24 @@
             const phase = state.phase * Math.PI / 180;
             const showRings = document.getElementById('toggleRings').checked;
             const showGCD = document.getElementById('toggleGCD').checked;
+            const invertRings = document.getElementById('toggleInvertRings').checked;
 
             const allPoints = [];
             const numRings = state.maxRing - state.minRing + 1;
 
             for (let m = state.minRing; m <= state.maxRing; m++) {
-                const ringIndex = m - state.minRing;
+                // Calculate ring index - invert if toggle is on
+                let ringIndex;
+                if (invertRings) {
+                    ringIndex = (state.maxRing - m);
+                } else {
+                    ringIndex = m - state.minRing;
+                }
+                
                 const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
+
+                // Calculate per-ring rotation
+                const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
 
                 // Ring circle
                 if (showRings) {
@@ -2918,7 +3021,7 @@
                 // Points for each k
                 for (let k = 0; k < m; k++) {
                     const g = gcd(k, m);
-                    const angle = 2 * Math.PI * k / m + phase;
+                    const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
 
@@ -3061,9 +3164,18 @@
                 if (fp.den >= state.minRing && fp.den <= state.maxRing) {
                     const m = fp.den;
                     const k = fp.num % m;
-                    const ringIndex = m - state.minRing;
+                    
+                    // Calculate ring index with inversion
+                    let ringIndex;
+                    if (invertRings) {
+                        ringIndex = (state.maxRing - m);
+                    } else {
+                        ringIndex = m - state.minRing;
+                    }
+                    
                     const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
-                    const angle = 2 * Math.PI * k / m + phase;
+                    const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
+                    const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
 
@@ -3101,6 +3213,11 @@
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.fillText(`m = ${state.minRing} to ${state.maxRing}`, cx, 55);
             ctx.shadowBlur = 0;
+
+            // Restore context if inverted
+            if (invertAll) {
+                ctx.restore();
+            }
         }
 
         function updateAll() {
@@ -3214,6 +3331,8 @@
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
+            document.getElementById('ringRotationSlider').value = 0;
+            document.getElementById('ringRotationInput').value = 0;
             document.getElementById('cayleyHRangeSlider').value = 6;
             document.getElementById('cayleyVRangeSlider').value = 4;
             document.getElementById('cayleyVOffsetSlider').value = 0;
@@ -3259,6 +3378,7 @@
             document.getElementById('minRingDisplay').textContent = '1';
             document.getElementById('maxRingDisplay').textContent = '12';
             document.getElementById('spacingValue').textContent = '1.0';
+            document.getElementById('ringRotationValue').textContent = '0°';
             document.getElementById('cayleyHRangeValue').textContent = '6.0';
             document.getElementById('cayleyVRangeValue').textContent = '4.0';
             document.getElementById('cayleyVOffsetValue').textContent = '0.0';
@@ -3942,7 +4062,7 @@
                 }
             });
             
-            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
