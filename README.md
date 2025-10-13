@@ -869,6 +869,9 @@
                 <span class="title-main">Farey Triangle & Cayley Transform</span>
             </h1>
             <p class="subtitle">Hyperbolic Geometry · Number Theory · Modular Forms</p>
+            <p style="font-family: 'Fira Code', monospace; font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-top: 10px;">
+                by Wessen Getachew · Twitter <a href="https://twitter.com/7dview" target="_blank" rel="noopener" style="color: #00ffff; text-decoration: none; transition: all 0.3s;">@7dview</a>
+            </p>
         </header>
 
         <!-- Introduction Panel -->
@@ -1443,7 +1446,7 @@
                         <span class="toggle-label">Unit Disk Outline</span>
                     </label>
 
-                    <input type="checkbox" id="toggleFullPlane">
+                    <input type="checkbox" id="toggleFullPlane" checked>
                     <label for="toggleFullPlane" class="toggle-item">
                         <div class="toggle-switch"></div>
                         <span class="toggle-label">Full Complex Plane View</span>
@@ -1919,7 +1922,7 @@
                 document.getElementById(id).addEventListener('change', updateAll);
             });
             
-            // Full plane toggle
+            // Full plane toggle - now checked by default
             document.getElementById('toggleFullPlane').addEventListener('change', e => {
                 const panel = document.getElementById('fullPlanePanel');
                 const vizGrid = document.getElementById('vizGrid');
@@ -1934,6 +1937,12 @@
                 
                 updateAll();
             });
+            
+            // Initialize full plane view on load since toggle is checked by default
+            const fullPlanePanel = document.getElementById('fullPlanePanel');
+            const vizGrid = document.getElementById('vizGrid');
+            fullPlanePanel.style.display = 'block';
+            vizGrid.classList.add('four-panel');
             
             // Update max Farey order display when modulus changes
             document.getElementById('modulusInput').addEventListener('change', () => {
@@ -3874,12 +3883,12 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('\n BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('\n CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -3890,7 +3899,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n🎯 FAREY POINTS:');
+            console.log('\n FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -3903,7 +3912,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('\n PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -3912,15 +3921,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('\n CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('\n LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n📊 DISPLAY TOGGLES:');
+            console.log('\n DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -3933,7 +3942,7 @@
                 }
             });
             
-            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
