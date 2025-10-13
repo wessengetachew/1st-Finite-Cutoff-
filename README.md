@@ -874,53 +874,59 @@
         <!-- Introduction Panel -->
         <div class="controls-section" style="margin-bottom: 20px;">
             <div class="controls-header" style="cursor: pointer; user-select: none;" onclick="toggleIntro()">
-                <span id="introToggle">▼</span> Mathematical Introduction
+                <span id="introToggle">&#9660;</span> Mathematical Introduction
             </div>
             <div class="controls-body" id="introPanel" style="display: block;">
                 <div style="line-height: 1.8; font-size: 0.95em;">
-                    <h3 style="color: var(--gold); margin-bottom: 15px;">What You're Seeing</h3>
+                    <h3 style="color: var(--gold); margin-bottom: 15px;">Mathematical Overview</h3>
                     
-                    <p style="margin-bottom: 15px;">This visualization explores the deep connection between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through three perspectives:</p>
+                    <p style="margin-bottom: 15px;">This visualization tool explores the deep connections between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through the lens of conformal mappings and modular arithmetic. Three complementary perspectives reveal how rational numbers, prime distributions, and hyperbolic structures interrelate.</p>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--gold);">
-                            <h4 style="color: var(--gold); margin-bottom: 8px;">Unit Disk (𝔻)</h4>
-                            <p style="font-size: 0.9em;">The <strong>Farey sequence</strong> points (rational numbers p/q in lowest terms) are placed on the unit circle. Prime numbers are distributed according to their residue classes modulo <em>m</em>.</p>
+                            <h4 style="color: var(--gold); margin-bottom: 8px;">Unit Disk Model</h4>
+                            <p style="font-size: 0.9em;">Points from the <strong>Farey sequence</strong> F_n (reduced fractions p/q with q ≤ n) are mapped to the unit circle at angles 2πp/q. Prime numbers are positioned according to their residue classes modulo m, revealing patterns in prime distribution. The Farey triangle formed by connecting these points has remarkable properties: adjacent Farey fractions p/q and r/s satisfy the mediant property |ps - qr| = 1.</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
-                            <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane (ℍ)</h4>
-                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) maps the disk to the half-plane, revealing geodesics as semicircles orthogonal to the real axis. The modular group PSL(2,ℤ) acts here naturally.</p>
+                            <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley Transform</h4>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
-                            <h4 style="color: var(--geodesic); margin-bottom: 8px;">Nested Rings</h4>
-                            <p style="font-size: 0.9em;">Each ring represents residues mod <em>m</em>. Points at angle 2πk/m are colored by their <strong>GCD(k,m)</strong>, revealing the structure of the multiplicative group (ℤ/mℤ)×.</p>
+                            <h4 style="color: var(--geodesic); margin-bottom: 8px;">Nested Rings Structure</h4>
+                            <p style="font-size: 0.9em;">Concentric rings represent residue classes modulo m for successive values of m. Points at angle 2πk/m are colored by gcd(k,m), revealing the multiplicative structure of (Z/mZ)×. The Euler totient function φ(m) counts coprime residues (colored gold). This visualization makes visible the Chinese Remainder Theorem and properties of the group of units modulo m.</p>
                         </div>
                     </div>
                     
-                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Key Mathematical Concepts</h3>
+                    <h3 style="color: var(--gold); margin: 25px 0 15px;">Core Mathematical Concepts</h3>
                     
                     <ul style="list-style: none; padding: 0;">
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Farey Sequence F_n:</strong> All reduced fractions p/q with 0 ≤ p ≤ q ≤ n. Adjacent fractions satisfy the mediant property: if p/q and r/s are neighbors, then |ps - qr| = 1.
+                            <strong style="color: var(--cyan);">Farey Sequence F_n:</strong> The set of all irreducible fractions p/q with 0 ≤ p ≤ q ≤ n, ordered by size. Adjacent fractions satisfy |ps - qr| = 1 (mediant property). The sequence has ∑_{k=1}^n φ(k) terms, where φ is Euler's totient function.
                         </li>
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Cayley Transform:</strong> The map w = i(1-z)/(1+z) is a Möbius transformation sending the unit disk 𝔻 = {z : |z| < 1} to the upper half-plane ℍ = {w : Im(w) > 0}.
+                            <strong style="color: var(--cyan);">Cayley Transform:</strong> The Möbius transformation w = i(1-z)/(1+z) providing a conformal equivalence between the Poincaré disk model (|z| < 1) and the upper half-plane model (Im(w) > 0) of hyperbolic geometry. Its inverse is z = (i-w)/(i+w).
                         </li>
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Modular Group PSL(2,ℤ):</strong> Möbius transformations z → (az+b)/(cz+d) with integer coefficients and ad-bc=1. Acts on ℍ preserving hyperbolic geometry.
+                            <strong style="color: var(--cyan);">Modular Group PSL(2,Z):</strong> The quotient group SL(2,Z)/{±I} acting on the upper half-plane via z → (az+b)/(cz+d) where ad-bc=1 and a,b,c,d are integers. This group is generated by S: z → -1/z and T: z → z+1, and is fundamental in the theory of modular forms and elliptic curves.
                         </li>
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Geodesics in ℍ:</strong> Hyperbolic straight lines appear as semicircles perpendicular to the real axis (or vertical lines).
+                            <strong style="color: var(--cyan);">Hyperbolic Geodesics:</strong> In the upper half-plane model, geodesics are either vertical lines or semicircles perpendicular to the real axis. The hyperbolic distance between two points is preserved under PSL(2,Z) actions.
                         </li>
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Prime Distribution mod m:</strong> Primes p are placed at angle 2πp/m on the unit circle, visualizing their distribution among residue classes coprime to m (Euler's φ function).
+                            <strong style="color: var(--cyan);">Prime Distribution mod m:</strong> Primes p are visualized at angle 2πp/m. By Dirichlet's theorem on primes in arithmetic progressions, primes are equidistributed among residue classes coprime to m. The density in each such class approaches 1/φ(m) as we consider larger primes.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Smith Chart Mapping:</strong> The transformation w = (z-1)/(z+1) used in electrical engineering for impedance visualization. Unlike the Cayley transform, it maps the unit disk to itself, with the real axis of z mapping to the unit circle in w.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Möbius Transformations:</strong> General linear fractional transformations w = (az+b)/(cz+d) with ad-bc ≠ 0. These form a group under composition and are the conformal automorphisms of the Riemann sphere. They map circles and lines to circles and lines.
                         </li>
                     </ul>
                     
                     <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; margin-top: 20px; border-radius: 4px;">
-                        <strong style="color: var(--gold);">Quick Start:</strong> Try the preset buttons below, hover over controls for tooltips, or explore the examples section for interesting configurations!
+                        <strong style="color: var(--gold);">Getting Started:</strong> Use the preset buttons below to load common configurations. Hover over any control for detailed tooltips. Click the Guide button for an interactive tutorial. Explore the various transform types to see how different conformal mappings affect the geometry.
                     </div>
                 </div>
             </div>
@@ -971,6 +977,85 @@
             </div>
         </div>
 
+        <!-- Interactive Guide -->
+        <div class="controls-section">
+            <div class="controls-header" style="cursor: pointer; user-select: none;" onclick="toggleGuide()">
+                <span id="guideToggle">&#9654;</span> Interactive Guide
+            </div>
+            <div class="controls-body" id="guidePanel" style="display: none;">
+                <div style="line-height: 1.8; font-size: 0.95em;">
+                    <h3 style="color: var(--gold); margin-bottom: 15px;">Step-by-Step Tutorial</h3>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--gold);">
+                        <h4 style="color: var(--gold); margin-bottom: 10px;">Step 1: Understanding the Farey Sequence</h4>
+                        <p style="margin-bottom: 10px;">The Farey sequence F_n consists of all reduced fractions between 0 and 1 with denominators not exceeding n, arranged in increasing order.</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>F_3 = {0/1, 1/3, 1/2, 2/3, 1/1}</li>
+                            <li>F_5 = {0/1, 1/5, 1/4, 1/3, 2/5, 1/2, 3/5, 2/3, 3/4, 4/5, 1/1}</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Click "Generate F_5" button in the Farey Sequence section to see these points on the unit circle.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--cyan);">
+                        <h4 style="color: var(--cyan); margin-bottom: 10px;">Step 2: The Cayley Transform</h4>
+                        <p style="margin-bottom: 10px;">The standard Cayley transform w = i(1-z)/(1+z) maps the unit disk conformally onto the upper half-plane.</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>Points on the unit circle |z|=1 map to the real axis Im(w)=0</li>
+                            <li>Interior points |z|&lt;1 map to upper half-plane Im(w)&gt;0</li>
+                            <li>The point z=1 maps to infinity</li>
+                            <li>The point z=-1 maps to w=0</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Switch between transform types in the "Cayley Transform & View Options" to see different conformal mappings.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--geodesic);">
+                        <h4 style="color: var(--geodesic); margin-bottom: 10px;">Step 3: Prime Distribution</h4>
+                        <p style="margin-bottom: 10px;">Primes are positioned at angles 2πp/m on the unit circle, where m is the modulus.</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>Set modulus m to see primes distributed in residue classes</li>
+                            <li>Enable "Residue Channels" to color primes by their class mod m</li>
+                            <li>Only primes coprime to m are shown when channels are enabled</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Set modulus to 12, enable "Residue Channels" toggle, and observe how primes cluster in coprime classes.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--cusp);">
+                        <h4 style="color: var(--cusp); margin-bottom: 10px;">Step 4: Nested Ring Structure</h4>
+                        <p style="margin-bottom: 10px;">Concentric rings show the structure of (Z/mZ)× for each modulus m from min to max.</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>Points are colored by gcd(k,m) where k is the residue</li>
+                            <li>Gold points have gcd(k,m)=1 (units in Z/mZ)</li>
+                            <li>The number of gold points on ring m equals φ(m)</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Set min ring to 1, max ring to 20, and enable "GCD Coloring" to see totient structure.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--prime);">
+                        <h4 style="color: var(--prime); margin-bottom: 10px;">Step 5: Geodesics and Hyperbolic Geometry</h4>
+                        <p style="margin-bottom: 10px;">In the upper half-plane, hyperbolic geodesics appear as semicircles perpendicular to the real axis.</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>Geodesics connect Farey points on the boundary</li>
+                            <li>These are the "straight lines" of hyperbolic geometry</li>
+                            <li>The modular group PSL(2,Z) acts by isometries</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Enable "Geodesic Arc" to see hyperbolic lines connecting Farey fractions.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-left: 3px solid var(--text);">
+                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Custom Möbius Transformations</h4>
+                        <p style="margin-bottom: 10px;">Experiment with general Möbius transformations w = (az+b)/(cz+d).</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li>Select "Möbius" transform type to reveal parameter controls</li>
+                            <li>Ensure ad-bc ≠ 0 for a valid transformation</li>
+                            <li>Common choices: (a,b,c,d) = (1,1,1,0) gives w=(z+1)/z</li>
+                            <li>Try (0,-1,1,0) for w=-1/z (inversion)</li>
+                        </ul>
+                        <p><strong>Mathematical note:</strong> Möbius transformations form a group isomorphic to PSL(2,C), the group of conformal automorphisms of the Riemann sphere.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Advanced Controls -->
         <div class="controls-section">
             <div class="controls-header">
@@ -986,6 +1071,7 @@
                             <span class="control-value" id="phaseValue">0°</span>
                         </div>
                         <input type="range" id="phaseSlider" min="0" max="360" value="0" step="0.1">
+                        <input type="number" id="phaseInput" value="0" min="0" max="360" step="0.1" style="margin-top: 8px;" placeholder="Enter angle in degrees">
                     </div>
 
                     <div class="control-item" data-tooltip="The modulus for residue classes. Affects prime distribution and ring structure. No upper limit!">
@@ -1035,18 +1121,53 @@
                 </div>
 
                 <!-- Cayley View Controls -->
-                <div class="section-header">Cayley Plane View Range</div>
+                <div class="section-header">Cayley Transform & View Options</div>
                 <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Switch between standard Cayley transform and alternative transformation">
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Choose which mathematical transformation to apply">
                         <div class="control-label">
                             <span>Transform Type</span>
                         </div>
                         <select id="cayleyTransformType">
-                            <option value="standard">Cayley Transform: w = i(1-z)/(1+z)</option>
-                            <option value="alternate">Alternative Transform: w = i(1+z)/(1-z)</option>
+                            <option value="standard">Standard Cayley: w = i(1-z)/(1+z)</option>
+                            <option value="alternate">Alternate View: w = i(1+z)/(1-z)</option>
+                            <option value="smith">Smith Chart: (z-1)/(z+1)</option>
+                            <option value="mobius">Möbius: (az+b)/(cz+d)</option>
                         </select>
-                        <div class="help-text">Standard maps disk to upper half-plane. Alternative creates different geometric patterns.</div>
+                        <div class="help-text" id="transformDescription">Standard: Maps unit disk to upper half-plane (modular forms)</div>
                     </div>
+                    
+                    <div class="control-item" id="mobiusParamsA" style="display: none;" data-tooltip="Coefficient a in Möbius transformation w=(az+b)/(cz+d). Must satisfy ad-bc not equal to zero for invertibility.">
+                        <div class="control-label">
+                            <span>Möbius coefficient a</span>
+                        </div>
+                        <input type="number" id="mobiusA" value="1" step="1">
+                    </div>
+                    
+                    <div class="control-item" id="mobiusParamsB" style="display: none;" data-tooltip="Coefficient b in Möbius transformation w=(az+b)/(cz+d). Represents translation component in numerator.">
+                        <div class="control-label">
+                            <span>Möbius coefficient b</span>
+                        </div>
+                        <input type="number" id="mobiusB" value="0" step="1">
+                    </div>
+                    
+                    <div class="control-item" id="mobiusParamsC" style="display: none;" data-tooltip="Coefficient c in Möbius transformation w=(az+b)/(cz+d). When c=0, transformation reduces to affine map.">
+                        <div class="control-label">
+                            <span>Möbius coefficient c</span>
+                        </div>
+                        <input type="number" id="mobiusC" value="0" step="1">
+                    </div>
+                    
+                    <div class="control-item" id="mobiusParamsD" style="display: none;" data-tooltip="Coefficient d in Möbius transformation w=(az+b)/(cz+d). Determinant ad-bc must be nonzero.">
+                        <div class="control-label">
+                            <span>Möbius coefficient d</span>
+                        </div>
+                        <input type="number" id="mobiusD" value="1" step="1">
+                        <div class="help-text">Constraint: determinant ad - bc must be nonzero</div>
+                    </div>
+                </div>
+
+                <div class="section-header">Cayley Plane View Range</div>
+                <div class="control-row">
                     
                     <div class="control-item" data-tooltip="Width of the visible window in the upper half-plane. Increase to see more of the real axis.">
                         <div class="control-label">
@@ -1396,7 +1517,11 @@
             cayleyVRange: 4,
             cayleyVOffset: 0,
             cayleyGridDensity: 1,
-            useAlternateCayley: false,
+            transformType: 'standard',
+            mobiusA: 1,
+            mobiusB: 0,
+            mobiusC: 0,
+            mobiusD: 1,
             diskZoom: 1.0,
             cayleyZoom: 1.0,
             nestedZoom: 1.0,
@@ -1585,7 +1710,20 @@
             // Phase slider
             document.getElementById('phaseSlider').addEventListener('input', e => {
                 state.phase = parseFloat(e.target.value);
-                document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+                document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + ' degrees';
+                document.getElementById('phaseInput').value = state.phase.toFixed(1);
+                if (!state.animationId) updateAll();
+            });
+
+            // Phase input box
+            document.getElementById('phaseInput').addEventListener('change', e => {
+                let val = parseFloat(e.target.value);
+                // Handle wraparound
+                val = ((val % 360) + 360) % 360;
+                state.phase = val;
+                document.getElementById('phaseSlider').value = val;
+                document.getElementById('phaseValue').textContent = val.toFixed(1) + ' degrees';
+                document.getElementById('phaseInput').value = val.toFixed(1);
                 if (!state.animationId) updateAll();
             });
 
@@ -1595,6 +1733,7 @@
                 if (val > 0) {
                     state.modulus = val;
                     document.getElementById('modulusDisplay').textContent = val;
+                    document.getElementById('maxFareyOrder').textContent = val;
                     updateAll();
                 }
             });
@@ -1695,8 +1834,34 @@
 
             // Cayley transform type
             document.getElementById('cayleyTransformType').addEventListener('change', e => {
-                state.useAlternateCayley = (e.target.value === 'alternate');
+                state.transformType = e.target.value;
+                
+                // Show/hide Möbius parameters
+                const showMobius = (e.target.value === 'mobius');
+                document.getElementById('mobiusParamsA').style.display = showMobius ? 'block' : 'none';
+                document.getElementById('mobiusParamsB').style.display = showMobius ? 'block' : 'none';
+                document.getElementById('mobiusParamsC').style.display = showMobius ? 'block' : 'none';
+                document.getElementById('mobiusParamsD').style.display = showMobius ? 'block' : 'none';
+                
+                // Update description
+                const descriptions = {
+                    'standard': 'Standard Cayley transform provides conformal equivalence between Poincaré disk and upper half-plane models',
+                    'alternate': 'Alternative conformal mapping producing different geometric visualization',
+                    'smith': 'Smith Chart mapping used in RF and microwave engineering for impedance analysis',
+                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero'
+                };
+                document.getElementById('transformDescription').textContent = descriptions[e.target.value];
+                
                 updateAll();
+            });
+
+            // Möbius parameters
+            ['mobiusA', 'mobiusB', 'mobiusC', 'mobiusD'].forEach(id => {
+                document.getElementById(id).addEventListener('change', e => {
+                    const param = id.replace('mobius', '').toLowerCase();
+                    state['mobius' + id.charAt(6).toUpperCase()] = parseFloat(e.target.value);
+                    updateAll();
+                });
             });
 
             // Connection controls
@@ -1819,10 +1984,9 @@
             return Math.round(result);
         }
 
-        function cayleyTransform(z, useAlternate = false) {
-            if (useAlternate) {
+        function cayleyTransform(z, transformType = 'standard') {
+            if (transformType === 'alternate') {
                 // Alternative visualization: (1+z)/(1-z) transform
-                // This was the original version - mathematically different but interesting
                 const numRe = 1 + z.re;
                 const numIm = z.im;
                 const denRe = 1 - z.re;
@@ -1838,6 +2002,60 @@
                 const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
                 
                 return { re: -quotIm, im: quotRe };
+            }
+            
+            if (transformType === 'smith') {
+                // Smith Chart mapping: w = (z-1)/(z+1)
+                // Used in RF/microwave engineering for impedance
+                const numRe = z.re - 1;
+                const numIm = z.im;
+                const denRe = z.re + 1;
+                const denIm = z.im;
+                
+                const denMagSq = denRe * denRe + denIm * denIm;
+                
+                if (denMagSq < 1e-10) {
+                    return { re: 1e10, im: 0 };
+                }
+                
+                const quotRe = (numRe * denRe + numIm * denIm) / denMagSq;
+                const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
+                
+                return { re: quotRe, im: quotIm };
+            }
+            
+            if (transformType === 'mobius') {
+                // General Möbius transform: w = (az+b)/(cz+d)
+                const a = state.mobiusA;
+                const b = state.mobiusB;
+                const c = state.mobiusC;
+                const d = state.mobiusD;
+                
+                // Check constraint: ad - bc ≠ 0
+                const det = a * d - b * c;
+                if (Math.abs(det) < 1e-10) {
+                    console.warn('Möbius determinant too small, using identity');
+                    return z;
+                }
+                
+                // Numerator: az + b
+                const numRe = a * z.re + b;
+                const numIm = a * z.im;
+                
+                // Denominator: cz + d
+                const denRe = c * z.re + d;
+                const denIm = c * z.im;
+                
+                const denMagSq = denRe * denRe + denIm * denIm;
+                
+                if (denMagSq < 1e-10) {
+                    return { re: 1e10 * Math.sign(numRe), im: 1e10 * Math.sign(numIm) };
+                }
+                
+                const quotRe = (numRe * denRe + numIm * denIm) / denMagSq;
+                const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
+                
+                return { re: quotRe, im: quotIm };
             }
             
             // Standard Cayley transform: w = i(1-z)/(1+z)
@@ -2256,8 +2474,8 @@
                         const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
                         const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
                         
-                        const w1 = cayleyTransform(z1, state.useAlternateCayley);
-                        const w2 = cayleyTransform(z2, state.useAlternateCayley);
+                        const w1 = cayleyTransform(z1, state.transformType);
+                        const w2 = cayleyTransform(z2, state.transformType);
 
                         const centerRe = (w1.re + w2.re) / 2;
                         const radius = Math.sqrt((w1.re - centerRe) ** 2 + w1.im ** 2);
@@ -2307,7 +2525,7 @@
 
                     const angle = 2 * Math.PI * p / state.modulus + phase;
                     const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const wp = cayleyTransform(z, state.useAlternateCayley);
+                    const wp = cayleyTransform(z, state.transformType);
 
                     // Only draw if in visible range
                     if (wp.re >= reMin && wp.re <= reMax && wp.im >= imMin && wp.im <= imMax && wp.im > 0.01) {
@@ -2331,7 +2549,7 @@
                     const frac = fp.num / fp.den;
                     const angle = 2 * Math.PI * frac + phase;
                     const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const wp = cayleyTransform(z, state.useAlternateCayley);
+                    const wp = cayleyTransform(z, state.transformType);
                     const cuspP = mathToScreen({ re: wp.re, im: 0 });
 
                     ctx.fillStyle = CONFIG.colors.cusp;
@@ -2360,7 +2578,7 @@
                     const frac = fp.num / fp.den;
                     const angle = 2 * Math.PI * frac + phase;
                     const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                    const wp = cayleyTransform(z, state.useAlternateCayley);
+                    const wp = cayleyTransform(z, state.transformType);
                     return {
                         ...mathToScreen(wp),
                         wp: wp,
@@ -2416,6 +2634,209 @@
             ctx.shadowBlur = 10;
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
+            ctx.shadowBlur = 0;
+        }
+
+        function drawFullPlane() {
+            const canvas = canvases.fullPlane;
+            const ctx = canvases.fullPlaneCtx;
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Coordinate conversion - full complex plane view
+            function mathToScreen(wp) {
+                const scale = Math.min(w, h) * 0.15 * state.cayleyZoom;
+                const x = w / 2 + wp.re * scale;
+                const y = h / 2 - wp.im * scale;
+                return { x, y };
+            }
+
+            const phase = state.phase * Math.PI / 180;
+
+            // Grid
+            if (document.getElementById('toggleGrid').checked) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.lineWidth = 1;
+
+                const gridSpacing = 1;
+                const maxGrid = 10;
+
+                for (let i = -maxGrid; i <= maxGrid; i++) {
+                    // Vertical lines
+                    const p1 = mathToScreen({ re: i * gridSpacing, im: -maxGrid * gridSpacing });
+                    const p2 = mathToScreen({ re: i * gridSpacing, im: maxGrid * gridSpacing });
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+
+                    // Horizontal lines
+                    const p3 = mathToScreen({ re: -maxGrid * gridSpacing, im: i * gridSpacing });
+                    const p4 = mathToScreen({ re: maxGrid * gridSpacing, im: i * gridSpacing });
+                    ctx.beginPath();
+                    ctx.moveTo(p3.x, p3.y);
+                    ctx.lineTo(p4.x, p4.y);
+                    ctx.stroke();
+                }
+            }
+
+            // Axes
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 2;
+            
+            // Real axis
+            const realStart = mathToScreen({ re: -10, im: 0 });
+            const realEnd = mathToScreen({ re: 10, im: 0 });
+            ctx.beginPath();
+            ctx.moveTo(realStart.x, realStart.y);
+            ctx.lineTo(realEnd.x, realEnd.y);
+            ctx.stroke();
+
+            // Imaginary axis
+            const imStart = mathToScreen({ re: 0, im: -10 });
+            const imEnd = mathToScreen({ re: 0, im: 10 });
+            ctx.beginPath();
+            ctx.moveTo(imStart.x, imStart.y);
+            ctx.lineTo(imEnd.x, imEnd.y);
+            ctx.stroke();
+
+            // Draw unit circle (boundary between disk and exterior)
+            ctx.strokeStyle = 'rgba(231, 76, 60, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            for (let i = 0; i <= 100; i++) {
+                const angle = 2 * Math.PI * i / 100;
+                const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                const wp = cayleyTransform(z, state.useAlternateCayley);
+                const p = mathToScreen(wp);
+                if (i === 0) {
+                    ctx.moveTo(p.x, p.y);
+                } else {
+                    ctx.lineTo(p.x, p.y);
+                }
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Transformed Farey points
+            if (document.getElementById('toggleFarey').checked && state.fareyPoints.length > 0) {
+                state.fareyPoints.forEach(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const wp = cayleyTransform(z, state.transformType);
+                    const p = mathToScreen(wp);
+
+                    ctx.fillStyle = CONFIG.colors.farey;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = CONFIG.colors.farey;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 8, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    if (state.labelMode !== 'none') {
+                        ctx.fillStyle = CONFIG.colors.farey;
+                        ctx.font = `bold ${state.labelSize + 3}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(`${fp.num}/${fp.den}`, p.x, p.y - 20);
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Geodesics
+            if (document.getElementById('toggleGeodesic').checked && state.fareyPoints.length >= 2) {
+                for (let i = 0; i < state.fareyPoints.length; i++) {
+                    for (let j = i + 1; j < state.fareyPoints.length; j++) {
+                        const fp1 = state.fareyPoints[i];
+                        const fp2 = state.fareyPoints[j];
+                        
+                        const frac1 = fp1.num / fp1.den;
+                        const frac2 = fp2.num / fp2.den;
+                        
+                        const angle1 = 2 * Math.PI * frac1 + phase;
+                        const angle2 = 2 * Math.PI * frac2 + phase;
+                        
+                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
+                        const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
+                        
+                        const w1 = cayleyTransform(z1, state.transformType);
+                        const w2 = cayleyTransform(z2, state.transformType);
+
+                        const centerRe = (w1.re + w2.re) / 2;
+                        const radius = Math.sqrt((w1.re - centerRe) ** 2 + w1.im ** 2);
+
+                        const isFirst = (i === 0 && j === 1);
+                        ctx.strokeStyle = isFirst ? CONFIG.colors.geodesic : 'rgba(26, 188, 156, 0.3)';
+                        ctx.lineWidth = isFirst ? 4 : 2;
+                        if (isFirst) {
+                            ctx.shadowBlur = 20;
+                            ctx.shadowColor = CONFIG.colors.geodesic;
+                        }
+                        
+                        ctx.beginPath();
+                        let firstGeo = true;
+                        for (let k = 0; k <= 100; k++) {
+                            const angle = Math.PI * k / 100;
+                            const re = centerRe + radius * Math.cos(angle);
+                            const im = radius * Math.sin(angle);
+                            
+                            const p = mathToScreen({ re, im });
+                            if (firstGeo) {
+                                ctx.moveTo(p.x, p.y);
+                                firstGeo = false;
+                            } else {
+                                ctx.lineTo(p.x, p.y);
+                            }
+                        }
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            // Primes
+            if (document.getElementById('togglePrimes').checked) {
+                const colors = generateColors(state.modulus);
+                const displayPrimes = state.primes.slice(0, state.numPrimes);
+                const showChannels = document.getElementById('toggleChannels').checked;
+
+                displayPrimes.forEach(p => {
+                    if (showChannels && gcd(p, state.modulus) !== 1) return;
+
+                    const angle = 2 * Math.PI * p / state.modulus + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const wp = cayleyTransform(z, state.transformType);
+                    const p_screen = mathToScreen(wp);
+
+                    const color = showChannels ? colors[p % state.modulus] : CONFIG.colors.prime;
+                    
+                    ctx.fillStyle = color;
+                    ctx.shadowBlur = 6;
+                    ctx.shadowColor = color;
+                    ctx.beginPath();
+                    ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+            }
+
+            // Title
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'bold 20px "Fira Code"';
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillText('Full Complex Plane ℂ', w/2, 35);
             ctx.shadowBlur = 0;
         }
 
@@ -2677,6 +3098,11 @@
             drawDisk();
             drawCayley();
             drawNested();
+            
+            // Draw full plane if visible
+            if (document.getElementById('toggleFullPlane').checked) {
+                drawFullPlane();
+            }
         }
 
         // ============================================================
@@ -2708,15 +3134,27 @@
         // UI CONTROLS
         // ============================================================
 
+        function toggleGuide() {
+            const panel = document.getElementById('guidePanel');
+            const toggle = document.getElementById('guideToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.innerHTML = '&#9660;';
+            } else {
+                panel.style.display = 'none';
+                toggle.innerHTML = '&#9654;';
+            }
+        }
+
         function toggleIntro() {
             const panel = document.getElementById('introPanel');
             const toggle = document.getElementById('introToggle');
             if (panel.style.display === 'none') {
                 panel.style.display = 'block';
-                toggle.textContent = '▼';
+                toggle.innerHTML = '&#9660;';
             } else {
                 panel.style.display = 'none';
-                toggle.textContent = '▶';
+                toggle.innerHTML = '&#9654;';
             }
         }
 
@@ -2741,7 +3179,11 @@
                 cayleyVRange: 4,
                 cayleyVOffset: 0,
                 cayleyGridDensity: 1,
-                useAlternateCayley: false,
+                transformType: 'standard',
+                mobiusA: 1,
+                mobiusB: 0,
+                mobiusC: 0,
+                mobiusD: 1,
                 diskZoom: 1.0,
                 cayleyZoom: 1.0,
                 nestedZoom: 1.0,
@@ -2756,41 +3198,51 @@
 
             // Reset UI
             document.getElementById('phaseSlider').value = 0;
-            document.getElementById('phaseInput').value = 0;
-            document.getElementById('modulusSlider').value = 30;
             document.getElementById('modulusInput').value = 30;
             document.getElementById('primesInput').value = 150;
             document.getElementById('primeLimitInput').value = 10000;
             document.getElementById('speedSlider').value = 1;
-            document.getElementById('speedInput').value = 1;
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
-            document.getElementById('spacingInput').value = 1;
             document.getElementById('cayleyHRangeSlider').value = 6;
-            document.getElementById('cayleyHRangeInput').value = 6;
             document.getElementById('cayleyVRangeSlider').value = 4;
-            document.getElementById('cayleyVRangeInput').value = 4;
             document.getElementById('cayleyVOffsetSlider').value = 0;
-            document.getElementById('cayleyVOffsetInput').value = 0;
             document.getElementById('cayleyGridDensitySlider').value = 1;
-            document.getElementById('cayleyGridDensityInput').value = 1;
             document.getElementById('connectionMode').value = 'none';
             document.getElementById('connectionThicknessSlider').value = 1;
-            document.getElementById('connectionThicknessInput').value = 1;
             document.getElementById('connectionOpacitySlider').value = 0.3;
-            document.getElementById('connectionOpacityInput').value = 0.3;
             document.getElementById('labelMode').value = 'farey';
             document.getElementById('labelSizeSlider').value = 10;
-            document.getElementById('labelSizeInput').value = 10;
             document.getElementById('labelFreqInput').value = 1;
+            document.getElementById('diskZoomSlider').value = 1;
+            document.getElementById('cayleyZoomSlider').value = 1;
+            document.getElementById('nestedZoomSlider').value = 1;
             document.getElementById('toggleAnimate').checked = false;
+            document.getElementById('toggleFarey').checked = true;
+            document.getElementById('toggleGeodesic').checked = true;
+            document.getElementById('togglePrimes').checked = true;
+            document.getElementById('toggleChannels').checked = true;
+            document.getElementById('toggleCusps').checked = true;
+            document.getElementById('toggleRings').checked = true;
+            document.getElementById('toggleGCD').checked = true;
+            document.getElementById('toggleGrid').checked = true;
             document.getElementById('toggleFundDomain').checked = false;
             document.getElementById('toggleVerticals').checked = false;
             document.getElementById('toggleDiskOutline').checked = false;
+            document.getElementById('toggleFullPlane').checked = false;
             document.getElementById('cayleyTransformType').value = 'standard';
+            document.getElementById('mobiusA').value = 1;
+            document.getElementById('mobiusB').value = 0;
+            document.getElementById('mobiusC').value = 0;
+            document.getElementById('mobiusD').value = 1;
+            document.getElementById('mobiusParamsA').style.display = 'none';
+            document.getElementById('mobiusParamsB').style.display = 'none';
+            document.getElementById('mobiusParamsC').style.display = 'none';
+            document.getElementById('mobiusParamsD').style.display = 'none';
+            document.getElementById('transformDescription').textContent = 'Standard: Maps unit disk to upper half-plane (modular forms)';
 
-            document.getElementById('phaseValue').textContent = '0°';
+            document.getElementById('phaseValue').textContent = '0 degrees';
             document.getElementById('modulusDisplay').textContent = '30';
             document.getElementById('primesDisplay').textContent = '150';
             document.getElementById('primeLimitDisplay').textContent = '10000';
@@ -2809,6 +3261,11 @@
             document.getElementById('diskZoomValue').textContent = '1.00×';
             document.getElementById('cayleyZoomValue').textContent = '1.00×';
             document.getElementById('nestedZoomValue').textContent = '1.00×';
+            document.getElementById('maxFareyOrder').textContent = '30';
+
+            // Hide full plane panel
+            document.getElementById('fullPlanePanel').style.display = 'none';
+            document.getElementById('vizGrid').classList.remove('four-panel');
 
             stopAnimation();
             updateFareyPointsList();
@@ -2894,7 +3351,7 @@
                         
                         <div class="action-bar">
                             <button class="btn btn-primary" onclick="performExport()">
-                                <span> Export PNG</span>
+                                <span>💾 Export PNG</span>
                             </button>
                             <button class="btn btn-secondary" onclick="closeExportDialog()">
                                 <span>Cancel</span>
@@ -3417,12 +3874,12 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n BASIC PARAMETERS:');
+            console.log('\n🎯 BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n CAYLEY PLANE VIEW:');
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -3433,7 +3890,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n FAREY POINTS:');
+            console.log('\n🎯 FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -3446,7 +3903,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n PRIME DISTRIBUTION:');
+            console.log('\n🔢 PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -3455,15 +3912,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n CONNECTION MODE:', state.connectionMode);
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n LABEL MODE:', state.labelMode);
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n DISPLAY TOGGLES:');
+            console.log('\n📊 DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -3476,25 +3933,26 @@
                 }
             });
             
-            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
             console.log('  Inverse: z = (i-w)/(i+w)');
             console.log('  Preserves angles (conformal)');
+
             
             // Test a few points
             const testPoints = [
-                { re: 1, im: 0, label: '1 → ∞' },
-                { re: -1, im: 0, label: '-1 → 0' },
-                { re: 0, im: 1, label: 'i → i' },
-                { re: 0, im: 0, label: '0 → i' }
+                { re: 1, im: 0, label: 'z=1' },
+                { re: -1, im: 0, label: 'z=-1' },
+                { re: 0, im: 1, label: 'z=i' },
+                { re: 0, im: 0, label: 'z=0' }
             ];
             
             console.log('\n  Test transformations:');
             testPoints.forEach(z => {
-                const w = cayleyTransform(z, state.useAlternateCayley);
-                console.log(`    z = (${z.re}, ${z.im}) ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
+                const w = cayleyTransform(z, state.transformType);
+                console.log(`    ${z.label}: w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i`);
             });
             
             console.log('\n=====================================================');
