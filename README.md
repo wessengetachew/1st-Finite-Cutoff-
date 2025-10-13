@@ -4062,7 +4062,7 @@
                 }
             });
             
-            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
