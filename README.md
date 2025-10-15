@@ -869,9 +869,6 @@
                 <span class="title-main">Farey Triangle & Cayley Transform</span>
             </h1>
             <p class="subtitle">Hyperbolic Geometry · Number Theory · Modular Forms</p>
-            <p style="font-family: 'Fira Code', monospace; font-size: 0.85em; color: rgba(255, 255, 255, 0.5); margin-top: 10px;">
-                by Wessen Getachew · Twitter <a href="https://twitter.com/7dview" target="_blank" rel="noopener" style="color: #00ffff; text-decoration: none; transition: all 0.3s;">@7dview</a>
-            </p>
         </header>
 
         <!-- Introduction Panel -->
@@ -893,7 +890,7 @@
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
                             <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley Transform</h4>
-                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y². Additionally, the <strong>R→R lift</strong> represents the identity embedding Q ⊂ R, while the <strong>R→R+mod×2^n lift</strong> (Hensel lift) translates points vertically by mod×2^n, fundamental in p-adic analysis and Newton-Hensel lifting for solving polynomial congruences.</p>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
@@ -922,12 +919,6 @@
                         </li>
                         <li style="margin-bottom: 12px;">
                             <strong style="color: var(--cyan);">Smith Chart Mapping:</strong> The transformation w = (z-1)/(z+1) used in electrical engineering for impedance visualization. Unlike the Cayley transform, it maps the unit disk to itself, with the real axis of z mapping to the unit circle in w.
-                        </li>
-                        <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">R→R Lift (Identity):</strong> The natural embedding Q ⊂ R that preserves the rational structure. In the context of lifting theorems, this represents solutions to f(x) ≡ 0 (mod m) extended to R while maintaining congruence properties.
-                        </li>
-                        <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">R→R+mod×2^n Lift (Hensel):</strong> A vertical translation x ↦ x + m·2^n fundamental in p-adic analysis. This lifting is central to Hensel's lemma: if f(a) ≡ 0 (mod p^k) and f'(a) ≢ 0 (mod p), we can lift a to a solution modulo p^(k+1). The parameter n controls the lifting height, with shift = mod×2^n. Used extensively in p-adic Newton iteration and solving polynomial congruences.
                         </li>
                         <li style="margin-bottom: 12px;">
                             <strong style="color: var(--cyan);">Möbius Transformations:</strong> General linear fractional transformations w = (az+b)/(cz+d) with ad-bc ≠ 0. These form a group under composition and are the conformal automorphisms of the Riemann sphere. They map circles and lines to circles and lines.
@@ -1051,15 +1042,15 @@
                     </div>
                     
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-left: 3px solid var(--text);">
-                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Hensel Lifting & p-adic Analysis</h4>
-                        <p style="margin-bottom: 10px;">The R→R+mod×2^n lift visualizes the core idea behind Hensel's lemma in p-adic analysis.</p>
+                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Custom Möbius Transformations</h4>
+                        <p style="margin-bottom: 10px;">Experiment with general Möbius transformations w = (az+b)/(cz+d).</p>
                         <ul style="margin-left: 20px; margin-bottom: 10px;">
-                            <li>Select "R→R+mod×2^n Lift" to see vertical displacement</li>
-                            <li>Adjust Hensel power n to control lift height: shift = mod×2^n</li>
-                            <li>This mimics how Hensel lifting "raises" modular solutions</li>
-                            <li>In p-adic context: if f(a) ≡ 0 (mod p^k), lift to mod p^(k+1)</li>
+                            <li>Select "Möbius" transform type to reveal parameter controls</li>
+                            <li>Ensure ad-bc ≠ 0 for a valid transformation</li>
+                            <li>Common choices: (a,b,c,d) = (1,1,1,0) gives w=(z+1)/z</li>
+                            <li>Try (0,-1,1,0) for w=-1/z (inversion)</li>
                         </ul>
-                        <p><strong>Mathematical note:</strong> Hensel's lemma states that if f(a) ≡ 0 (mod p^k) and the derivative f'(a) is a unit mod p (i.e., gcd(f'(a), p) = 1), then there exists a unique lift ã with f(ã) ≡ 0 (mod p^(k+1)) and ã ≡ a (mod p^k). The iteration ã = a - f(a)/f'(a) (Newton's method) converges p-adically. Our visualization shows the geometric intuition: solutions "lift" to higher powers of the modulus.</p>
+                        <p><strong>Mathematical note:</strong> Möbius transformations form a group isomorphic to PSL(2,C), the group of conformal automorphisms of the Riemann sphere.</p>
                     </div>
                 </div>
             </div>
@@ -1141,19 +1132,8 @@
                             <option value="alternate">Alternate View: w = i(1+z)/(1-z)</option>
                             <option value="smith">Smith Chart: (z-1)/(z+1)</option>
                             <option value="mobius">Möbius: (az+b)/(cz+d)</option>
-                            <option value="rtor">R→R Lift (Identity on Rationals)</option>
-                            <option value="rtorshift">R→R+mod×2^n Lift (Hensel-type)</option>
                         </select>
                         <div class="help-text" id="transformDescription">Standard: Maps unit disk to upper half-plane (modular forms)</div>
-                    </div>
-                    
-                    <div class="control-item" id="henselParams" style="display: none; grid-column: 1 / -1;" data-tooltip="Parameters for Hensel-type lifting in p-adic analysis">
-                        <div class="control-label">
-                            <span>Hensel Lift Power n (mod×2^n)</span>
-                            <span class="control-value" id="henselPowerValue">3</span>
-                        </div>
-                        <input type="range" id="henselPowerSlider" min="0" max="10" value="3" step="1">
-                        <div class="help-text">Controls vertical displacement: shift by mod×2^n. Used in p-adic Hensel lifting.</div>
                     </div>
                     
                     <div class="control-item" id="mobiusParamsA" style="display: none;" data-tooltip="Coefficient a in Möbius transformation w=(az+b)/(cz+d). Must satisfy ad-bc not equal to zero for invertibility.">
@@ -1275,15 +1255,6 @@
                         </div>
                         <input type="range" id="spacingSlider" min="0.1" max="5" value="1" step="0.1">
                     </div>
-
-                    <div class="control-item" data-tooltip="Rotate each individual ring by this angle. Creates spiraling patterns.">
-                        <div class="control-label">
-                            <span>Per-Ring Rotation</span>
-                            <span class="control-value" id="ringRotationValue">0°</span>
-                        </div>
-                        <input type="range" id="ringRotationSlider" min="0" max="360" value="0" step="1">
-                        <input type="number" id="ringRotationInput" value="0" min="0" max="360" step="1" style="margin-top: 8px;" placeholder="Degrees per ring">
-                    </div>
                 </div>
 
                 <!-- Custom Farey Points -->
@@ -1338,32 +1309,26 @@
                 <!-- Connection Options -->
                 <div class="section-header">Connection Options</div>
                 <div class="control-row">
-                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
+                    <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
                         <div class="control-label">
                             <span>Connect Points By</span>
                         </div>
                         <select id="connectionMode">
                             <option value="none">No Connections</option>
-                            <option value="farey">Farey Points Only (gcd=1)</option>
-                            <option value="mod">Same Modulus (Same Ring)</option>
-                            <option value="angle">Same Angle (Radial)</option>
-                            <option value="gcd">Same GCD (Arithmetic Structure)</option>
-                            <option value="fraction">Same Fraction Value (k/m Equivalence)</option>
-                            <option value="rtor">R→R Lift (Vertical Extension)</option>
-                            <option value="hensel">R→R+mod×2^n (Hensel Lift Levels)</option>
+                            <option value="farey">Farey Points Only</option>
+                            <option value="mod">Same Modulus</option>
+                            <option value="angle">Same Angle</option>
+                            <option value="gcd">Same GCD</option>
+                            <option value="fraction">Same Fraction Value</option>
                         </select>
-                        <div id="connectionExplanation" class="help-text" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--cyan); line-height: 1.6;">
-                            <strong>No Connections:</strong> Clean view without connecting lines.
-                        </div>
                     </div>
 
-                    <div class="control-item" data-tooltip="Line width for connections. Use smaller values (0.1-0.5) for many rings to avoid clutter.">
+                    <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
                         <div class="control-label">
                             <span>Connection Thickness</span>
                             <span class="control-value" id="connectionThicknessValue">1.0</span>
                         </div>
-                        <input type="range" id="connectionThicknessSlider" min="0.05" max="10" value="1" step="0.05">
-                        <div class="help-text">Recommended: 0.1-0.5 for many rings (>20), 0.5-2.0 for few rings</div>
+                        <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
                     </div>
 
                     <div class="control-item" data-tooltip="Transparency of connection lines. Lower = more transparent, easier to see overlapping patterns.">
@@ -1371,8 +1336,7 @@
                             <span>Connection Opacity</span>
                             <span class="control-value" id="connectionOpacityValue">0.3</span>
                         </div>
-                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.01">
-                        <div class="help-text">Lower opacity (0.1-0.3) recommended for dense connection patterns</div>
+                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.05">
                     </div>
                 </div>
 
@@ -1479,7 +1443,7 @@
                         <span class="toggle-label">Unit Disk Outline</span>
                     </label>
 
-                    <input type="checkbox" id="toggleFullPlane" checked>
+                    <input type="checkbox" id="toggleFullPlane">
                     <label for="toggleFullPlane" class="toggle-item">
                         <div class="toggle-switch"></div>
                         <span class="toggle-label">Full Complex Plane View</span>
@@ -1489,18 +1453,6 @@
                     <label for="toggleAnimate" class="toggle-item">
                         <div class="toggle-switch"></div>
                         <span class="toggle-label">Auto-Rotate</span>
-                    </label>
-
-                    <input type="checkbox" id="toggleInvertRings">
-                    <label for="toggleInvertRings" class="toggle-item">
-                        <div class="toggle-switch"></div>
-                        <span class="toggle-label">Invert Ring Order (Outer↔Inner)</span>
-                    </label>
-
-                    <input type="checkbox" id="toggleInvertAll">
-                    <label for="toggleInvertAll" class="toggle-item">
-                        <div class="toggle-switch"></div>
-                        <span class="toggle-label">Invert All Canvases</span>
                     </label>
                 </div>
 
@@ -1555,7 +1507,6 @@
             minRing: 1,
             maxRing: 12,
             ringSpacing: 1.0,
-            ringRotation: 0,
             connectionMode: 'none',
             connectionThickness: 1.0,
             connectionOpacity: 0.3,
@@ -1571,7 +1522,6 @@
             mobiusB: 0,
             mobiusC: 0,
             mobiusD: 1,
-            henselPower: 3,
             diskZoom: 1.0,
             cayleyZoom: 1.0,
             nestedZoom: 1.0,
@@ -1647,25 +1597,6 @@
 
         function initFareyPointsUI() {
             updateFareyPointsList();
-            updateConnectionExplanation();
-        }
-
-        function updateConnectionExplanation() {
-            const explanations = {
-                'none': '<strong>No Connections:</strong> Clean view without connecting lines.',
-                'farey': '<strong>Farey Points Only (gcd=1):</strong> Connects all coprime points where gcd(k,m)=1. These form the <em>Farey neighbors</em> and satisfy the mediant property: if p/q and r/s are adjacent Farey fractions, then |ps-qr|=1. This creates a web showing the structure of ℚ ∩ [0,1]. <span style="color: var(--gold);">Mathematical: ∀ k/m with gcd(k,m)=1, connect to all other k\'/m\' with gcd(k\',m\')=1.</span>',
-                'mod': '<strong>Same Modulus (Same Ring):</strong> Connects consecutive points on each ring m, forming m-sided polygons. Each ring represents ℤ/mℤ, the integers modulo m. The connections visualize the <em>cyclic group structure</em> of (ℤ/mℤ, +). <span style="color: var(--gold);">Mathematical: For fixed m, connect k/m to (k+1)/m for k=0,1,...,m-1 (with wraparound).</span>',
-                'angle': '<strong>Same Angle (Radial):</strong> Connects points at similar angles across different rings, forming radial spokes. If k₁/m₁ ≈ k₂/m₂ as fractions, they lie on approximately the same ray from origin. This shows <em>fraction equivalence classes</em> and how different representations of the same rational number appear across rings. <span style="color: var(--gold);">Mathematical: Connect k₁/m₁ to k₂/m₂ if |θ₁-θ₂| < ε where θᵢ = 2πkᵢ/mᵢ (typically ε ≈ 0.1 radians).</span>',
-                'gcd': '<strong>Same GCD (Arithmetic Structure):</strong> Groups points by their greatest common divisor gcd(k,m). Points with the same GCD value share arithmetic properties: gcd(k,m)=d means k=da, m=db where gcd(a,b)=1. This reveals the <em>divisibility structure</em> and how the ring ℤ/mℤ decomposes based on common factors. <span style="color: var(--gold);">Mathematical: Connect all pairs (k₁,m₁), (k₂,m₂) where gcd(k₁,m₁) = gcd(k₂,m₂) = d. Color by d.</span>',
-                'fraction': '<strong>Same Fraction Value (k/m Equivalence):</strong> Connects points representing the same rational number in lowest terms. For example, 1/2 = 2/4 = 3/6 = 4/8... This demonstrates <em>rational number equality</em> and the equivalence relation on ℤ×ℤ₊ given by (a,b)~(c,d) ⟺ ad=bc. Shows how ℚ is constructed as equivalence classes. <span style="color: var(--gold);">Mathematical: Connect k₁/m₁ to k₂/m₂ if k₁m₂ = k₂m₁ (cross-multiplication test for equality).</span>',
-                'rtor': '<strong>R→R Lift (Vertical Extension):</strong> Shows how values lift through powers-of-2 moduli. In mod 30 with φ(30)=8 coprime values {1,7,11,13,17,19,23,29}, each lifts to TWO values in mod 60: k→k and k→k+30. For example: 1→{1,31}, 7→{7,37}, 11→{11,41}, 13→{13,43}, 17→{17,47}, 19→{19,49}, 23→{23,53}, 29→{29,59}. This reveals the <em>branching structure</em> where each coprime class splits into multiple branches in higher moduli, preserving GCD=1. Twin primes emerge from the 11,17,29 trees (and 1→31), while 7,23 trees produce multiples of 3,5. <span style="color: var(--gold);">Mathematical: Connect k₁ in mod m to k₂ in mod 2^n·m where k₂≡k₁ (mod m) and gcd(k₁,m)=gcd(k₂,2^n·m).</span>',
-                'hensel': '<strong>R→R+mod×2^n (Hensel Lift Levels):</strong> Connects points that are related by <em>Hensel lifting</em> through powers of 2. If a solution exists at mod m·2^k, the connection shows potential lifts to mod m·2^(k+1). This visualizes the <em>p-adic tree structure</em> where each solution branches to possible lifts. Fundamental to solving f(x)≡0 (mod p^n) via Newton-Hensel iteration. <span style="color: var(--gold);">Mathematical: Connect k/m on ring m to k/(m·2) on ring m·2, modeling Hensel lift: if f(a)≡0 (mod m), find ã with ã≡a (mod m) and f(ã)≡0 (mod 2m). Requires f\'(a)≠0 (mod p).</span>'
-            };
-            
-            const elem = document.getElementById('connectionExplanation');
-            if (elem) {
-                elem.innerHTML = explanations[state.connectionMode] || explanations['none'];
-            }
         }
 
         function updateFareyPointsList() {
@@ -1876,24 +1807,6 @@
                 if (!state.animationId) updateAll();
             });
 
-            // Ring rotation slider
-            document.getElementById('ringRotationSlider').addEventListener('input', e => {
-                state.ringRotation = parseFloat(e.target.value);
-                document.getElementById('ringRotationValue').textContent = state.ringRotation.toFixed(0) + '°';
-                document.getElementById('ringRotationInput').value = state.ringRotation.toFixed(0);
-                if (!state.animationId) updateAll();
-            });
-
-            // Ring rotation input
-            document.getElementById('ringRotationInput').addEventListener('change', e => {
-                let val = parseFloat(e.target.value);
-                val = ((val % 360) + 360) % 360;
-                state.ringRotation = val;
-                document.getElementById('ringRotationSlider').value = val;
-                document.getElementById('ringRotationValue').textContent = val.toFixed(0) + '°';
-                if (!state.animationId) updateAll();
-            });
-
             // Cayley view controls
             document.getElementById('cayleyHRangeSlider').addEventListener('input', e => {
                 state.cayleyHRange = parseFloat(e.target.value);
@@ -1930,18 +1843,12 @@
                 document.getElementById('mobiusParamsC').style.display = showMobius ? 'block' : 'none';
                 document.getElementById('mobiusParamsD').style.display = showMobius ? 'block' : 'none';
                 
-                // Show/hide Hensel parameters
-                const showHensel = (e.target.value === 'rtorshift');
-                document.getElementById('henselParams').style.display = showHensel ? 'block' : 'none';
-                
                 // Update description
                 const descriptions = {
                     'standard': 'Standard Cayley transform provides conformal equivalence between Poincaré disk and upper half-plane models',
                     'alternate': 'Alternative conformal mapping producing different geometric visualization',
                     'smith': 'Smith Chart mapping used in RF and microwave engineering for impedance analysis',
-                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero',
-                    'rtor': 'R→R Lift: Identity map on rational points, extends Q ⊂ R to R preserving rational structure',
-                    'rtorshift': 'R→R+mod×2^n Lift: Hensel-type vertical translation by mod×2^n, fundamental in p-adic analysis and lifting theorems'
+                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero'
                 };
                 document.getElementById('transformDescription').textContent = descriptions[e.target.value];
                 
@@ -1956,24 +1863,16 @@
                     updateAll();
                 });
             });
-            
-            // Hensel lift power
-            document.getElementById('henselPowerSlider').addEventListener('input', e => {
-                state.henselPower = parseInt(e.target.value);
-                document.getElementById('henselPowerValue').textContent = state.henselPower;
-                if (!state.animationId) updateAll();
-            });
 
             // Connection controls
             document.getElementById('connectionMode').addEventListener('change', e => {
                 state.connectionMode = e.target.value;
-                updateConnectionExplanation();
                 updateAll();
             });
 
             document.getElementById('connectionThicknessSlider').addEventListener('input', e => {
                 state.connectionThickness = parseFloat(e.target.value);
-                document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(2);
+                document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(1);
                 if (!state.animationId) updateAll();
             });
 
@@ -2016,12 +1915,11 @@
             // Display toggles
             ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels', 
              'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
-             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline', 
-             'toggleInvertRings', 'toggleInvertAll'].forEach(id => {
+             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline'].forEach(id => {
                 document.getElementById(id).addEventListener('change', updateAll);
             });
             
-            // Full plane toggle - now checked by default
+            // Full plane toggle
             document.getElementById('toggleFullPlane').addEventListener('change', e => {
                 const panel = document.getElementById('fullPlanePanel');
                 const vizGrid = document.getElementById('vizGrid');
@@ -2036,12 +1934,6 @@
                 
                 updateAll();
             });
-            
-            // Initialize full plane view on load since toggle is checked by default
-            const fullPlanePanel = document.getElementById('fullPlanePanel');
-            const vizGrid = document.getElementById('vizGrid');
-            fullPlanePanel.style.display = 'block';
-            vizGrid.classList.add('four-panel');
             
             // Update max Farey order display when modulus changes
             document.getElementById('modulusInput').addEventListener('change', () => {
@@ -2093,22 +1985,6 @@
         }
 
         function cayleyTransform(z, transformType = 'standard') {
-            if (transformType === 'rtor') {
-                // R→R Lift: Identity on rationals, extends to full real line
-                // This represents the natural embedding Q ⊂ R
-                // In our visualization, we keep points on the unit circle but
-                // can think of this as preserving the rational structure
-                return { re: z.re, im: z.im };
-            }
-            
-            if (transformType === 'rtorshift') {
-                // R→R+mod×2^n Lift: Hensel-type lifting
-                // This is fundamental in p-adic analysis and Newton's method
-                // We apply a vertical shift by modulus × 2^power
-                const shift = state.modulus * Math.pow(2, state.henselPower);
-                return { re: z.re, im: z.im + shift };
-            }
-            
             if (transformType === 'alternate') {
                 // Alternative visualization: (1+z)/(1-z) transform
                 const numRe = 1 + z.re;
@@ -2238,15 +2114,6 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // Apply inversion if enabled (visual flip, not text)
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.scale(1, -1); // Flip vertically only
-                ctx.translate(-cx, -cy);
-            }
-
             // Grid
             if (document.getElementById('toggleGrid').checked) {
                 ctx.strokeStyle = CONFIG.colors.grid;
@@ -2310,44 +2177,6 @@
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 });
-            }
-
-            // R→R Lift connections on Disk (if enabled)
-            if (state.connectionMode === 'rtor' && showPrimes) {
-                ctx.globalAlpha = state.connectionOpacity;
-                ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
-                ctx.lineWidth = state.connectionThickness;
-                
-                const displayPrimes = state.primes.slice(0, state.numPrimes);
-                
-                // For each prime, connect to its lifts in higher moduli
-                displayPrimes.forEach(p1 => {
-                    if (showChannels && gcd(p1, state.modulus) !== 1) return;
-                    
-                    const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
-                    const x1 = cx + r * Math.cos(angle1);
-                    const y1 = cy + r * Math.sin(angle1);
-                    
-                    // Look for lifts: p1 lifts to p1 and p1+modulus in 2*modulus
-                    displayPrimes.forEach(p2 => {
-                        if (p2 <= p1) return;
-                        if (showChannels && gcd(p2, state.modulus) !== 1) return;
-                        
-                        // Check if p2 is a lift of p1 (p2 = p1 or p2 = p1 + modulus)
-                        if (p2 % state.modulus === p1 % state.modulus) {
-                            const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
-                            const x2 = cx + r * Math.cos(angle2);
-                            const y2 = cy + r * Math.sin(angle2);
-                            
-                            ctx.beginPath();
-                            ctx.moveTo(x1, y1);
-                            ctx.lineTo(x2, y2);
-                            ctx.stroke();
-                        }
-                    });
-                });
-                
-                ctx.globalAlpha = 1.0;
             }
 
             // Farey triangle
@@ -2428,11 +2257,6 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Unit Disk 𝔻', cx, 35);
             ctx.shadowBlur = 0;
-
-            // Restore context if inverted
-            if (invertAll) {
-                ctx.restore();
-            }
         }
 
         function drawCayley() {
@@ -2442,15 +2266,6 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
 
             ctx.clearRect(0, 0, w, h);
-
-            // Apply inversion if enabled (visual flip, not text)
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(w / 2, h / 2);
-                ctx.scale(1, -1); // Flip vertically only
-                ctx.translate(-w / 2, -h / 2);
-            }
 
             // Coordinate conversion functions for Cayley plane
             function mathToScreen(wp) {
@@ -2704,48 +2519,6 @@
                 const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
                 const imMin = state.cayleyVOffset;
                 const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
-                
-                // R→R Lift connections (draw before points)
-                if (state.connectionMode === 'rtor') {
-                    ctx.globalAlpha = state.connectionOpacity;
-                    ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
-                    ctx.lineWidth = state.connectionThickness;
-                    
-                    displayPrimes.forEach(p1 => {
-                        if (showChannels && gcd(p1, state.modulus) !== 1) return;
-                        
-                        const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
-                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
-                        const wp1 = cayleyTransform(z1, state.transformType);
-                        
-                        if (wp1.re < reMin || wp1.re > reMax || wp1.im < imMin || wp1.im > imMax || wp1.im <= 0.01) return;
-                        
-                        const p1_screen = mathToScreen(wp1);
-                        
-                        displayPrimes.forEach(p2 => {
-                            if (p2 <= p1) return;
-                            if (showChannels && gcd(p2, state.modulus) !== 1) return;
-                            
-                            // Check if p2 is a lift of p1
-                            if (p2 % state.modulus === p1 % state.modulus) {
-                                const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
-                                const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
-                                const wp2 = cayleyTransform(z2, state.transformType);
-                                
-                                if (wp2.re < reMin || wp2.re > reMax || wp2.im < imMin || wp2.im > imMax || wp2.im <= 0.01) return;
-                                
-                                const p2_screen = mathToScreen(wp2);
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(p1_screen.x, p1_screen.y);
-                                ctx.lineTo(p2_screen.x, p2_screen.y);
-                                ctx.stroke();
-                            }
-                        });
-                    });
-                    
-                    ctx.globalAlpha = 1.0;
-                }
 
                 displayPrimes.forEach(p => {
                     if (showChannels && gcd(p, state.modulus) !== 1) return;
@@ -2766,17 +2539,6 @@
                         ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
                         ctx.fill();
                         ctx.shadowBlur = 0;
-
-                        // Add labels if enabled
-                        if (state.labelMode === 'all' || state.labelMode === 'everything') {
-                            ctx.fillStyle = color;
-                            ctx.font = `${state.labelSize - 2}px "Fira Code"`;
-                            ctx.textAlign = 'center';
-                            ctx.shadowBlur = 4;
-                            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                            ctx.fillText(p.toString(), p_screen.x, p_screen.y - 8);
-                            ctx.shadowBlur = 0;
-                        }
                     }
                 });
             }
@@ -2873,11 +2635,6 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
             ctx.shadowBlur = 0;
-
-            // Restore context if inverted
-            if (invertAll) {
-                ctx.restore();
-            }
         }
 
         function drawFullPlane() {
@@ -2887,15 +2644,6 @@
             const h = canvas.height / (window.devicePixelRatio || 1);
 
             ctx.clearRect(0, 0, w, h);
-
-            // Apply inversion if enabled
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(w / 2, h / 2);
-                ctx.scale(-1, -1);
-                ctx.translate(-w / 2, -h / 2);
-            }
 
             // Coordinate conversion - full complex plane view
             function mathToScreen(wp) {
@@ -3061,42 +2809,6 @@
                 const colors = generateColors(state.modulus);
                 const displayPrimes = state.primes.slice(0, state.numPrimes);
                 const showChannels = document.getElementById('toggleChannels').checked;
-                
-                // R→R Lift connections (draw before points)
-                if (state.connectionMode === 'rtor') {
-                    ctx.globalAlpha = state.connectionOpacity;
-                    ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
-                    ctx.lineWidth = state.connectionThickness;
-                    
-                    displayPrimes.forEach(p1 => {
-                        if (showChannels && gcd(p1, state.modulus) !== 1) return;
-                        
-                        const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
-                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
-                        const wp1 = cayleyTransform(z1, state.transformType);
-                        const p1_screen = mathToScreen(wp1);
-                        
-                        displayPrimes.forEach(p2 => {
-                            if (p2 <= p1) return;
-                            if (showChannels && gcd(p2, state.modulus) !== 1) return;
-                            
-                            // Check if p2 is a lift of p1
-                            if (p2 % state.modulus === p1 % state.modulus) {
-                                const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
-                                const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
-                                const wp2 = cayleyTransform(z2, state.transformType);
-                                const p2_screen = mathToScreen(wp2);
-                                
-                                ctx.beginPath();
-                                ctx.moveTo(p1_screen.x, p1_screen.y);
-                                ctx.lineTo(p2_screen.x, p2_screen.y);
-                                ctx.stroke();
-                            }
-                        });
-                    });
-                    
-                    ctx.globalAlpha = 1.0;
-                }
 
                 displayPrimes.forEach(p => {
                     if (showChannels && gcd(p, state.modulus) !== 1) return;
@@ -3115,17 +2827,6 @@
                     ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
                     ctx.fill();
                     ctx.shadowBlur = 0;
-
-                    // Add labels if enabled
-                    if (state.labelMode === 'all' || state.labelMode === 'everything') {
-                        ctx.fillStyle = color;
-                        ctx.font = `${state.labelSize - 2}px "Fira Code"`;
-                        ctx.textAlign = 'center';
-                        ctx.shadowBlur = 4;
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                        ctx.fillText(p.toString(), p_screen.x, p_screen.y - 8);
-                        ctx.shadowBlur = 0;
-                    }
                 });
             }
 
@@ -3137,11 +2838,6 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Full Complex Plane ℂ', w/2, 35);
             ctx.shadowBlur = 0;
-
-            // Restore context if inverted
-            if (invertAll) {
-                ctx.restore();
-            }
         }
 
         function drawNested() {
@@ -3155,15 +2851,6 @@
             const baseRadius = maxRadius * 0.15;
 
             ctx.clearRect(0, 0, w, h);
-
-            // Apply inversion if enabled
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.scale(-1, -1);
-                ctx.translate(-cx, -cy);
-            }
 
             // Grid
             if (document.getElementById('toggleGrid').checked) {
@@ -3194,24 +2881,13 @@
             const phase = state.phase * Math.PI / 180;
             const showRings = document.getElementById('toggleRings').checked;
             const showGCD = document.getElementById('toggleGCD').checked;
-            const invertRings = document.getElementById('toggleInvertRings').checked;
 
             const allPoints = [];
             const numRings = state.maxRing - state.minRing + 1;
 
             for (let m = state.minRing; m <= state.maxRing; m++) {
-                // Calculate ring index - invert if toggle is on
-                let ringIndex;
-                if (invertRings) {
-                    ringIndex = (state.maxRing - m);
-                } else {
-                    ringIndex = m - state.minRing;
-                }
-                
+                const ringIndex = m - state.minRing;
                 const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
-
-                // Calculate per-ring rotation
-                const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
 
                 // Ring circle
                 if (showRings) {
@@ -3233,7 +2909,7 @@
                 // Points for each k
                 for (let k = 0; k < m; k++) {
                     const g = gcd(k, m);
-                    const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
+                    const angle = 2 * Math.PI * k / m + phase;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
 
@@ -3366,83 +3042,6 @@
                             }
                         });
                         break;
-                    
-                    case 'rtor':
-                        // R→R Lift: Show actual lifting where k in mod m lifts to k and k+m in mod 2m
-                        // Example: mod 30: {1,7,11,13,17,19,23,29} (gcd=1)
-                        //          lifts to mod 60: 1→1,31; 7→7,37; 11→11,41; etc.
-                        
-                        ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)'; // Purple for R→R lift
-                        ctx.lineWidth = state.connectionThickness;
-                        
-                        // For each point, find its lifts in the next power-of-2 modulus
-                        allPoints.forEach(p1 => {
-                            // Look for lifts in modulus = m * 2^n for n=1,2,3...
-                            const baseM = p1.m;
-                            
-                            allPoints.forEach(p2 => {
-                                // Check if p2.m is a power-of-2 multiple of p1.m
-                                if (p2.m > baseM && p2.m % baseM === 0) {
-                                    const ratio = p2.m / baseM;
-                                    // Check if ratio is a power of 2
-                                    if ((ratio & (ratio - 1)) === 0) {
-                                        // p2 is a lift of p1 if:
-                                        // 1. k2 ≡ k1 (mod m1), OR
-                                        // 2. k2 ≡ k1 + m1 (mod 2*m1) for first lift
-                                        
-                                        const k1 = p1.k;
-                                        const k2 = p2.k;
-                                        const m1 = p1.m;
-                                        
-                                        // Check if k2 is a lift of k1
-                                        // Lifts are: k1, k1+m1, k1+2*m1, k1+3*m1, ... (mod p2.m)
-                                        if (k2 % m1 === k1 % m1) {
-                                            // Also check GCD is preserved
-                                            if (gcd(k1, m1) === gcd(k2, p2.m)) {
-                                                ctx.beginPath();
-                                                ctx.moveTo(p1.x, p1.y);
-                                                ctx.lineTo(p2.x, p2.y);
-                                                ctx.stroke();
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                        break;
-                    
-                    case 'hensel':
-                        // R→R+mod×2^n: Connect points related by Hensel lifting (powers of 2)
-                        ctx.strokeStyle = 'rgba(255, 69, 0, 0.6)'; // Orange-red for Hensel lifts
-                        
-                        // Group by fraction value and connect if one modulus is double the other
-                        const henselGroups = {};
-                        allPoints.forEach(p => {
-                            const key = Math.floor(p.frac * 10000);
-                            if (!henselGroups[key]) henselGroups[key] = [];
-                            henselGroups[key].push(p);
-                        });
-                        
-                        Object.values(henselGroups).forEach(group => {
-                            // Sort by modulus
-                            group.sort((a, b) => a.m - b.m);
-                            
-                            // Connect if modulus doubles (Hensel lift pattern)
-                            for (let i = 0; i < group.length; i++) {
-                                for (let j = i + 1; j < group.length; j++) {
-                                    // Check if m_j is a power-of-2 multiple of m_i
-                                    const ratio = group[j].m / group[i].m;
-                                    if (Number.isInteger(ratio) && (ratio & (ratio - 1)) === 0) {
-                                        // ratio is a power of 2
-                                        ctx.beginPath();
-                                        ctx.moveTo(group[i].x, group[i].y);
-                                        ctx.lineTo(group[j].x, group[j].y);
-                                        ctx.stroke();
-                                    }
-                                }
-                            }
-                        });
-                        break;
                 }
 
                 ctx.globalAlpha = 1.0;
@@ -3453,18 +3052,9 @@
                 if (fp.den >= state.minRing && fp.den <= state.maxRing) {
                     const m = fp.den;
                     const k = fp.num % m;
-                    
-                    // Calculate ring index with inversion
-                    let ringIndex;
-                    if (invertRings) {
-                        ringIndex = (state.maxRing - m);
-                    } else {
-                        ringIndex = m - state.minRing;
-                    }
-                    
+                    const ringIndex = m - state.minRing;
                     const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
-                    const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
-                    const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
+                    const angle = 2 * Math.PI * k / m + phase;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
 
@@ -3502,11 +3092,6 @@
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.fillText(`m = ${state.minRing} to ${state.maxRing}`, cx, 55);
             ctx.shadowBlur = 0;
-
-            // Restore context if inverted
-            if (invertAll) {
-                ctx.restore();
-            }
         }
 
         function updateAll() {
@@ -3620,8 +3205,6 @@
             document.getElementById('minRingInput').value = 1;
             document.getElementById('maxRingInput').value = 12;
             document.getElementById('spacingSlider').value = 1;
-            document.getElementById('ringRotationSlider').value = 0;
-            document.getElementById('ringRotationInput').value = 0;
             document.getElementById('cayleyHRangeSlider').value = 6;
             document.getElementById('cayleyVRangeSlider').value = 4;
             document.getElementById('cayleyVOffsetSlider').value = 0;
@@ -3667,7 +3250,6 @@
             document.getElementById('minRingDisplay').textContent = '1';
             document.getElementById('maxRingDisplay').textContent = '12';
             document.getElementById('spacingValue').textContent = '1.0';
-            document.getElementById('ringRotationValue').textContent = '0°';
             document.getElementById('cayleyHRangeValue').textContent = '6.0';
             document.getElementById('cayleyVRangeValue').textContent = '4.0';
             document.getElementById('cayleyVOffsetValue').textContent = '0.0';
@@ -4292,12 +3874,12 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n BASIC PARAMETERS:');
+            console.log('\n🎯 BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n CAYLEY PLANE VIEW:');
+            console.log('\n🔭 CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -4308,7 +3890,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n FAREY POINTS:');
+            console.log('\n🎯 FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -4321,7 +3903,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n PRIME DISTRIBUTION:');
+            console.log('\n🔢 PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -4330,15 +3912,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n CONNECTION MODE:', state.connectionMode);
+            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n LABEL MODE:', state.labelMode);
+            console.log('\n🏷️ LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n DISPLAY TOGGLES:');
+            console.log('\n📊 DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -4351,7 +3933,7 @@
                 }
             });
             
-            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
+            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
             console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
             console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
