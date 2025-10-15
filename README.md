@@ -881,29 +881,6 @@
             </div>
             <div class="controls-body" id="introPanel" style="display: block;">
                 <div style="line-height: 1.8; font-size: 0.95em;">
-                    
-                    <div style="background: rgba(52, 152, 219, 0.15); padding: 20px; border-left: 4px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
-                        <h3 style="color: #3498db; margin-bottom: 15px;">⚠️ Cayley Transform Implementation Check</h3>
-                        <p style="margin-bottom: 10px;"><strong>Our current formula:</strong> w = i(1+z)/(1-z) ✓ CORRECT</p>
-                        <p style="margin-bottom: 10px;"><strong>Reference:</strong> <a href="https://en.wikipedia.org/wiki/Cayley_transform" target="_blank" rel="noopener" style="color: #3498db;">Wikipedia - Cayley Transform</a></p>
-                        
-                        <p style="margin-bottom: 10px;"><strong>Test Points (should map correctly):</strong></p>
-                        <ul style="margin-left: 25px; margin-bottom: 10px;">
-                            <li>z = 0 (center) → w = i ✓ (correct: interior maps to upper half-plane)</li>
-                            <li>z = 1 (right) → w = ∞ ✓ (correct: circle maps to real axis/infinity)</li>
-                            <li>z = -1 (left) → w = 0 ✓ (correct: circle maps to real axis/origin)</li>
-                            <li>z = i (top) → w = -1 ✓ (correct: circle maps to real axis)</li>
-                            <li>z = -i (bottom) → w = 1 ✓ (correct: circle maps to real axis)</li>
-                        </ul>
-                        
-                        <p style="color: #2ecc71; font-weight: bold;">✓ CORRECT: We use w = i(1+z)/(1-z), the standard Cayley transform for conformal mapping between Poincaré disk and upper half-plane models of hyperbolic geometry. This is the inverse of the transform (z-i)/(z+i) that maps half-plane to disk.</p>
-                        
-                        <button class="btn btn-secondary" onclick="verifyCayleyTransform()" style="margin-top: 10px; padding: 8px 20px;">
-                            <span>🔍 Run Verification Test</span>
-                        </button>
-                        <div id="verificationResults" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 4px; display: none; font-family: 'Fira Code', monospace; font-size: 0.9em;"></div>
-                    </div>
-                    
                     <h3 style="color: var(--gold); margin-bottom: 15px;">Mathematical Overview</h3>
                     
                     <p style="margin-bottom: 15px;">This visualization tool explores the deep connections between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through the lens of conformal mappings and modular arithmetic. Three complementary perspectives reveal how rational numbers, prime distributions, and hyperbolic structures interrelate.</p>
@@ -916,16 +893,7 @@
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
                             <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley Transform</h4>
-                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1+z)/(1-z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. This is the inverse of the transform f(z)=(z-i)/(z+i) that maps the upper half-plane to the disk. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
-                        </div>
-                        
-                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--prime);">
-                            <h4 style="color: var(--prime); margin-bottom: 8px;">Full Complex Plane View</h4>
-                            <p style="font-size: 0.9em;">The <strong>fourth panel</strong> extends the Cayley transform to show the complete complex plane. Since the transform maps the unit disk interior to the upper half-plane and the unit disk exterior to the lower half-plane, this view reveals the full geometry: <br>
-                            • |z| &lt; 1 (disk interior) → Im(w) &gt; 0 (upper half-plane)<br>
-                            • |z| = 1 (unit circle) → Im(w) = 0 (real axis)<br>
-                            • |z| &gt; 1 (disk exterior) → Im(w) &lt; 0 (lower half-plane)<br>
-                            This complete picture shows how the Cayley transform partitions the entire complex plane.</p>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y². Additionally, the <strong>R→R lift</strong> represents the identity embedding Q ⊂ R, while the <strong>R→R+mod×2^n lift</strong> (Hensel lift) translates points vertically by mod×2^n, fundamental in p-adic analysis and Newton-Hensel lifting for solving polynomial congruences.</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
@@ -954,6 +922,12 @@
                         </li>
                         <li style="margin-bottom: 12px;">
                             <strong style="color: var(--cyan);">Smith Chart Mapping:</strong> The transformation w = (z-1)/(z+1) used in electrical engineering for impedance visualization. Unlike the Cayley transform, it maps the unit disk to itself, with the real axis of z mapping to the unit circle in w.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">R→R Lift (Identity):</strong> The natural embedding Q ⊂ R that preserves the rational structure. In the context of lifting theorems, this represents solutions to f(x) ≡ 0 (mod m) extended to R while maintaining congruence properties.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">R→R+mod×2^n Lift (Hensel):</strong> A vertical translation x ↦ x + m·2^n fundamental in p-adic analysis. This lifting is central to Hensel's lemma: if f(a) ≡ 0 (mod p^k) and f'(a) ≢ 0 (mod p), we can lift a to a solution modulo p^(k+1). The parameter n controls the lifting height, with shift = mod×2^n. Used extensively in p-adic Newton iteration and solving polynomial congruences.
                         </li>
                         <li style="margin-bottom: 12px;">
                             <strong style="color: var(--cyan);">Möbius Transformations:</strong> General linear fractional transformations w = (az+b)/(cz+d) with ad-bc ≠ 0. These form a group under composition and are the conformal automorphisms of the Riemann sphere. They map circles and lines to circles and lines.
@@ -1005,7 +979,7 @@
                 <div class="panel-header">
                     <div>
                         <div class="panel-title">ℂ Full Complex Plane</div>
-                        <div class="panel-subtitle">Complete Cayley Transform View (Interior + Exterior)</div>
+                        <div class="panel-subtitle">Complete Cayley Transform View</div>
                     </div>
                 </div>
                 <canvas id="fullPlaneCanvas" width="1000" height="1000"></canvas>
@@ -1077,15 +1051,15 @@
                     </div>
                     
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-left: 3px solid var(--text);">
-                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Custom Möbius Transformations</h4>
-                        <p style="margin-bottom: 10px;">Experiment with general Möbius transformations w = (az+b)/(cz+d).</p>
+                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Hensel Lifting & p-adic Analysis</h4>
+                        <p style="margin-bottom: 10px;">The R→R+mod×2^n lift visualizes the core idea behind Hensel's lemma in p-adic analysis.</p>
                         <ul style="margin-left: 20px; margin-bottom: 10px;">
-                            <li>Select "Möbius" transform type to reveal parameter controls</li>
-                            <li>Ensure ad-bc ≠ 0 for a valid transformation</li>
-                            <li>Common choices: (a,b,c,d) = (1,1,1,0) gives w=(z+1)/z</li>
-                            <li>Try (0,-1,1,0) for w=-1/z (inversion)</li>
+                            <li>Select "R→R+mod×2^n Lift" to see vertical displacement</li>
+                            <li>Adjust Hensel power n to control lift height: shift = mod×2^n</li>
+                            <li>This mimics how Hensel lifting "raises" modular solutions</li>
+                            <li>In p-adic context: if f(a) ≡ 0 (mod p^k), lift to mod p^(k+1)</li>
                         </ul>
-                        <p><strong>Mathematical note:</strong> Möbius transformations form a group isomorphic to PSL(2,C), the group of conformal automorphisms of the Riemann sphere.</p>
+                        <p><strong>Mathematical note:</strong> Hensel's lemma states that if f(a) ≡ 0 (mod p^k) and the derivative f'(a) is a unit mod p (i.e., gcd(f'(a), p) = 1), then there exists a unique lift ã with f(ã) ≡ 0 (mod p^(k+1)) and ã ≡ a (mod p^k). The iteration ã = a - f(a)/f'(a) (Newton's method) converges p-adically. Our visualization shows the geometric intuition: solutions "lift" to higher powers of the modulus.</p>
                     </div>
                 </div>
             </div>
@@ -1163,12 +1137,23 @@
                             <span>Transform Type</span>
                         </div>
                         <select id="cayleyTransformType">
-                            <option value="standard">Standard Cayley: w = i(1+z)/(1-z)</option>
-                            <option value="alternate">Alternate View: w = i(1-z)/(1+z)</option>
+                            <option value="standard">Standard Cayley: w = i(1-z)/(1+z)</option>
+                            <option value="alternate">Alternate View: w = i(1+z)/(1-z)</option>
                             <option value="smith">Smith Chart: (z-1)/(z+1)</option>
                             <option value="mobius">Möbius: (az+b)/(cz+d)</option>
+                            <option value="rtor">R→R Lift (Identity on Rationals)</option>
+                            <option value="rtorshift">R→R+mod×2^n Lift (Hensel-type)</option>
                         </select>
                         <div class="help-text" id="transformDescription">Standard: Maps unit disk to upper half-plane (modular forms)</div>
+                    </div>
+                    
+                    <div class="control-item" id="henselParams" style="display: none; grid-column: 1 / -1;" data-tooltip="Parameters for Hensel-type lifting in p-adic analysis">
+                        <div class="control-label">
+                            <span>Hensel Lift Power n (mod×2^n)</span>
+                            <span class="control-value" id="henselPowerValue">3</span>
+                        </div>
+                        <input type="range" id="henselPowerSlider" min="0" max="10" value="3" step="1">
+                        <div class="help-text">Controls vertical displacement: shift by mod×2^n. Used in p-adic Hensel lifting.</div>
                     </div>
                     
                     <div class="control-item" id="mobiusParamsA" style="display: none;" data-tooltip="Coefficient a in Möbius transformation w=(az+b)/(cz+d). Must satisfy ad-bc not equal to zero for invertibility.">
@@ -1317,19 +1302,6 @@
                         <div class="help-text">F_n max = current modulus m (currently F_<span id="maxFareyOrder">30</span> available)</div>
                     </div>
 
-                    <div class="control-item" data-tooltip="Add all residue classes k/m for a given modulus m, from 0/m to (m-1)/m">
-                        <div class="control-label">
-                            <span>Add All Residues for Modulus</span>
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="number" id="residueModInput" value="12" min="1" step="1" style="flex: 1;" placeholder="Modulus">
-                            <button class="btn btn-secondary" onclick="addAllResidues()" style="padding: 8px 20px; margin: 0;">
-                                <span>Add 0/m to (m-1)/m</span>
-                            </button>
-                        </div>
-                        <div class="help-text">Adds all fractions k/m for k = 0 to m-1 (includes 0/m)</div>
-                    </div>
-
                     <div class="control-item" data-tooltip="Quick preset Farey sequences for common exploration">
                         <div class="control-label">
                             <span>Quick Presets</span>
@@ -1343,15 +1315,6 @@
                             </button>
                             <button class="btn btn-accent" onclick="generateFareySequence(7)" style="padding: 6px 10px; font-size: 0.8em;">
                                 <span>F₇</span>
-                            </button>
-                            <button class="btn btn-accent" onclick="addAllResidues(6)" style="padding: 6px 10px; font-size: 0.8em;">
-                                <span>All mod 6</span>
-                            </button>
-                            <button class="btn btn-accent" onclick="addAllResidues(12)" style="padding: 6px 10px; font-size: 0.8em;">
-                                <span>All mod 12</span>
-                            </button>
-                            <button class="btn btn-accent" onclick="addAllResidues(24)" style="padding: 6px 10px; font-size: 0.8em;">
-                                <span>All mod 24</span>
                             </button>
                         </div>
                     </div>
@@ -1375,26 +1338,32 @@
                 <!-- Connection Options -->
                 <div class="section-header">Connection Options</div>
                 <div class="control-row">
-                    <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
                         <div class="control-label">
                             <span>Connect Points By</span>
                         </div>
                         <select id="connectionMode">
                             <option value="none">No Connections</option>
-                            <option value="farey">Farey Points Only</option>
-                            <option value="mod">Same Modulus</option>
-                            <option value="angle">Same Angle</option>
-                            <option value="gcd">Same GCD</option>
-                            <option value="fraction">Same Fraction Value</option>
+                            <option value="farey">Farey Points Only (gcd=1)</option>
+                            <option value="mod">Same Modulus (Same Ring)</option>
+                            <option value="angle">Same Angle (Radial)</option>
+                            <option value="gcd">Same GCD (Arithmetic Structure)</option>
+                            <option value="fraction">Same Fraction Value (k/m Equivalence)</option>
+                            <option value="rtor">R→R Lift (Vertical Extension)</option>
+                            <option value="hensel">R→R+mod×2^n (Hensel Lift Levels)</option>
                         </select>
+                        <div id="connectionExplanation" class="help-text" style="margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--cyan); line-height: 1.6;">
+                            <strong>No Connections:</strong> Clean view without connecting lines.
+                        </div>
                     </div>
 
-                    <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
+                    <div class="control-item" data-tooltip="Line width for connections. Use smaller values (0.1-0.5) for many rings to avoid clutter.">
                         <div class="control-label">
                             <span>Connection Thickness</span>
                             <span class="control-value" id="connectionThicknessValue">1.0</span>
                         </div>
-                        <input type="range" id="connectionThicknessSlider" min="0.1" max="10" value="1" step="0.1">
+                        <input type="range" id="connectionThicknessSlider" min="0.05" max="10" value="1" step="0.05">
+                        <div class="help-text">Recommended: 0.1-0.5 for many rings (>20), 0.5-2.0 for few rings</div>
                     </div>
 
                     <div class="control-item" data-tooltip="Transparency of connection lines. Lower = more transparent, easier to see overlapping patterns.">
@@ -1402,7 +1371,8 @@
                             <span>Connection Opacity</span>
                             <span class="control-value" id="connectionOpacityValue">0.3</span>
                         </div>
-                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.05">
+                        <input type="range" id="connectionOpacitySlider" min="0" max="1" value="0.3" step="0.01">
+                        <div class="help-text">Lower opacity (0.1-0.3) recommended for dense connection patterns</div>
                     </div>
                 </div>
 
@@ -1601,6 +1571,7 @@
             mobiusB: 0,
             mobiusC: 0,
             mobiusD: 1,
+            henselPower: 3,
             diskZoom: 1.0,
             cayleyZoom: 1.0,
             nestedZoom: 1.0,
@@ -1676,6 +1647,25 @@
 
         function initFareyPointsUI() {
             updateFareyPointsList();
+            updateConnectionExplanation();
+        }
+
+        function updateConnectionExplanation() {
+            const explanations = {
+                'none': '<strong>No Connections:</strong> Clean view without connecting lines.',
+                'farey': '<strong>Farey Points Only (gcd=1):</strong> Connects all coprime points where gcd(k,m)=1. These form the <em>Farey neighbors</em> and satisfy the mediant property: if p/q and r/s are adjacent Farey fractions, then |ps-qr|=1. This creates a web showing the structure of ℚ ∩ [0,1]. <span style="color: var(--gold);">Mathematical: ∀ k/m with gcd(k,m)=1, connect to all other k\'/m\' with gcd(k\',m\')=1.</span>',
+                'mod': '<strong>Same Modulus (Same Ring):</strong> Connects consecutive points on each ring m, forming m-sided polygons. Each ring represents ℤ/mℤ, the integers modulo m. The connections visualize the <em>cyclic group structure</em> of (ℤ/mℤ, +). <span style="color: var(--gold);">Mathematical: For fixed m, connect k/m to (k+1)/m for k=0,1,...,m-1 (with wraparound).</span>',
+                'angle': '<strong>Same Angle (Radial):</strong> Connects points at similar angles across different rings, forming radial spokes. If k₁/m₁ ≈ k₂/m₂ as fractions, they lie on approximately the same ray from origin. This shows <em>fraction equivalence classes</em> and how different representations of the same rational number appear across rings. <span style="color: var(--gold);">Mathematical: Connect k₁/m₁ to k₂/m₂ if |θ₁-θ₂| < ε where θᵢ = 2πkᵢ/mᵢ (typically ε ≈ 0.1 radians).</span>',
+                'gcd': '<strong>Same GCD (Arithmetic Structure):</strong> Groups points by their greatest common divisor gcd(k,m). Points with the same GCD value share arithmetic properties: gcd(k,m)=d means k=da, m=db where gcd(a,b)=1. This reveals the <em>divisibility structure</em> and how the ring ℤ/mℤ decomposes based on common factors. <span style="color: var(--gold);">Mathematical: Connect all pairs (k₁,m₁), (k₂,m₂) where gcd(k₁,m₁) = gcd(k₂,m₂) = d. Color by d.</span>',
+                'fraction': '<strong>Same Fraction Value (k/m Equivalence):</strong> Connects points representing the same rational number in lowest terms. For example, 1/2 = 2/4 = 3/6 = 4/8... This demonstrates <em>rational number equality</em> and the equivalence relation on ℤ×ℤ₊ given by (a,b)~(c,d) ⟺ ad=bc. Shows how ℚ is constructed as equivalence classes. <span style="color: var(--gold);">Mathematical: Connect k₁/m₁ to k₂/m₂ if k₁m₂ = k₂m₁ (cross-multiplication test for equality).</span>',
+                'rtor': '<strong>R→R Lift (Vertical Extension):</strong> Shows how values lift through powers-of-2 moduli. In mod 30 with φ(30)=8 coprime values {1,7,11,13,17,19,23,29}, each lifts to TWO values in mod 60: k→k and k→k+30. For example: 1→{1,31}, 7→{7,37}, 11→{11,41}, 13→{13,43}, 17→{17,47}, 19→{19,49}, 23→{23,53}, 29→{29,59}. This reveals the <em>branching structure</em> where each coprime class splits into multiple branches in higher moduli, preserving GCD=1. Twin primes emerge from the 11,17,29 trees (and 1→31), while 7,23 trees produce multiples of 3,5. <span style="color: var(--gold);">Mathematical: Connect k₁ in mod m to k₂ in mod 2^n·m where k₂≡k₁ (mod m) and gcd(k₁,m)=gcd(k₂,2^n·m).</span>',
+                'hensel': '<strong>R→R+mod×2^n (Hensel Lift Levels):</strong> Connects points that are related by <em>Hensel lifting</em> through powers of 2. If a solution exists at mod m·2^k, the connection shows potential lifts to mod m·2^(k+1). This visualizes the <em>p-adic tree structure</em> where each solution branches to possible lifts. Fundamental to solving f(x)≡0 (mod p^n) via Newton-Hensel iteration. <span style="color: var(--gold);">Mathematical: Connect k/m on ring m to k/(m·2) on ring m·2, modeling Hensel lift: if f(a)≡0 (mod m), find ã with ã≡a (mod m) and f(ã)≡0 (mod 2m). Requires f\'(a)≠0 (mod p).</span>'
+            };
+            
+            const elem = document.getElementById('connectionExplanation');
+            if (elem) {
+                elem.innerHTML = explanations[state.connectionMode] || explanations['none'];
+            }
         }
 
         function updateFareyPointsList() {
@@ -1749,51 +1739,6 @@
             });
             
             state.fareyPoints = uniqueFarey;
-            updateFareyPointsList();
-            updateAll();
-        }
-
-        function addAllResidues(m) {
-            // If called with a number argument, use it; otherwise read from input
-            const modulus = m || parseInt(document.getElementById('residueModInput').value);
-            
-            if (modulus < 1) {
-                alert('Modulus must be at least 1');
-                return;
-            }
-            
-            // Add all residues k/m for k = 0 to m-1
-            const newPoints = [];
-            for (let k = 0; k < modulus; k++) {
-                newPoints.push({ num: k, den: modulus });
-            }
-            
-            // Check if we should replace or append
-            const shouldReplace = confirm(
-                `Add all ${modulus} residues (0/${modulus} to ${modulus-1}/${modulus})?\n\n` +
-                `Click OK to REPLACE current points\n` +
-                `Click Cancel to ADD to current points`
-            );
-            
-            if (shouldReplace) {
-                state.fareyPoints = newPoints;
-            } else {
-                // Append and remove duplicates
-                const combined = [...state.fareyPoints, ...newPoints];
-                const unique = [];
-                const seen = new Set();
-                
-                combined.forEach(f => {
-                    const key = `${f.num}/${f.den}`;
-                    if (!seen.has(key)) {
-                        seen.add(key);
-                        unique.push(f);
-                    }
-                });
-                
-                state.fareyPoints = unique;
-            }
-            
             updateFareyPointsList();
             updateAll();
         }
@@ -1985,12 +1930,18 @@
                 document.getElementById('mobiusParamsC').style.display = showMobius ? 'block' : 'none';
                 document.getElementById('mobiusParamsD').style.display = showMobius ? 'block' : 'none';
                 
+                // Show/hide Hensel parameters
+                const showHensel = (e.target.value === 'rtorshift');
+                document.getElementById('henselParams').style.display = showHensel ? 'block' : 'none';
+                
                 // Update description
                 const descriptions = {
-                    'standard': 'Standard Cayley: w = i(1+z)/(1-z) maps disk to upper half-plane (correct for modular forms)',
-                    'alternate': 'Alternate: w = i(1-z)/(1+z) provides conjugate/reflected view of the transformation',
+                    'standard': 'Standard Cayley transform provides conformal equivalence between Poincaré disk and upper half-plane models',
+                    'alternate': 'Alternative conformal mapping producing different geometric visualization',
                     'smith': 'Smith Chart mapping used in RF and microwave engineering for impedance analysis',
-                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero'
+                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero',
+                    'rtor': 'R→R Lift: Identity map on rational points, extends Q ⊂ R to R preserving rational structure',
+                    'rtorshift': 'R→R+mod×2^n Lift: Hensel-type vertical translation by mod×2^n, fundamental in p-adic analysis and lifting theorems'
                 };
                 document.getElementById('transformDescription').textContent = descriptions[e.target.value];
                 
@@ -2005,16 +1956,24 @@
                     updateAll();
                 });
             });
+            
+            // Hensel lift power
+            document.getElementById('henselPowerSlider').addEventListener('input', e => {
+                state.henselPower = parseInt(e.target.value);
+                document.getElementById('henselPowerValue').textContent = state.henselPower;
+                if (!state.animationId) updateAll();
+            });
 
             // Connection controls
             document.getElementById('connectionMode').addEventListener('change', e => {
                 state.connectionMode = e.target.value;
+                updateConnectionExplanation();
                 updateAll();
             });
 
             document.getElementById('connectionThicknessSlider').addEventListener('input', e => {
                 state.connectionThickness = parseFloat(e.target.value);
-                document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(1);
+                document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(2);
                 if (!state.animationId) updateAll();
             });
 
@@ -2134,13 +2093,28 @@
         }
 
         function cayleyTransform(z, transformType = 'standard') {
+            if (transformType === 'rtor') {
+                // R→R Lift: Identity on rationals, extends to full real line
+                // This represents the natural embedding Q ⊂ R
+                // In our visualization, we keep points on the unit circle but
+                // can think of this as preserving the rational structure
+                return { re: z.re, im: z.im };
+            }
+            
+            if (transformType === 'rtorshift') {
+                // R→R+mod×2^n Lift: Hensel-type lifting
+                // This is fundamental in p-adic analysis and Newton's method
+                // We apply a vertical shift by modulus × 2^power
+                const shift = state.modulus * Math.pow(2, state.henselPower);
+                return { re: z.re, im: z.im + shift };
+            }
+            
             if (transformType === 'alternate') {
-                // Alternative visualization: i(1-z)/(1+z) transform
-                // This is actually a different map that gives a rotated/reflected view
-                const numRe = 1 - z.re;
-                const numIm = -z.im;
-                const denRe = 1 + z.re;
-                const denIm = z.im;
+                // Alternative visualization: (1+z)/(1-z) transform
+                const numRe = 1 + z.re;
+                const numIm = z.im;
+                const denRe = 1 - z.re;
+                const denIm = -z.im;
                 
                 const denMagSq = denRe * denRe + denIm * denIm;
                 
@@ -2208,12 +2182,12 @@
                 return { re: quotRe, im: quotIm };
             }
             
-            // Standard Cayley transform: w = i(1+z)/(1-z)
+            // Standard Cayley transform: w = i(1-z)/(1+z)
             // Maps unit disk to upper half-plane
-            const numRe = 1 + z.re;   // Real part of (1+z)
-            const numIm = z.im;       // Imaginary part of (1+z)
-            const denRe = 1 - z.re;   // Real part of (1-z)
-            const denIm = -z.im;      // Imaginary part of (1-z)
+            const numRe = -z.re;      // Real part of (1-z)
+            const numIm = 1 - z.im;   // Imaginary part of (1-z)
+            const denRe = 1 + z.re;   // Real part of (1+z)
+            const denIm = z.im;       // Imaginary part of (1+z)
             
             const denMagSq = denRe * denRe + denIm * denIm;
             
@@ -2264,12 +2238,12 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // Apply inversion if enabled
+            // Apply inversion if enabled (visual flip, not text)
             const invertAll = document.getElementById('toggleInvertAll').checked;
             if (invertAll) {
                 ctx.save();
                 ctx.translate(cx, cy);
-                ctx.scale(-1, -1);
+                ctx.scale(1, -1); // Flip vertically only
                 ctx.translate(-cx, -cy);
             }
 
@@ -2336,6 +2310,44 @@
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 });
+            }
+
+            // R→R Lift connections on Disk (if enabled)
+            if (state.connectionMode === 'rtor' && showPrimes) {
+                ctx.globalAlpha = state.connectionOpacity;
+                ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
+                ctx.lineWidth = state.connectionThickness;
+                
+                const displayPrimes = state.primes.slice(0, state.numPrimes);
+                
+                // For each prime, connect to its lifts in higher moduli
+                displayPrimes.forEach(p1 => {
+                    if (showChannels && gcd(p1, state.modulus) !== 1) return;
+                    
+                    const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
+                    const x1 = cx + r * Math.cos(angle1);
+                    const y1 = cy + r * Math.sin(angle1);
+                    
+                    // Look for lifts: p1 lifts to p1 and p1+modulus in 2*modulus
+                    displayPrimes.forEach(p2 => {
+                        if (p2 <= p1) return;
+                        if (showChannels && gcd(p2, state.modulus) !== 1) return;
+                        
+                        // Check if p2 is a lift of p1 (p2 = p1 or p2 = p1 + modulus)
+                        if (p2 % state.modulus === p1 % state.modulus) {
+                            const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
+                            const x2 = cx + r * Math.cos(angle2);
+                            const y2 = cy + r * Math.sin(angle2);
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(x1, y1);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                        }
+                    });
+                });
+                
+                ctx.globalAlpha = 1.0;
             }
 
             // Farey triangle
@@ -2431,12 +2443,12 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // Apply inversion if enabled
+            // Apply inversion if enabled (visual flip, not text)
             const invertAll = document.getElementById('toggleInvertAll').checked;
             if (invertAll) {
                 ctx.save();
                 ctx.translate(w / 2, h / 2);
-                ctx.scale(-1, -1);
+                ctx.scale(1, -1); // Flip vertically only
                 ctx.translate(-w / 2, -h / 2);
             }
 
@@ -2692,6 +2704,48 @@
                 const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
                 const imMin = state.cayleyVOffset;
                 const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
+                
+                // R→R Lift connections (draw before points)
+                if (state.connectionMode === 'rtor') {
+                    ctx.globalAlpha = state.connectionOpacity;
+                    ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
+                    ctx.lineWidth = state.connectionThickness;
+                    
+                    displayPrimes.forEach(p1 => {
+                        if (showChannels && gcd(p1, state.modulus) !== 1) return;
+                        
+                        const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
+                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
+                        const wp1 = cayleyTransform(z1, state.transformType);
+                        
+                        if (wp1.re < reMin || wp1.re > reMax || wp1.im < imMin || wp1.im > imMax || wp1.im <= 0.01) return;
+                        
+                        const p1_screen = mathToScreen(wp1);
+                        
+                        displayPrimes.forEach(p2 => {
+                            if (p2 <= p1) return;
+                            if (showChannels && gcd(p2, state.modulus) !== 1) return;
+                            
+                            // Check if p2 is a lift of p1
+                            if (p2 % state.modulus === p1 % state.modulus) {
+                                const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
+                                const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
+                                const wp2 = cayleyTransform(z2, state.transformType);
+                                
+                                if (wp2.re < reMin || wp2.re > reMax || wp2.im < imMin || wp2.im > imMax || wp2.im <= 0.01) return;
+                                
+                                const p2_screen = mathToScreen(wp2);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(p1_screen.x, p1_screen.y);
+                                ctx.lineTo(p2_screen.x, p2_screen.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    ctx.globalAlpha = 1.0;
+                }
 
                 displayPrimes.forEach(p => {
                     if (showChannels && gcd(p, state.modulus) !== 1) return;
@@ -2712,6 +2766,17 @@
                         ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
                         ctx.fill();
                         ctx.shadowBlur = 0;
+
+                        // Add labels if enabled
+                        if (state.labelMode === 'all' || state.labelMode === 'everything') {
+                            ctx.fillStyle = color;
+                            ctx.font = `${state.labelSize - 2}px "Fira Code"`;
+                            ctx.textAlign = 'center';
+                            ctx.shadowBlur = 4;
+                            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                            ctx.fillText(p.toString(), p_screen.x, p_screen.y - 8);
+                            ctx.shadowBlur = 0;
+                        }
                     }
                 });
             }
@@ -2897,7 +2962,7 @@
             for (let i = 0; i <= 100; i++) {
                 const angle = 2 * Math.PI * i / 100;
                 const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                const wp = cayleyTransform(z, state.transformType);
+                const wp = cayleyTransform(z, state.useAlternateCayley);
                 const p = mathToScreen(wp);
                 if (i === 0) {
                     ctx.moveTo(p.x, p.y);
@@ -2907,32 +2972,6 @@
             }
             ctx.stroke();
             ctx.setLineDash([]);
-
-            // Draw real axis (maps from unit circle |z|=1)
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.lineWidth = 2;
-            const realAxisStart = mathToScreen({ re: -10, im: 0 });
-            const realAxisEnd = mathToScreen({ re: 10, im: 0 });
-            ctx.beginPath();
-            ctx.moveTo(realAxisStart.x, realAxisStart.y);
-            ctx.lineTo(realAxisEnd.x, realAxisEnd.y);
-            ctx.stroke();
-
-            // Label the regions
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.font = 'italic 14px "Fira Code"';
-            ctx.textAlign = 'center';
-            
-            const upperLabel = mathToScreen({ re: 0, im: 4 });
-            ctx.fillText('Upper Half-Plane', upperLabel.x, upperLabel.y);
-            ctx.fillText('(|z| < 1 interior)', upperLabel.x, upperLabel.y + 20);
-            
-            const lowerLabel = mathToScreen({ re: 0, im: -4 });
-            ctx.fillText('Lower Half-Plane', lowerLabel.x, lowerLabel.y);
-            ctx.fillText('(|z| > 1 exterior)', lowerLabel.x, lowerLabel.y + 20);
-            
-            const axisLabel = mathToScreen({ re: 7, im: 0 });
-            ctx.fillText('Real Axis (|z| = 1)', axisLabel.x, axisLabel.y - 10);
 
             // Transformed Farey points
             if (document.getElementById('toggleFarey').checked && state.fareyPoints.length > 0) {
@@ -3022,6 +3061,42 @@
                 const colors = generateColors(state.modulus);
                 const displayPrimes = state.primes.slice(0, state.numPrimes);
                 const showChannels = document.getElementById('toggleChannels').checked;
+                
+                // R→R Lift connections (draw before points)
+                if (state.connectionMode === 'rtor') {
+                    ctx.globalAlpha = state.connectionOpacity;
+                    ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)';
+                    ctx.lineWidth = state.connectionThickness;
+                    
+                    displayPrimes.forEach(p1 => {
+                        if (showChannels && gcd(p1, state.modulus) !== 1) return;
+                        
+                        const angle1 = 2 * Math.PI * p1 / state.modulus + phase;
+                        const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
+                        const wp1 = cayleyTransform(z1, state.transformType);
+                        const p1_screen = mathToScreen(wp1);
+                        
+                        displayPrimes.forEach(p2 => {
+                            if (p2 <= p1) return;
+                            if (showChannels && gcd(p2, state.modulus) !== 1) return;
+                            
+                            // Check if p2 is a lift of p1
+                            if (p2 % state.modulus === p1 % state.modulus) {
+                                const angle2 = 2 * Math.PI * p2 / state.modulus + phase;
+                                const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
+                                const wp2 = cayleyTransform(z2, state.transformType);
+                                const p2_screen = mathToScreen(wp2);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(p1_screen.x, p1_screen.y);
+                                ctx.lineTo(p2_screen.x, p2_screen.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    ctx.globalAlpha = 1.0;
+                }
 
                 displayPrimes.forEach(p => {
                     if (showChannels && gcd(p, state.modulus) !== 1) return;
@@ -3040,6 +3115,17 @@
                     ctx.arc(p_screen.x, p_screen.y, 3.5, 0, 2 * Math.PI);
                     ctx.fill();
                     ctx.shadowBlur = 0;
+
+                    // Add labels if enabled
+                    if (state.labelMode === 'all' || state.labelMode === 'everything') {
+                        ctx.fillStyle = color;
+                        ctx.font = `${state.labelSize - 2}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(p.toString(), p_screen.x, p_screen.y - 8);
+                        ctx.shadowBlur = 0;
+                    }
                 });
             }
 
@@ -3280,6 +3366,83 @@
                             }
                         });
                         break;
+                    
+                    case 'rtor':
+                        // R→R Lift: Show actual lifting where k in mod m lifts to k and k+m in mod 2m
+                        // Example: mod 30: {1,7,11,13,17,19,23,29} (gcd=1)
+                        //          lifts to mod 60: 1→1,31; 7→7,37; 11→11,41; etc.
+                        
+                        ctx.strokeStyle = 'rgba(138, 43, 226, 0.6)'; // Purple for R→R lift
+                        ctx.lineWidth = state.connectionThickness;
+                        
+                        // For each point, find its lifts in the next power-of-2 modulus
+                        allPoints.forEach(p1 => {
+                            // Look for lifts in modulus = m * 2^n for n=1,2,3...
+                            const baseM = p1.m;
+                            
+                            allPoints.forEach(p2 => {
+                                // Check if p2.m is a power-of-2 multiple of p1.m
+                                if (p2.m > baseM && p2.m % baseM === 0) {
+                                    const ratio = p2.m / baseM;
+                                    // Check if ratio is a power of 2
+                                    if ((ratio & (ratio - 1)) === 0) {
+                                        // p2 is a lift of p1 if:
+                                        // 1. k2 ≡ k1 (mod m1), OR
+                                        // 2. k2 ≡ k1 + m1 (mod 2*m1) for first lift
+                                        
+                                        const k1 = p1.k;
+                                        const k2 = p2.k;
+                                        const m1 = p1.m;
+                                        
+                                        // Check if k2 is a lift of k1
+                                        // Lifts are: k1, k1+m1, k1+2*m1, k1+3*m1, ... (mod p2.m)
+                                        if (k2 % m1 === k1 % m1) {
+                                            // Also check GCD is preserved
+                                            if (gcd(k1, m1) === gcd(k2, p2.m)) {
+                                                ctx.beginPath();
+                                                ctx.moveTo(p1.x, p1.y);
+                                                ctx.lineTo(p2.x, p2.y);
+                                                ctx.stroke();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                        break;
+                    
+                    case 'hensel':
+                        // R→R+mod×2^n: Connect points related by Hensel lifting (powers of 2)
+                        ctx.strokeStyle = 'rgba(255, 69, 0, 0.6)'; // Orange-red for Hensel lifts
+                        
+                        // Group by fraction value and connect if one modulus is double the other
+                        const henselGroups = {};
+                        allPoints.forEach(p => {
+                            const key = Math.floor(p.frac * 10000);
+                            if (!henselGroups[key]) henselGroups[key] = [];
+                            henselGroups[key].push(p);
+                        });
+                        
+                        Object.values(henselGroups).forEach(group => {
+                            // Sort by modulus
+                            group.sort((a, b) => a.m - b.m);
+                            
+                            // Connect if modulus doubles (Hensel lift pattern)
+                            for (let i = 0; i < group.length; i++) {
+                                for (let j = i + 1; j < group.length; j++) {
+                                    // Check if m_j is a power-of-2 multiple of m_i
+                                    const ratio = group[j].m / group[i].m;
+                                    if (Number.isInteger(ratio) && (ratio & (ratio - 1)) === 0) {
+                                        // ratio is a power of 2
+                                        ctx.beginPath();
+                                        ctx.moveTo(group[i].x, group[i].y);
+                                        ctx.lineTo(group[j].x, group[j].y);
+                                        ctx.stroke();
+                                    }
+                                }
+                            }
+                        });
+                        break;
                 }
 
                 ctx.globalAlpha = 1.0;
@@ -3385,73 +3548,6 @@
         // ============================================================
         // UI CONTROLS
         // ============================================================
-
-        function toggleIntro() {
-            const panel = document.getElementById('introPanel');
-            const toggle = document.getElementById('introToggle');
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                toggle.innerHTML = '&#9660;';
-            } else {
-                panel.style.display = 'none';
-                toggle.innerHTML = '&#9654;';
-            }
-        }
-
-        function verifyCayleyTransform() {
-            const resultsDiv = document.getElementById('verificationResults');
-            resultsDiv.style.display = 'block';
-            
-            let html = '<h4 style="color: #3498db; margin-bottom: 10px;">Cayley Transform Verification Results:</h4>';
-            
-            const testPoints = [
-                { z: { re: 0, im: 0 }, label: 'z = 0 (center)', expected: 'w = i (upper half-plane)' },
-                { z: { re: 1, im: 0 }, label: 'z = 1 (right edge)', expected: 'w = ∞ (real axis point at infinity)' },
-                { z: { re: -1, im: 0 }, label: 'z = -1 (left edge)', expected: 'w = 0 (origin on real axis)' },
-                { z: { re: 0, im: 1 }, label: 'z = i (top edge)', expected: 'w = 1 (real axis)' },
-                { z: { re: 0, im: -1 }, label: 'z = -i (bottom edge)', expected: 'w = -1 (real axis)' },
-                { z: { re: 0.5, im: 0 }, label: 'z = 0.5 (interior)', expected: 'Im(w) > 0' },
-            ];
-            
-            testPoints.forEach(test => {
-                const w = cayleyTransform(test.z, 'standard');
-                const magnitude = Math.sqrt(test.z.re * test.z.re + test.z.im * test.z.im);
-                const isInterior = magnitude < 0.99;
-                const isBoundary = magnitude >= 0.99 && magnitude <= 1.01;
-                
-                let status = '✓';
-                let color = '#2ecc71';
-                
-                // Check if mapping is correct
-                if (isInterior && w.im <= 0.01) {
-                    status = '✗';
-                    color = '#e74c3c';
-                } else if (isBoundary && Math.abs(w.im) > 0.1) {
-                    status = '✗';
-                    color = '#e74c3c';
-                }
-                
-                html += `<div style="margin: 8px 0; padding: 8px; background: rgba(0,0,0,0.2); border-left: 3px solid ${color};">`;
-                html += `<span style="color: ${color}; font-weight: bold;">${status}</span> `;
-                html += `<strong>${test.label}</strong><br>`;
-                html += `|z| = ${magnitude.toFixed(4)} → `;
-                html += `w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i<br>`;
-                html += `<span style="color: #95a5a6;">Expected: ${test.expected}</span>`;
-                html += `</div>`;
-            });
-            
-            // Overall assessment
-            html += '<div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 4px;">';
-            html += '<strong style="color: #ffd700;">Assessment:</strong><br>';
-            html += 'The formula w = i(1-z)/(1+z) correctly maps:<br>';
-            html += '• Unit disk |z| &lt; 1 → Upper half-plane Im(w) &gt; 0 ✓<br>';
-            html += '• Unit circle |z| = 1 → Real axis Im(w) = 0 ✓<br>';
-            html += '<br>This is the standard Cayley transform for hyperbolic geometry (Poincaré disk ↔ upper half-plane).';
-            html += '</div>';
-            
-            resultsDiv.innerHTML = html;
-        }
-
 
         function toggleGuide() {
             const panel = document.getElementById('guidePanel');
@@ -3631,12 +3727,8 @@
                                     <span>Nested Rings Only</span>
                                 </label>
                                 <label class="export-radio">
-                                    <input type="radio" name="canvas" value="fullplane">
-                                    <span>Full Complex Plane Only</span>
-                                </label>
-                                <label class="export-radio">
                                     <input type="radio" name="canvas" value="all">
-                                    <span>All Four Canvases</span>
+                                    <span>All Three Canvases</span>
                                 </label>
                             </div>
                         </div>
@@ -3728,86 +3820,34 @@
             const tempCtx = tempCanvas.getContext('2d');
 
             if (canvasSelection === 'all') {
-                // For all four canvases, use 2x2 grid with SQUARE canvases
-                const size = Math.min(width, height);
-                tempCanvas.width = size;
-                tempCanvas.height = size;
+                // For all three canvases, maintain aspect ratio
+                tempCanvas.width = width;
+                tempCanvas.height = height;
                 
                 // Background
                 tempCtx.fillStyle = '#0a0e27';
-                tempCtx.fillRect(0, 0, size, size);
+                tempCtx.fillRect(0, 0, width, height);
 
-                // Calculate dimensions for 2x2 grid - each canvas is square
-                const canvasSize = size / 2;
-                const sourceCanvases = [
-                    { canvas: canvases.disk, title: 'Unit Disk 𝔻', x: 0, y: 0 },
-                    { canvas: canvases.cayley, title: 'Upper Half-Plane ℍ', x: canvasSize, y: 0 },
-                    { canvas: canvases.nested, title: 'Nested Rings ⊚', x: 0, y: canvasSize },
-                    { canvas: canvases.fullPlane, title: 'Full Complex Plane ℂ', x: canvasSize, y: canvasSize }
-                ];
+                // Calculate dimensions to fit three square canvases
+                const canvasSize = Math.min(width / 3, height);
+                const offsetY = (height - canvasSize) / 2;
+                const sourceCanvases = [canvases.disk, canvases.cayley, canvases.nested];
                 
-                sourceCanvases.forEach((item) => {
-                    // Draw canvas maintaining square aspect ratio - no stretching!
-                    tempCtx.drawImage(item.canvas, 
-                        0, 0, item.canvas.width, item.canvas.height,
-                        item.x, item.y, canvasSize, canvasSize);
+                sourceCanvases.forEach((canvas, idx) => {
+                    const destX = idx * (width / 3);
+                    const destWidth = width / 3;
                     
-                    // Draw title for each canvas
-                    const scale = size / 1920;
-                    const fontSize = 18 * scale;
-                    const titleY = item.y + 30 * scale;
-                    const titleX = item.x + canvasSize / 2;
-                    
-                    tempCtx.fillStyle = '#ffd700';
-                    tempCtx.font = `bold ${fontSize}px "Fira Code"`;
-                    tempCtx.textAlign = 'center';
-                    tempCtx.textBaseline = 'top';
-                    tempCtx.shadowBlur = 8 * scale;
-                    tempCtx.shadowColor = 'rgba(255, 215, 0, 0.4)';
-                    tempCtx.fillText(item.title, titleX, titleY);
-                    tempCtx.shadowBlur = 0;
+                    // Draw canvas maintaining aspect ratio (square)
+                    tempCtx.drawImage(canvas, 
+                        0, 0, canvas.width, canvas.height,
+                        destX, offsetY, destWidth, canvasSize);
                 });
 
-                // Add main title at top center
-                const scale = size / 1920;
-                const mainTitleSize = 32 * scale;
-                const padding = 40 * scale;
-                
-                // Title background
-                const titleBgWidth = 800 * scale;
-                const titleBgHeight = 60 * scale;
-                const titleBgX = (size - titleBgWidth) / 2;
-                const titleBgY = padding / 2;
-                
-                tempCtx.fillStyle = 'rgba(10, 14, 39, 0.9)';
-                tempCtx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
-                tempCtx.lineWidth = 2 * scale;
-                
-                const radius = 8 * scale;
-                tempCtx.beginPath();
-                tempCtx.moveTo(titleBgX + radius, titleBgY);
-                tempCtx.lineTo(titleBgX + titleBgWidth - radius, titleBgY);
-                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY, titleBgX + titleBgWidth, titleBgY + radius);
-                tempCtx.lineTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight - radius);
-                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight, titleBgX + titleBgWidth - radius, titleBgY + titleBgHeight);
-                tempCtx.lineTo(titleBgX + radius, titleBgY + titleBgHeight);
-                tempCtx.quadraticCurveTo(titleBgX, titleBgY + titleBgHeight, titleBgX, titleBgY + titleBgHeight - radius);
-                tempCtx.lineTo(titleBgX, titleBgY + radius);
-                tempCtx.quadraticCurveTo(titleBgX, titleBgY, titleBgX + radius, titleBgY);
-                tempCtx.closePath();
-                tempCtx.fill();
-                tempCtx.stroke();
-                
-                tempCtx.fillStyle = '#ffd700';
-                tempCtx.font = `bold ${mainTitleSize}px "Fira Code"`;
-                tempCtx.textAlign = 'center';
-                tempCtx.shadowBlur = 12 * scale;
-                tempCtx.shadowColor = 'rgba(255, 215, 0, 0.5)';
-                tempCtx.fillText('Farey Triangle & Cayley Transform', size / 2, titleBgY + titleBgHeight / 2 + 5 * scale);
-                tempCtx.shadowBlur = 0;
+                // Add titles for each canvas
+                drawCanvasTitles(tempCtx, width, height, canvasSize, offsetY);
 
                 if (includeLegend) {
-                    drawLegend(tempCtx, size, size, 'all');
+                    drawLegend(tempCtx, width, height, 'all');
                 }
             } else {
                 // For single canvas, make it square to maintain aspect ratio
@@ -3834,10 +3874,6 @@
                         sourceCanvas = canvases.nested;
                         title = 'Nested Modular Rings';
                         break;
-                    case 'fullplane':
-                        sourceCanvas = canvases.fullPlane;
-                        title = 'Full Complex Plane ℂ - Complete Cayley View';
-                        break;
                 }
 
                 // Draw canvas maintaining square aspect ratio
@@ -3851,7 +3887,7 @@
                 }
             }
 
-            // Add watermark if requested
+            // Add watermark if requested (should be visible now)
             if (includeWatermark) {
                 drawWatermark(tempCtx, tempCanvas.width, tempCanvas.height);
             }
@@ -3866,28 +3902,23 @@
 
         function drawMainTitle(ctx, size, titleText) {
             const scale = size / 1000;
-            const fontSize = 28 * scale;
-            const padding = 40 * scale;
+            const fontSize = 24 * scale;
+            const padding = 30 * scale;
 
             ctx.save();
             
-            // Measure text width
-            ctx.font = `bold ${fontSize}px "Fira Code"`;
+            // Title background
             const textMetrics = ctx.measureText(titleText);
-            const titleWidth = textMetrics.width + 80 * scale;
-            const titleHeight = 70 * scale;
+            const titleWidth = textMetrics.width + 60 * scale;
+            const titleHeight = 60 * scale;
             const titleX = (size - titleWidth) / 2;
             const titleY = padding;
 
-            // Title background with gradient
-            const gradient = ctx.createLinearGradient(titleX, titleY, titleX, titleY + titleHeight);
-            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.95)');
-            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.95)');
-            ctx.fillStyle = gradient;
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
-            ctx.lineWidth = 3 * scale;
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
+            ctx.lineWidth = 2 * scale;
             
-            const radius = 10 * scale;
+            const radius = 8 * scale;
             ctx.beginPath();
             ctx.moveTo(titleX + radius, titleY);
             ctx.lineTo(titleX + titleWidth - radius, titleY);
@@ -3902,16 +3933,13 @@
             ctx.fill();
             ctx.stroke();
 
-            // Title text with gradient
-            const textGradient = ctx.createLinearGradient(titleX, titleY, titleX, titleY + titleHeight);
-            textGradient.addColorStop(0, '#ffd700');
-            textGradient.addColorStop(1, '#ffed4e');
-            ctx.fillStyle = textGradient;
+            // Title text
+            ctx.fillStyle = '#ffd700';
             ctx.font = `bold ${fontSize}px "Fira Code"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 15 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+            ctx.shadowBlur = 10 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
             ctx.fillText(titleText, size / 2, titleY + titleHeight / 2);
             
             ctx.restore();
@@ -3946,29 +3974,26 @@
 
         function drawWatermark(ctx, width, height) {
             const scale = Math.min(width, height) / 1920;
-            const fontSize = 18 * scale;
-            const padding = 30 * scale;
+            const fontSize = 16 * scale;
+            const padding = 20 * scale;
 
             ctx.save();
             
             // Measure text first
             ctx.font = `bold ${fontSize}px "Fira Code"`;
-            const textMetrics = ctx.measureText('by Wessen Getachew · @7dview');
-            const watermarkWidth = textMetrics.width + 50 * scale;
-            const watermarkHeight = 55 * scale;
+            const textMetrics = ctx.measureText('Wessen Getachew');
+            const watermarkWidth = textMetrics.width + 40 * scale;
+            const watermarkHeight = 45 * scale;
             const watermarkX = width - watermarkWidth - padding;
             const watermarkY = height - watermarkHeight - padding;
 
-            // Watermark background with gradient
-            const gradient = ctx.createLinearGradient(watermarkX, watermarkY, watermarkX, watermarkY + watermarkHeight);
-            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.95)');
-            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.95)');
-            ctx.fillStyle = gradient;
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
-            ctx.lineWidth = 3 * scale;
+            // Watermark background
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.9)';
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+            ctx.lineWidth = 2 * scale;
             
             // Rounded rectangle
-            const radius = 10 * scale;
+            const radius = 8 * scale;
             ctx.beginPath();
             ctx.moveTo(watermarkX + radius, watermarkY);
             ctx.lineTo(watermarkX + watermarkWidth - radius, watermarkY);
@@ -3983,17 +4008,14 @@
             ctx.fill();
             ctx.stroke();
 
-            // Watermark text with gradient
-            const textGradient = ctx.createLinearGradient(watermarkX, watermarkY, watermarkX, watermarkY + watermarkHeight);
-            textGradient.addColorStop(0, '#ffd700');
-            textGradient.addColorStop(1, '#ffed4e');
-            ctx.fillStyle = textGradient;
+            // Watermark text
+            ctx.fillStyle = '#ffd700';
             ctx.font = `bold ${fontSize}px "Fira Code"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 15 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
-            ctx.fillText('by Wessen Getachew · @7dview', watermarkX + watermarkWidth / 2, watermarkY + watermarkHeight / 2);
+            ctx.shadowBlur = 10 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            ctx.fillText('Wessen Getachew', watermarkX + watermarkWidth / 2, watermarkY + watermarkHeight / 2);
             
             ctx.restore();
         }
@@ -4330,9 +4352,10 @@
             });
             
             console.log('\n CAYLEY TRANSFORM VERIFICATION:');
-            console.log('  Current Formula: w = i(1+z)/(1-z) ✓ CORRECT');
+            console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
+            console.log('  Standard Formula: w = i(1-z)/(1+z)');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
-            console.log('  Inverse of: f(z) = (z-i)/(z+i) which maps ℍ → 𝔻');
+            console.log('  Inverse: z = (i-w)/(i+w)');
             console.log('  Preserves angles (conformal)');
 
             
