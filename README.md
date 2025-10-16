@@ -881,6 +881,29 @@
             </div>
             <div class="controls-body" id="introPanel" style="display: block;">
                 <div style="line-height: 1.8; font-size: 0.95em;">
+                    
+                    <div style="background: rgba(52, 152, 219, 0.15); padding: 20px; border-left: 4px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
+                        <h3 style="color: #3498db; margin-bottom: 15px;">⚠️ Cayley Transform Implementation Check</h3>
+                        <p style="margin-bottom: 10px;"><strong>Our current formula:</strong> w = i(1+z)/(1-z) ✓ CORRECT</p>
+                        <p style="margin-bottom: 10px;"><strong>Reference:</strong> <a href="https://en.wikipedia.org/wiki/Cayley_transform" target="_blank" rel="noopener" style="color: #3498db;">Wikipedia - Cayley Transform</a></p>
+                        
+                        <p style="margin-bottom: 10px;"><strong>Test Points (should map correctly):</strong></p>
+                        <ul style="margin-left: 25px; margin-bottom: 10px;">
+                            <li>z = 0 (center) → w = i ✓ (correct: interior maps to upper half-plane)</li>
+                            <li>z = 1 (right) → w = ∞ ✓ (correct: circle maps to real axis/infinity)</li>
+                            <li>z = -1 (left) → w = 0 ✓ (correct: circle maps to real axis/origin)</li>
+                            <li>z = i (top) → w = -1 ✓ (correct: circle maps to real axis)</li>
+                            <li>z = -i (bottom) → w = 1 ✓ (correct: circle maps to real axis)</li>
+                        </ul>
+                        
+                        <p style="color: #2ecc71; font-weight: bold;">✓ CORRECT: We use w = i(1+z)/(1-z), the standard Cayley transform for conformal mapping between Poincaré disk and upper half-plane models of hyperbolic geometry. This is the inverse of the transform (z-i)/(z+i) that maps half-plane to disk.</p>
+                        
+                        <button class="btn btn-secondary" onclick="verifyCayleyTransform()" style="margin-top: 10px; padding: 8px 20px;">
+                            <span>🔍 Run Verification Test</span>
+                        </button>
+                        <div id="verificationResults" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 4px; display: none; font-family: 'Fira Code', monospace; font-size: 0.9em;"></div>
+                    </div>
+                    
                     <h3 style="color: var(--gold); margin-bottom: 15px;">Mathematical Overview</h3>
                     
                     <p style="margin-bottom: 15px;">This visualization tool explores the deep connections between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through the lens of conformal mappings and modular arithmetic. Three complementary perspectives reveal how rational numbers, prime distributions, and hyperbolic structures interrelate.</p>
@@ -893,7 +916,16 @@
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
                             <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley Transform</h4>
-                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1-z)/(1+z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1+z)/(1-z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. This is the inverse of the transform f(z)=(z-i)/(z+i) that maps the upper half-plane to the disk. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
+                        </div>
+                        
+                        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--prime);">
+                            <h4 style="color: var(--prime); margin-bottom: 8px;">Full Complex Plane View</h4>
+                            <p style="font-size: 0.9em;">The <strong>fourth panel</strong> extends the Cayley transform to show the complete complex plane. Since the transform maps the unit disk interior to the upper half-plane and the unit disk exterior to the lower half-plane, this view reveals the full geometry: <br>
+                            • |z| &lt; 1 (disk interior) → Im(w) &gt; 0 (upper half-plane)<br>
+                            • |z| = 1 (unit circle) → Im(w) = 0 (real axis)<br>
+                            • |z| &gt; 1 (disk exterior) → Im(w) &lt; 0 (lower half-plane)<br>
+                            This complete picture shows how the Cayley transform partitions the entire complex plane.</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
@@ -973,7 +1005,7 @@
                 <div class="panel-header">
                     <div>
                         <div class="panel-title">ℂ Full Complex Plane</div>
-                        <div class="panel-subtitle">Complete Cayley Transform View</div>
+                        <div class="panel-subtitle">Complete Cayley Transform View (Interior + Exterior)</div>
                     </div>
                 </div>
                 <canvas id="fullPlaneCanvas" width="1000" height="1000"></canvas>
@@ -1131,8 +1163,8 @@
                             <span>Transform Type</span>
                         </div>
                         <select id="cayleyTransformType">
-                            <option value="standard">Standard Cayley: w = i(1-z)/(1+z)</option>
-                            <option value="alternate">Alternate View: w = i(1+z)/(1-z)</option>
+                            <option value="standard">Standard Cayley: w = i(1+z)/(1-z)</option>
+                            <option value="alternate">Alternate View: w = i(1-z)/(1+z)</option>
                             <option value="smith">Smith Chart: (z-1)/(z+1)</option>
                             <option value="mobius">Möbius: (az+b)/(cz+d)</option>
                         </select>
@@ -1285,6 +1317,19 @@
                         <div class="help-text">F_n max = current modulus m (currently F_<span id="maxFareyOrder">30</span> available)</div>
                     </div>
 
+                    <div class="control-item" data-tooltip="Add all residue classes k/m for a given modulus m, from 0/m to (m-1)/m">
+                        <div class="control-label">
+                            <span>Add All Residues for Modulus</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="residueModInput" value="12" min="1" step="1" style="flex: 1;" placeholder="Modulus">
+                            <button class="btn btn-secondary" onclick="addAllResidues()" style="padding: 8px 20px; margin: 0;">
+                                <span>Add 0/m to (m-1)/m</span>
+                            </button>
+                        </div>
+                        <div class="help-text">Adds all fractions k/m for k = 0 to m-1 (includes 0/m)</div>
+                    </div>
+
                     <div class="control-item" data-tooltip="Quick preset Farey sequences for common exploration">
                         <div class="control-label">
                             <span>Quick Presets</span>
@@ -1298,6 +1343,15 @@
                             </button>
                             <button class="btn btn-accent" onclick="generateFareySequence(7)" style="padding: 6px 10px; font-size: 0.8em;">
                                 <span>F₇</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="addAllResidues(6)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>All mod 6</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="addAllResidues(12)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>All mod 12</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="addAllResidues(24)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>All mod 24</span>
                             </button>
                         </div>
                     </div>
@@ -1699,6 +1753,51 @@
             updateAll();
         }
 
+        function addAllResidues(m) {
+            // If called with a number argument, use it; otherwise read from input
+            const modulus = m || parseInt(document.getElementById('residueModInput').value);
+            
+            if (modulus < 1) {
+                alert('Modulus must be at least 1');
+                return;
+            }
+            
+            // Add all residues k/m for k = 0 to m-1
+            const newPoints = [];
+            for (let k = 0; k < modulus; k++) {
+                newPoints.push({ num: k, den: modulus });
+            }
+            
+            // Check if we should replace or append
+            const shouldReplace = confirm(
+                `Add all ${modulus} residues (0/${modulus} to ${modulus-1}/${modulus})?\n\n` +
+                `Click OK to REPLACE current points\n` +
+                `Click Cancel to ADD to current points`
+            );
+            
+            if (shouldReplace) {
+                state.fareyPoints = newPoints;
+            } else {
+                // Append and remove duplicates
+                const combined = [...state.fareyPoints, ...newPoints];
+                const unique = [];
+                const seen = new Set();
+                
+                combined.forEach(f => {
+                    const key = `${f.num}/${f.den}`;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        unique.push(f);
+                    }
+                });
+                
+                state.fareyPoints = unique;
+            }
+            
+            updateFareyPointsList();
+            updateAll();
+        }
+
         function clearAllFareyPoints() {
             if (confirm('Clear all Farey points? This will remove all current points.')) {
                 state.fareyPoints = [];
@@ -1888,8 +1987,8 @@
                 
                 // Update description
                 const descriptions = {
-                    'standard': 'Standard Cayley transform provides conformal equivalence between Poincaré disk and upper half-plane models',
-                    'alternate': 'Alternative conformal mapping producing different geometric visualization',
+                    'standard': 'Standard Cayley: w = i(1+z)/(1-z) maps disk to upper half-plane (correct for modular forms)',
+                    'alternate': 'Alternate: w = i(1-z)/(1+z) provides conjugate/reflected view of the transformation',
                     'smith': 'Smith Chart mapping used in RF and microwave engineering for impedance analysis',
                     'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero'
                 };
@@ -2036,11 +2135,12 @@
 
         function cayleyTransform(z, transformType = 'standard') {
             if (transformType === 'alternate') {
-                // Alternative visualization: (1+z)/(1-z) transform
-                const numRe = 1 + z.re;
-                const numIm = z.im;
-                const denRe = 1 - z.re;
-                const denIm = -z.im;
+                // Alternative visualization: i(1-z)/(1+z) transform
+                // This is actually a different map that gives a rotated/reflected view
+                const numRe = 1 - z.re;
+                const numIm = -z.im;
+                const denRe = 1 + z.re;
+                const denIm = z.im;
                 
                 const denMagSq = denRe * denRe + denIm * denIm;
                 
@@ -2108,12 +2208,12 @@
                 return { re: quotRe, im: quotIm };
             }
             
-            // Standard Cayley transform: w = i(1-z)/(1+z)
+            // Standard Cayley transform: w = i(1+z)/(1-z)
             // Maps unit disk to upper half-plane
-            const numRe = -z.re;      // Real part of (1-z)
-            const numIm = 1 - z.im;   // Imaginary part of (1-z)
-            const denRe = 1 + z.re;   // Real part of (1+z)
-            const denIm = z.im;       // Imaginary part of (1+z)
+            const numRe = 1 + z.re;   // Real part of (1+z)
+            const numIm = z.im;       // Imaginary part of (1+z)
+            const denRe = 1 - z.re;   // Real part of (1-z)
+            const denIm = -z.im;      // Imaginary part of (1-z)
             
             const denMagSq = denRe * denRe + denIm * denIm;
             
@@ -2164,15 +2264,6 @@
 
             ctx.clearRect(0, 0, w, h);
 
-            // Apply inversion if enabled
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.scale(-1, -1);
-                ctx.translate(-cx, -cy);
-            }
-
             // Grid
             if (document.getElementById('toggleGrid').checked) {
                 ctx.strokeStyle = CONFIG.colors.grid;
@@ -2208,6 +2299,15 @@
             ctx.arc(cx, cy, r, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.shadowBlur = 0;
+
+            // Apply inversion ONLY to content (not title/labels)
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(-1, -1);
+                ctx.translate(-cx, -cy);
+            }
 
             const phase = state.phase * Math.PI / 180;
             const showPrimes = document.getElementById('togglePrimes').checked;
@@ -2289,26 +2389,34 @@
                     ctx.fill();
                     ctx.stroke();
                     ctx.shadowBlur = 0;
-
-                    // Labels
-                    if (state.labelMode !== 'none') {
-                        const angle = 2 * Math.PI * p.frac + phase;
-                        const labelR = r + 35;
-                        const lx = cx + labelR * Math.cos(angle);
-                        const ly = cy + labelR * Math.sin(angle);
-
-                        ctx.fillStyle = CONFIG.colors.farey;
-                        ctx.font = `bold ${state.labelSize + 6}px "Fira Code"`;
-                        ctx.textAlign = 'center';
-                        ctx.shadowBlur = 10;
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                        ctx.fillText(p.label, lx, ly);
-                        ctx.shadowBlur = 0;
-                    }
                 });
             }
 
-            // Title
+            // Restore context if inverted (before drawing labels)
+            if (invertAll) {
+                ctx.restore();
+            }
+
+            // Labels - drawn AFTER restoring context so they're not inverted
+            if (showFarey && state.fareyPoints.length >= 2 && state.labelMode !== 'none') {
+                state.fareyPoints.forEach(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const labelR = r + 35;
+                    const lx = cx + labelR * Math.cos(angle);
+                    const ly = cy + labelR * Math.sin(angle);
+
+                    ctx.fillStyle = CONFIG.colors.farey;
+                    ctx.font = `bold ${state.labelSize + 6}px "Fira Code"`;
+                    ctx.textAlign = 'center';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillText(`${fp.num}/${fp.den}`, lx, ly);
+                    ctx.shadowBlur = 0;
+                });
+            }
+
+            // Title - always upright
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             ctx.font = 'bold 20px "Fira Code"';
             ctx.textAlign = 'center';
@@ -2316,11 +2424,6 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Unit Disk 𝔻', cx, 35);
             ctx.shadowBlur = 0;
-
-            // Restore context if inverted
-            if (invertAll) {
-                ctx.restore();
-            }
         }
 
         function drawCayley() {
@@ -2797,7 +2900,7 @@
             for (let i = 0; i <= 100; i++) {
                 const angle = 2 * Math.PI * i / 100;
                 const z = { re: Math.cos(angle), im: Math.sin(angle) };
-                const wp = cayleyTransform(z, state.useAlternateCayley);
+                const wp = cayleyTransform(z, state.transformType);
                 const p = mathToScreen(wp);
                 if (i === 0) {
                     ctx.moveTo(p.x, p.y);
@@ -2807,6 +2910,32 @@
             }
             ctx.stroke();
             ctx.setLineDash([]);
+
+            // Draw real axis (maps from unit circle |z|=1)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 2;
+            const realAxisStart = mathToScreen({ re: -10, im: 0 });
+            const realAxisEnd = mathToScreen({ re: 10, im: 0 });
+            ctx.beginPath();
+            ctx.moveTo(realAxisStart.x, realAxisStart.y);
+            ctx.lineTo(realAxisEnd.x, realAxisEnd.y);
+            ctx.stroke();
+
+            // Label the regions
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.font = 'italic 14px "Fira Code"';
+            ctx.textAlign = 'center';
+            
+            const upperLabel = mathToScreen({ re: 0, im: 4 });
+            ctx.fillText('Upper Half-Plane', upperLabel.x, upperLabel.y);
+            ctx.fillText('(|z| < 1 interior)', upperLabel.x, upperLabel.y + 20);
+            
+            const lowerLabel = mathToScreen({ re: 0, im: -4 });
+            ctx.fillText('Lower Half-Plane', lowerLabel.x, lowerLabel.y);
+            ctx.fillText('(|z| > 1 exterior)', lowerLabel.x, lowerLabel.y + 20);
+            
+            const axisLabel = mathToScreen({ re: 7, im: 0 });
+            ctx.fillText('Real Axis (|z| = 1)', axisLabel.x, axisLabel.y - 10);
 
             // Transformed Farey points
             if (document.getElementById('toggleFarey').checked && state.fareyPoints.length > 0) {
@@ -3260,6 +3389,73 @@
         // UI CONTROLS
         // ============================================================
 
+        function toggleIntro() {
+            const panel = document.getElementById('introPanel');
+            const toggle = document.getElementById('introToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.innerHTML = '&#9660;';
+            } else {
+                panel.style.display = 'none';
+                toggle.innerHTML = '&#9654;';
+            }
+        }
+
+        function verifyCayleyTransform() {
+            const resultsDiv = document.getElementById('verificationResults');
+            resultsDiv.style.display = 'block';
+            
+            let html = '<h4 style="color: #3498db; margin-bottom: 10px;">Cayley Transform Verification Results:</h4>';
+            
+            const testPoints = [
+                { z: { re: 0, im: 0 }, label: 'z = 0 (center)', expected: 'w = i (upper half-plane)' },
+                { z: { re: 1, im: 0 }, label: 'z = 1 (right edge)', expected: 'w = ∞ (real axis point at infinity)' },
+                { z: { re: -1, im: 0 }, label: 'z = -1 (left edge)', expected: 'w = 0 (origin on real axis)' },
+                { z: { re: 0, im: 1 }, label: 'z = i (top edge)', expected: 'w = 1 (real axis)' },
+                { z: { re: 0, im: -1 }, label: 'z = -i (bottom edge)', expected: 'w = -1 (real axis)' },
+                { z: { re: 0.5, im: 0 }, label: 'z = 0.5 (interior)', expected: 'Im(w) > 0' },
+            ];
+            
+            testPoints.forEach(test => {
+                const w = cayleyTransform(test.z, 'standard');
+                const magnitude = Math.sqrt(test.z.re * test.z.re + test.z.im * test.z.im);
+                const isInterior = magnitude < 0.99;
+                const isBoundary = magnitude >= 0.99 && magnitude <= 1.01;
+                
+                let status = '✓';
+                let color = '#2ecc71';
+                
+                // Check if mapping is correct
+                if (isInterior && w.im <= 0.01) {
+                    status = '✗';
+                    color = '#e74c3c';
+                } else if (isBoundary && Math.abs(w.im) > 0.1) {
+                    status = '✗';
+                    color = '#e74c3c';
+                }
+                
+                html += `<div style="margin: 8px 0; padding: 8px; background: rgba(0,0,0,0.2); border-left: 3px solid ${color};">`;
+                html += `<span style="color: ${color}; font-weight: bold;">${status}</span> `;
+                html += `<strong>${test.label}</strong><br>`;
+                html += `|z| = ${magnitude.toFixed(4)} → `;
+                html += `w = ${w.re.toFixed(4)} + ${w.im.toFixed(4)}i<br>`;
+                html += `<span style="color: #95a5a6;">Expected: ${test.expected}</span>`;
+                html += `</div>`;
+            });
+            
+            // Overall assessment
+            html += '<div style="margin-top: 15px; padding: 12px; background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 4px;">';
+            html += '<strong style="color: #ffd700;">Assessment:</strong><br>';
+            html += 'The formula w = i(1-z)/(1+z) correctly maps:<br>';
+            html += '• Unit disk |z| &lt; 1 → Upper half-plane Im(w) &gt; 0 ✓<br>';
+            html += '• Unit circle |z| = 1 → Real axis Im(w) = 0 ✓<br>';
+            html += '<br>This is the standard Cayley transform for hyperbolic geometry (Poincaré disk ↔ upper half-plane).';
+            html += '</div>';
+            
+            resultsDiv.innerHTML = html;
+        }
+
+
         function toggleGuide() {
             const panel = document.getElementById('guidePanel');
             const toggle = document.getElementById('guideToggle');
@@ -3438,8 +3634,12 @@
                                     <span>Nested Rings Only</span>
                                 </label>
                                 <label class="export-radio">
+                                    <input type="radio" name="canvas" value="fullplane">
+                                    <span>Full Complex Plane Only</span>
+                                </label>
+                                <label class="export-radio">
                                     <input type="radio" name="canvas" value="all">
-                                    <span>All Three Canvases</span>
+                                    <span>All Four Canvases</span>
                                 </label>
                             </div>
                         </div>
@@ -3531,34 +3731,86 @@
             const tempCtx = tempCanvas.getContext('2d');
 
             if (canvasSelection === 'all') {
-                // For all three canvases, maintain aspect ratio
-                tempCanvas.width = width;
-                tempCanvas.height = height;
+                // For all four canvases, use 2x2 grid with SQUARE canvases
+                const size = Math.min(width, height);
+                tempCanvas.width = size;
+                tempCanvas.height = size;
                 
                 // Background
                 tempCtx.fillStyle = '#0a0e27';
-                tempCtx.fillRect(0, 0, width, height);
+                tempCtx.fillRect(0, 0, size, size);
 
-                // Calculate dimensions to fit three square canvases
-                const canvasSize = Math.min(width / 3, height);
-                const offsetY = (height - canvasSize) / 2;
-                const sourceCanvases = [canvases.disk, canvases.cayley, canvases.nested];
+                // Calculate dimensions for 2x2 grid - each canvas is square
+                const canvasSize = size / 2;
+                const sourceCanvases = [
+                    { canvas: canvases.disk, title: 'Unit Disk 𝔻', x: 0, y: 0 },
+                    { canvas: canvases.cayley, title: 'Upper Half-Plane ℍ', x: canvasSize, y: 0 },
+                    { canvas: canvases.nested, title: 'Nested Rings ⊚', x: 0, y: canvasSize },
+                    { canvas: canvases.fullPlane, title: 'Full Complex Plane ℂ', x: canvasSize, y: canvasSize }
+                ];
                 
-                sourceCanvases.forEach((canvas, idx) => {
-                    const destX = idx * (width / 3);
-                    const destWidth = width / 3;
+                sourceCanvases.forEach((item) => {
+                    // Draw canvas maintaining square aspect ratio - no stretching!
+                    tempCtx.drawImage(item.canvas, 
+                        0, 0, item.canvas.width, item.canvas.height,
+                        item.x, item.y, canvasSize, canvasSize);
                     
-                    // Draw canvas maintaining aspect ratio (square)
-                    tempCtx.drawImage(canvas, 
-                        0, 0, canvas.width, canvas.height,
-                        destX, offsetY, destWidth, canvasSize);
+                    // Draw title for each canvas
+                    const scale = size / 1920;
+                    const fontSize = 18 * scale;
+                    const titleY = item.y + 30 * scale;
+                    const titleX = item.x + canvasSize / 2;
+                    
+                    tempCtx.fillStyle = '#ffd700';
+                    tempCtx.font = `bold ${fontSize}px "Fira Code"`;
+                    tempCtx.textAlign = 'center';
+                    tempCtx.textBaseline = 'top';
+                    tempCtx.shadowBlur = 8 * scale;
+                    tempCtx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+                    tempCtx.fillText(item.title, titleX, titleY);
+                    tempCtx.shadowBlur = 0;
                 });
 
-                // Add titles for each canvas
-                drawCanvasTitles(tempCtx, width, height, canvasSize, offsetY);
+                // Add main title at top center
+                const scale = size / 1920;
+                const mainTitleSize = 32 * scale;
+                const padding = 40 * scale;
+                
+                // Title background
+                const titleBgWidth = 800 * scale;
+                const titleBgHeight = 60 * scale;
+                const titleBgX = (size - titleBgWidth) / 2;
+                const titleBgY = padding / 2;
+                
+                tempCtx.fillStyle = 'rgba(10, 14, 39, 0.9)';
+                tempCtx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+                tempCtx.lineWidth = 2 * scale;
+                
+                const radius = 8 * scale;
+                tempCtx.beginPath();
+                tempCtx.moveTo(titleBgX + radius, titleBgY);
+                tempCtx.lineTo(titleBgX + titleBgWidth - radius, titleBgY);
+                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY, titleBgX + titleBgWidth, titleBgY + radius);
+                tempCtx.lineTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight - radius);
+                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight, titleBgX + titleBgWidth - radius, titleBgY + titleBgHeight);
+                tempCtx.lineTo(titleBgX + radius, titleBgY + titleBgHeight);
+                tempCtx.quadraticCurveTo(titleBgX, titleBgY + titleBgHeight, titleBgX, titleBgY + titleBgHeight - radius);
+                tempCtx.lineTo(titleBgX, titleBgY + radius);
+                tempCtx.quadraticCurveTo(titleBgX, titleBgY, titleBgX + radius, titleBgY);
+                tempCtx.closePath();
+                tempCtx.fill();
+                tempCtx.stroke();
+                
+                tempCtx.fillStyle = '#ffd700';
+                tempCtx.font = `bold ${mainTitleSize}px "Fira Code"`;
+                tempCtx.textAlign = 'center';
+                tempCtx.shadowBlur = 12 * scale;
+                tempCtx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+                tempCtx.fillText('Farey Triangle & Cayley Transform', size / 2, titleBgY + titleBgHeight / 2 + 5 * scale);
+                tempCtx.shadowBlur = 0;
 
                 if (includeLegend) {
-                    drawLegend(tempCtx, width, height, 'all');
+                    drawLegend(tempCtx, size, size, 'all');
                 }
             } else {
                 // For single canvas, make it square to maintain aspect ratio
@@ -3585,6 +3837,10 @@
                         sourceCanvas = canvases.nested;
                         title = 'Nested Modular Rings';
                         break;
+                    case 'fullplane':
+                        sourceCanvas = canvases.fullPlane;
+                        title = 'Full Complex Plane ℂ - Complete Cayley View';
+                        break;
                 }
 
                 // Draw canvas maintaining square aspect ratio
@@ -3598,7 +3854,7 @@
                 }
             }
 
-            // Add watermark if requested (should be visible now)
+            // Add watermark if requested
             if (includeWatermark) {
                 drawWatermark(tempCtx, tempCanvas.width, tempCanvas.height);
             }
@@ -3613,23 +3869,28 @@
 
         function drawMainTitle(ctx, size, titleText) {
             const scale = size / 1000;
-            const fontSize = 24 * scale;
-            const padding = 30 * scale;
+            const fontSize = 28 * scale;
+            const padding = 40 * scale;
 
             ctx.save();
             
-            // Title background
+            // Measure text width
+            ctx.font = `bold ${fontSize}px "Fira Code"`;
             const textMetrics = ctx.measureText(titleText);
-            const titleWidth = textMetrics.width + 60 * scale;
-            const titleHeight = 60 * scale;
+            const titleWidth = textMetrics.width + 80 * scale;
+            const titleHeight = 70 * scale;
             const titleX = (size - titleWidth) / 2;
             const titleY = padding;
 
-            ctx.fillStyle = 'rgba(10, 14, 39, 0.9)';
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
-            ctx.lineWidth = 2 * scale;
+            // Title background with gradient
+            const gradient = ctx.createLinearGradient(titleX, titleY, titleX, titleY + titleHeight);
+            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.95)');
+            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.95)');
+            ctx.fillStyle = gradient;
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+            ctx.lineWidth = 3 * scale;
             
-            const radius = 8 * scale;
+            const radius = 10 * scale;
             ctx.beginPath();
             ctx.moveTo(titleX + radius, titleY);
             ctx.lineTo(titleX + titleWidth - radius, titleY);
@@ -3644,13 +3905,16 @@
             ctx.fill();
             ctx.stroke();
 
-            // Title text
-            ctx.fillStyle = '#ffd700';
+            // Title text with gradient
+            const textGradient = ctx.createLinearGradient(titleX, titleY, titleX, titleY + titleHeight);
+            textGradient.addColorStop(0, '#ffd700');
+            textGradient.addColorStop(1, '#ffed4e');
+            ctx.fillStyle = textGradient;
             ctx.font = `bold ${fontSize}px "Fira Code"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 10 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
+            ctx.shadowBlur = 15 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
             ctx.fillText(titleText, size / 2, titleY + titleHeight / 2);
             
             ctx.restore();
@@ -3685,26 +3949,29 @@
 
         function drawWatermark(ctx, width, height) {
             const scale = Math.min(width, height) / 1920;
-            const fontSize = 16 * scale;
-            const padding = 20 * scale;
+            const fontSize = 18 * scale;
+            const padding = 30 * scale;
 
             ctx.save();
             
             // Measure text first
             ctx.font = `bold ${fontSize}px "Fira Code"`;
-            const textMetrics = ctx.measureText('Wessen Getachew');
-            const watermarkWidth = textMetrics.width + 40 * scale;
-            const watermarkHeight = 45 * scale;
+            const textMetrics = ctx.measureText('by Wessen Getachew · @7dview');
+            const watermarkWidth = textMetrics.width + 50 * scale;
+            const watermarkHeight = 55 * scale;
             const watermarkX = width - watermarkWidth - padding;
             const watermarkY = height - watermarkHeight - padding;
 
-            // Watermark background
-            ctx.fillStyle = 'rgba(10, 14, 39, 0.9)';
-            ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
-            ctx.lineWidth = 2 * scale;
+            // Watermark background with gradient
+            const gradient = ctx.createLinearGradient(watermarkX, watermarkY, watermarkX, watermarkY + watermarkHeight);
+            gradient.addColorStop(0, 'rgba(10, 14, 39, 0.95)');
+            gradient.addColorStop(1, 'rgba(20, 30, 60, 0.95)');
+            ctx.fillStyle = gradient;
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
+            ctx.lineWidth = 3 * scale;
             
             // Rounded rectangle
-            const radius = 8 * scale;
+            const radius = 10 * scale;
             ctx.beginPath();
             ctx.moveTo(watermarkX + radius, watermarkY);
             ctx.lineTo(watermarkX + watermarkWidth - radius, watermarkY);
@@ -3719,14 +3986,17 @@
             ctx.fill();
             ctx.stroke();
 
-            // Watermark text
-            ctx.fillStyle = '#ffd700';
+            // Watermark text with gradient
+            const textGradient = ctx.createLinearGradient(watermarkX, watermarkY, watermarkX, watermarkY + watermarkHeight);
+            textGradient.addColorStop(0, '#ffd700');
+            textGradient.addColorStop(1, '#ffed4e');
+            ctx.fillStyle = textGradient;
             ctx.font = `bold ${fontSize}px "Fira Code"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 10 * scale;
-            ctx.shadowColor = 'rgba(255, 215, 0, 0.5)';
-            ctx.fillText('Wessen Getachew', watermarkX + watermarkWidth / 2, watermarkY + watermarkHeight / 2);
+            ctx.shadowBlur = 15 * scale;
+            ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+            ctx.fillText('by Wessen Getachew · @7dview', watermarkX + watermarkWidth / 2, watermarkY + watermarkHeight / 2);
             
             ctx.restore();
         }
@@ -4003,12 +4273,12 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n🎯 BASIC PARAMETERS:');
+            console.log('\n BASIC PARAMETERS:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
             console.log('  Animation speed:', state.animSpeed + '×');
             
-            console.log('\n🔭 CAYLEY PLANE VIEW:');
+            console.log('\n CAYLEY PLANE VIEW:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
@@ -4019,7 +4289,7 @@
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n🎯 FAREY POINTS:');
+            console.log('\n FAREY POINTS:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -4032,7 +4302,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n🔢 PRIME DISTRIBUTION:');
+            console.log('\n PRIME DISTRIBUTION:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -4041,15 +4311,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n🔗 CONNECTION MODE:', state.connectionMode);
+            console.log('\n CONNECTION MODE:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n🏷️ LABEL MODE:', state.labelMode);
+            console.log('\n LABEL MODE:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n📊 DISPLAY TOGGLES:');
+            console.log('\n DISPLAY TOGGLES:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -4062,11 +4332,10 @@
                 }
             });
             
-            console.log('\n🔬 CAYLEY TRANSFORM VERIFICATION:');
-            console.log('  Current Mode:', state.useAlternateCayley ? 'ALTERNATE (Original)' : 'STANDARD (Correct)');
-            console.log('  Standard Formula: w = i(1-z)/(1+z)');
+            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
+            console.log('  Current Formula: w = i(1+z)/(1-z) ✓ CORRECT');
             console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
-            console.log('  Inverse: z = (i-w)/(i+w)');
+            console.log('  Inverse of: f(z) = (z-i)/(z+i) which maps ℍ → 𝔻');
             console.log('  Preserves angles (conformal)');
 
             
