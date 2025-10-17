@@ -619,6 +619,139 @@
             position: relative;
         }
 
+        /* Interactive inspection styles */
+        .property-panel {
+            position: fixed;
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.98), rgba(20, 30, 60, 0.98));
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 320px;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            font-family: 'Fira Code', monospace;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .property-panel.visible {
+            display: block;
+        }
+
+        .property-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .property-panel-title {
+            font-size: 1.2em;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .property-panel-close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5em;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .property-panel-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold);
+        }
+
+        .property-item {
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--cyan);
+            border-radius: 4px;
+        }
+
+        .property-label {
+            font-size: 0.85em;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .property-value {
+            font-size: 1em;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        .property-highlight {
+            background: rgba(255, 215, 0, 0.1);
+            border-left-color: var(--gold);
+        }
+
+        .property-highlight .property-value {
+            color: var(--gold);
+        }
+
+        .tooltip {
+            position: fixed;
+            background: rgba(10, 14, 39, 0.95);
+            border: 1px solid var(--cyan);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--text);
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
+        }
+
+        .tooltip.visible {
+            display: block;
+        }
+
+        .tooltip-label {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-value {
+            color: var(--cyan);
+        }
+
+        canvas {
+            cursor: default;
+        }
+
+        canvas.interactive {
+            cursor: pointer;
+        }
+
         @media (max-width: 1800px) {
             .viz-grid {
                 grid-template-columns: 1fr 1fr;
@@ -863,6 +996,16 @@
 
     <div class="starfield" id="starfield"></div>
 
+    <!-- Interactive Inspection UI -->
+    <div id="tooltip" class="tooltip"></div>
+    <div id="propertyPanel" class="property-panel">
+        <div class="property-panel-header">
+            <div class="property-panel-title" id="propertyPanelTitle">Point Properties</div>
+            <button class="property-panel-close" onclick="closePropertyPanel()">✕</button>
+        </div>
+        <div id="propertyPanelContent"></div>
+    </div>
+
     <div class="main-container">
         <header>
             <h1>
@@ -877,31 +1020,36 @@
         <!-- Introduction Panel -->
         <div class="controls-section" style="margin-bottom: 20px;">
             <div class="controls-header" style="cursor: pointer; user-select: none;" onclick="toggleIntro()">
-                <span id="introToggle">&#9660;</span> Mathematical Introduction
+                <span id="introToggle">&#9654;</span> Mathematical Introduction
             </div>
-            <div class="controls-body" id="introPanel" style="display: block;">
+            <div class="controls-body" id="introPanel" style="display: none;">
                 <div style="line-height: 1.8; font-size: 0.95em;">
                     
                     <div style="background: rgba(52, 152, 219, 0.15); padding: 20px; border-left: 4px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
-                        <h3 style="color: #3498db; margin-bottom: 15px;">⚠️ Cayley Transform Implementation Check</h3>
-                        <p style="margin-bottom: 10px;"><strong>Our current formula:</strong> w = i(1+z)/(1-z) ✓ CORRECT</p>
-                        <p style="margin-bottom: 10px;"><strong>Reference:</strong> <a href="https://en.wikipedia.org/wiki/Cayley_transform" target="_blank" rel="noopener" style="color: #3498db;">Wikipedia - Cayley Transform</a></p>
+                        <h3 style="color: #3498db; margin-bottom: 15px;">Transform Types Available</h3>
+                        <p style="margin-bottom: 10px;"><strong>Standard Cayley:</strong> w = i(1+z)/(1-z) - Classic form mapping unit disk interior to upper half-plane. This is THE fundamental conformal bijection in hyperbolic geometry.</p>
+                        <p style="margin-bottom: 10px;"><strong>Inverse Cayley:</strong> w = i(1-z)/(1+z) - Alternative form also mapping disk to upper half-plane but with reversed orientation along the real axis.</p>
+                        <p style="margin-bottom: 10px;"><strong>FTT Transform:</strong> w = (z-i)/(z+i) - This is the INVERSE of the standard Cayley transform. It maps the upper half-plane BACK to the unit disk. Useful for reversing the conformal mapping.</p>
+                        <p style="margin-bottom: 10px;"><strong>Smith Chart:</strong> w = (z-1)/(z+1) - Maps unit disk to itself (disk → disk). Standard in RF engineering for impedance analysis. Different fixed points than Cayley.</p>
+                        <p style="margin-bottom: 10px;"><strong>Möbius:</strong> w = (az+b)/(cz+d) - Fully customizable linear fractional transformation with parameters a, b, c, d. Constraint: ad-bc ≠ 0 for invertibility.</p>
                         
-                        <p style="margin-bottom: 10px;"><strong>Test Points (should map correctly):</strong></p>
+                        <p style="margin-top: 15px;"><strong>Key Mappings (Standard Cayley):</strong></p>
                         <ul style="margin-left: 25px; margin-bottom: 10px;">
-                            <li>z = 0 (center) → w = i ✓ (correct: interior maps to upper half-plane)</li>
-                            <li>z = 1 (right) → w = ∞ ✓ (correct: circle maps to real axis/infinity)</li>
-                            <li>z = -1 (left) → w = 0 ✓ (correct: circle maps to real axis/origin)</li>
-                            <li>z = i (top) → w = -1 ✓ (correct: circle maps to real axis)</li>
-                            <li>z = -i (bottom) → w = 1 ✓ (correct: circle maps to real axis)</li>
+                            <li>z = 0 (center) → w = i (upper half-plane interior)</li>
+                            <li>z = 1 (right edge) → w = ∞ (point at infinity)</li>
+                            <li>z = -1 (left edge) → w = 0 (origin on real axis)</li>
+                            <li>z = i (top) → w = -1 (real axis)</li>
+                            <li>z = -i (bottom) → w = 1 (real axis)</li>
+                            <li>|z| &lt; 1 (disk interior) → Im(w) &gt; 0 (upper half-plane)</li>
+                            <li>|z| = 1 (unit circle) → Im(w) = 0 (real axis)</li>
                         </ul>
                         
-                        <p style="color: #2ecc71; font-weight: bold;">✓ CORRECT: We use w = i(1+z)/(1-z), the standard Cayley transform for conformal mapping between Poincaré disk and upper half-plane models of hyperbolic geometry. This is the inverse of the transform (z-i)/(z+i) that maps half-plane to disk.</p>
-                        
-                        <button class="btn btn-secondary" onclick="verifyCayleyTransform()" style="margin-top: 10px; padding: 8px 20px;">
-                            <span>🔍 Run Verification Test</span>
-                        </button>
-                        <div id="verificationResults" style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 4px; display: none; font-family: 'Fira Code', monospace; font-size: 0.9em;"></div>
+                        <p style="margin-top: 15px;"><strong>Relationship between transforms:</strong></p>
+                        <ul style="margin-left: 25px;">
+                            <li>Standard Cayley and FTT are inverses: If w = Standard(z), then z = FTT(w)</li>
+                            <li>All these transforms are special cases of Möbius transformations</li>
+                            <li>They preserve angles (conformal) and map circles/lines to circles/lines</li>
+                        </ul>
                     </div>
                     
                     <h3 style="color: var(--gold); margin-bottom: 15px;">Mathematical Overview</h3>
@@ -1076,8 +1224,36 @@
                         <p><strong>Try it:</strong> Enable "Geodesic Arc" to see hyperbolic lines connecting Farey fractions.</p>
                     </div>
                     
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--prime);">
+                        <h4 style="color: var(--prime); margin-bottom: 10px;">Step 5: Generalized Lift Dynamics</h4>
+                        <p style="margin-bottom: 10px;">For modular sequences M₀, M₁, M₂,... where Mₙ = M₀·bⁿ (b ≥ 2 is the scaling factor):</p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li><strong>Residue Lift:</strong> Lift(n→n+1)(r) = {r + k·Mₙ mod Mₙ₊₁ : k=0,1,...,b-1}</li>
+                            <li><strong>Transition Lift:</strong> Gap-g pair (r, r+g) lifts to {(r+kMₙ, r+g+kMₙ) : k=0,...,b-1}</li>
+                            <li><strong>Coprimality:</strong> If gcd(r, Mₙ) = 1 and gcd(r, b) = 1, then gcd(r, Mₙ₊₁) = 1</li>
+                            <li><strong>Counting:</strong> If each element lifts to b valid elements: |Sₙ₊₁| = b·|Sₙ|</li>
+                        </ul>
+                        <p><strong>Try it:</strong> Use "Gap-2n" connection mode to visualize gap-preserving lifts where r connects to r+gap within each ring.</p>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; margin-bottom: 20px; border-left: 3px solid var(--cusp);">
+                        <h4 style="color: var(--cusp); margin-bottom: 10px;">Mathematical Framework</h4>
+                        <p style="margin-bottom: 10px;"><strong>Base Modulus M₀ ∈ ℤ₊</strong> and scaling factor <strong>b ∈ ℤ≥₂</strong></p>
+                        <p style="margin-bottom: 10px;"><strong>Modulus Sequence:</strong> Mₙ = M₀·bⁿ for n ∈ ℤ≥₀</p>
+                        <p style="margin-bottom: 10px;"><strong>Residue Lift Formula:</strong></p>
+                        <div style="font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.4); padding: 10px; margin: 10px 0; border-radius: 4px;">
+                            Lift_{n→n+1}(r) = {r, r+Mₙ, r+2Mₙ, ..., r+(b-1)Mₙ} mod Mₙ₊₁
+                        </div>
+                        <p style="margin-bottom: 10px;"><strong>GCD Preservation Condition:</strong></p>
+                        <div style="font-family: 'Fira Code', monospace; background: rgba(0,0,0,0.4); padding: 10px; margin: 10px 0; border-radius: 4px;">
+                            gcd(r, Mₙ) = 1 ∧ gcd(r, b) = 1  ⟹  gcd(r, Mₙ₊₁) = 1
+                        </div>
+                        <p style="margin-bottom: 10px;"><strong>Self-Similarity:</strong> When PrimeFactors(b) ⊆ PrimeFactors(M₀), coprimality is automatically preserved across lifts.</p>
+                        <p style="margin-bottom: 10px;"><strong>Transition Counting:</strong> For valid transitions T(Mₙ), if each lifts to b valid transitions: T(Mₙ₊₁) = b·T(Mₙ)</p>
+                    </div>
+                    
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-left: 3px solid var(--text);">
-                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Custom Möbius Transformations</h4>
+                        <h4 style="color: var(--text); margin-bottom: 10px;">Advanced: Ford Circles & Gap Connections</h4>
                         <p style="margin-bottom: 10px;">Experiment with general Möbius transformations w = (az+b)/(cz+d).</p>
                         <ul style="margin-left: 20px; margin-bottom: 10px;">
                             <li>Select "Möbius" transform type to reveal parameter controls</li>
@@ -1103,10 +1279,10 @@
                     <div class="control-item" data-tooltip="Rotates all visualizations by this angle. Animated when auto-rotate is enabled.">
                         <div class="control-label">
                             <span>Phase Rotation θ</span>
-                            <span class="control-value" id="phaseValue">0°</span>
+                            <span class="control-value" id="phaseValue">180°</span>
                         </div>
-                        <input type="range" id="phaseSlider" min="0" max="360" value="0" step="0.1">
-                        <input type="number" id="phaseInput" value="0" min="0" max="360" step="0.1" style="margin-top: 8px;" placeholder="Enter angle in degrees">
+                        <input type="range" id="phaseSlider" min="0" max="360" value="180" step="0.1">
+                        <input type="number" id="phaseInput" value="180" min="0" max="360" step="0.1" style="margin-top: 8px;" placeholder="Enter angle in degrees">
                     </div>
 
                     <div class="control-item" data-tooltip="The modulus for residue classes. Affects prime distribution and ring structure. No upper limit!">
@@ -1164,11 +1340,12 @@
                         </div>
                         <select id="cayleyTransformType">
                             <option value="standard">Standard Cayley: w = i(1+z)/(1-z)</option>
-                            <option value="alternate">Alternate View: w = i(1-z)/(1+z)</option>
+                            <option value="alternate">Inverse Cayley: w = i(1-z)/(1+z)</option>
+                            <option value="ftt">FTT Transform: w = (z-i)/(z+i)</option>
                             <option value="smith">Smith Chart: (z-1)/(z+1)</option>
                             <option value="mobius">Möbius: (az+b)/(cz+d)</option>
                         </select>
-                        <div class="help-text" id="transformDescription">Standard: Maps unit disk to upper half-plane (modular forms)</div>
+                        <div class="help-text" id="transformDescription">Standard Cayley: Disk→Upper Half-Plane | Inverse: Different orientation | FTT: Upper Half-Plane→Disk | Smith: Disk→Disk (RF) | Möbius: Fully customizable</div>
                     </div>
                     
                     <div class="control-item" id="mobiusParamsA" style="display: none;" data-tooltip="Coefficient a in Möbius transformation w=(az+b)/(cz+d). Must satisfy ad-bc not equal to zero for invertibility.">
@@ -1304,7 +1481,7 @@
                 <!-- Custom Farey Points -->
                 <div class="section-header">Farey Sequence & Custom Points</div>
                 <div class="control-row">
-                    <div class="control-item" data-tooltip="Generate complete Farey sequence F_n: all reduced fractions p/q with 0 ≤ p ≤ q ≤ n">
+                    <div class="control-item" data-tooltip="Generate complete Farey sequence F_n with option to include 0/n for each denominator n (0/1, 0/2, 0/3, etc.)">
                         <div class="control-label">
                             <span>Generate Farey Sequence F_n</span>
                         </div>
@@ -1314,7 +1491,7 @@
                                 <span>Generate F_n</span>
                             </button>
                         </div>
-                        <div class="help-text">F_n max = current modulus m (currently F_<span id="maxFareyOrder">30</span> available)</div>
+                        <div class="help-text">F_n max = current modulus m (currently F_<span id="maxFareyOrder">30</span> available). Option to include 0/n for each n.</div>
                     </div>
 
                     <div class="control-item" data-tooltip="Add all residue classes k/m for a given modulus m, from 0/m to (m-1)/m">
@@ -1375,6 +1552,34 @@
                 <!-- Connection Options -->
                 <div class="section-header">Connection Options</div>
                 <div class="control-row">
+                    <div class="control-item" data-tooltip="Filter which points get connections based on their GCD with the modulus">
+                        <div class="control-label">
+                            <span>Apply Connections To</span>
+                        </div>
+                        <select id="gcdFilter">
+                            <option value="both">Both GCD=1 and GCD≠1</option>
+                            <option value="coprime">Only GCD=1 (Coprime)</option>
+                            <option value="noncoprime">Only GCD≠1 (Non-Coprime)</option>
+                        </select>
+                        <div class="help-text">Filter points by their GCD relationship</div>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Choose color scheme for nested rings visualization">
+                        <div class="control-label">
+                            <span>Nested Rings Color Scheme</span>
+                        </div>
+                        <select id="nestedColorScheme">
+                            <option value="gcd">By GCD Value (Default)</option>
+                            <option value="coprime">Binary (Coprime vs Non-Coprime)</option>
+                            <option value="rainbow">Rainbow by Angle</option>
+                            <option value="ring">By Ring (Modulus)</option>
+                            <option value="prime">Prime Factorization</option>
+                            <option value="totient">Totient Class</option>
+                            <option value="monochrome">Monochrome (Gold)</option>
+                        </select>
+                        <div class="help-text">Different color schemes reveal different patterns</div>
+                    </div>
+
                     <div class="control-item" data-tooltip="Draw lines connecting points based on mathematical relationships in the nested rings view.">
                         <div class="control-label">
                             <span>Connect Points By</span>
@@ -1386,7 +1591,27 @@
                             <option value="angle">Same Angle</option>
                             <option value="gcd">Same GCD</option>
                             <option value="fraction">Same Fraction Value</option>
+                            <option value="gap2n">Gap-2n (r to r+2n)</option>
+                            <option value="evengaps">Multiple Even Gaps</option>
                         </select>
+                    </div>
+
+                    <div class="control-item" id="singleGapControl" data-tooltip="For gap-2n connections: the gap size between connected residues (connects r to r+gap).">
+                        <div class="control-label">
+                            <span>Gap Size (2n)</span>
+                            <span class="control-value" id="gapSizeDisplay">2</span>
+                        </div>
+                        <input type="number" id="gapSizeInput" value="2" min="1" step="1">
+                        <div class="help-text">Connect r to r+gap in residue space</div>
+                    </div>
+
+                    <div class="control-item" id="multiGapControl" style="display: none;" data-tooltip="Show multiple even gap patterns simultaneously (2, 4, 6, 8...)">
+                        <div class="control-label">
+                            <span>Max Even Gap</span>
+                            <span class="control-value" id="maxGapDisplay">8</span>
+                        </div>
+                        <input type="number" id="maxGapInput" value="8" min="2" step="2">
+                        <div class="help-text">Show all even gaps from 2 to this value</div>
                     </div>
 
                     <div class="control-item" data-tooltip="Line width for connections in the nested rings visualization.">
@@ -1416,7 +1641,8 @@
                         <select id="labelMode">
                             <option value="none">No Labels</option>
                             <option value="farey">Farey Points Only</option>
-                            <option value="all">All Points</option>
+                            <option value="integers">Integers (k) Only</option>
+                            <option value="all">All Points (Fractions)</option>
                             <option value="coprime">Coprime Only</option>
                             <option value="rings">Ring Numbers Only</option>
                             <option value="everything">Everything</option>
@@ -1437,6 +1663,24 @@
                             <span class="control-value" id="labelFreqValue">1</span>
                         </div>
                         <input type="number" id="labelFreqInput" value="1" min="1" step="1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Position labels radially outward from the center to avoid overlapping with points.">
+                        <div class="control-label">
+                            <span>Label Position</span>
+                        </div>
+                        <select id="labelPosition">
+                            <option value="center">On Point (Center)</option>
+                            <option value="radial" selected>Radial (Outside Point)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item" data-tooltip="Distance from point to label when using radial positioning.">
+                        <div class="control-label">
+                            <span>Label Offset</span>
+                            <span class="control-value" id="labelOffsetValue">18</span>
+                        </div>
+                        <input type="range" id="labelOffsetSlider" min="10" max="40" value="18" step="2">
                     </div>
                 </div>
 
@@ -1509,6 +1753,12 @@
                         <span class="toggle-label">Unit Disk Outline</span>
                     </label>
 
+                    <input type="checkbox" id="toggleFordCircles">
+                    <label for="toggleFordCircles" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Ford Circles</span>
+                    </label>
+
                     <input type="checkbox" id="toggleFullPlane" checked>
                     <label for="toggleFullPlane" class="toggle-item">
                         <div class="toggle-switch"></div>
@@ -1531,6 +1781,34 @@
                     <label for="toggleInvertAll" class="toggle-item">
                         <div class="toggle-switch"></div>
                         <span class="toggle-label">Invert All Canvases</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleShowCoprimeOnly">
+                    <label for="toggleShowCoprimeOnly" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Nested: Show Only GCD=1 (Coprime)</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleShowNonCoprimeOnly">
+                    <label for="toggleShowNonCoprimeOnly" class="toggle-item">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Nested: Show Only GCD≠1 (Non-Coprime)</span>
+                    </label>
+                </div>
+
+                <!-- Global Connection Visualization -->
+                <div class="section-header">Global Connection Visualization (All Canvases)</div>
+                <div class="toggle-grid">
+                    <input type="checkbox" id="toggleShowRtoR">
+                    <label for="toggleShowRtoR" class="toggle-item" data-tooltip="Connect residue r to itself across all rings. Shows vertical self-similarity in modular tower.">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Show r → r Connections</span>
+                    </label>
+
+                    <input type="checkbox" id="toggleShowRtoRplus2n">
+                    <label for="toggleShowRtoRplus2n" class="toggle-item" data-tooltip="Connect r to r+m×2ⁿ showing power-of-2 lifts in modular sequences. Reveals binary structure.">
+                        <div class="toggle-switch"></div>
+                        <span class="toggle-label">Show r → r+m×2ⁿ Connections</span>
                     </label>
                 </div>
 
@@ -1577,7 +1855,7 @@
         };
 
         let state = {
-            phase: 0,
+            phase: 180,
             modulus: 30,
             numPrimes: 150,
             primeLimit: 10000,
@@ -1587,11 +1865,17 @@
             ringSpacing: 1.0,
             ringRotation: 0,
             connectionMode: 'none',
+            gcdFilter: 'both',
+            gapSize: 2,
+            maxGap: 8,
             connectionThickness: 1.0,
             connectionOpacity: 0.3,
             labelMode: 'farey',
             labelSize: 10,
             labelFreq: 1,
+            labelPosition: 'radial',
+            labelOffset: 18,
+            nestedColorScheme: 'gcd',
             cayleyHRange: 6,
             cayleyVRange: 4,
             cayleyVOffset: 0,
@@ -1605,12 +1889,32 @@
             cayleyZoom: 1.0,
             nestedZoom: 1.0,
             fareyPoints: [
-                {num: 1, den: 3},
+                {num: 1, den: 1},
+                {num: 0, den: 1},
                 {num: 1, den: 2},
-                {num: 2, den: 3}
+                {num: 0, den: 2},
+                {num: 1, den: 3},
+                {num: 2, den: 3},
+                {num: 0, den: 3},
+                {num: 1, den: 4},
+                {num: 3, den: 4},
+                {num: 0, den: 4},
+                {num: 1, den: 5},
+                {num: 2, den: 5},
+                {num: 3, den: 5},
+                {num: 4, den: 5},
+                {num: 0, den: 5}
             ],
             primes: [],
             animationId: null
+        };
+
+        // Interactive inspection state
+        let inspectionState = {
+            selectedPoint: null,
+            hoveredPoint: null,
+            propertyPanelVisible: false,
+            tooltip: null
         };
 
         let canvases = {
@@ -1634,6 +1938,7 @@
             initFareyPointsUI();
             regeneratePrimes();
             setupEventListeners();
+            setupInteractiveInspection(); // NEW: Set up click/hover handlers
             updateAll();
             setTimeout(() => {
                 document.getElementById('loading').classList.add('hidden');
@@ -1722,33 +2027,49 @@
                 alert(`Farey order limited to current modulus m=${maxOrder}. Generating F_${actualOrder} instead.`);
             }
             
+            // Ask if user wants to include 0/n for each n
+            const includeZeroFractions = confirm('Include 0/n fractions for each denominator?\n\n(e.g., F_3 with 0/n: {1/1, 0/1, 1/2, 0/2, 1/3, 2/3, 0/3})\n(e.g., F_3 without 0/n: {0/1, 1/2, 1/3, 2/3, 1/1})\n\nClick OK to include all 0/n (placed at end of each sequence)\nClick Cancel for standard Farey (only coprime fractions)');
+            
             // Generate Farey sequence F_n
             const fareySeq = [];
             
-            // Algorithm: Generate all fractions p/q where 0 ≤ p ≤ q ≤ n and gcd(p,q)=1
-            for (let q = 1; q <= actualOrder; q++) {
-                for (let p = 0; p <= q; p++) {
-                    if (gcd(p, q) === 1) {
-                        fareySeq.push({ num: p, den: q });
+            if (includeZeroFractions) {
+                // For each denominator, add coprime fractions first, then 0/n at the end
+                for (let q = 1; q <= actualOrder; q++) {
+                    // Add all coprime fractions p/q where gcd(p,q)=1 and p > 0
+                    for (let p = 1; p <= q; p++) {
+                        if (gcd(p, q) === 1) {
+                            fareySeq.push({ num: p, den: q });
+                        }
+                    }
+                    // Add 0/q at the end of this sequence
+                    fareySeq.push({ num: 0, den: q });
+                }
+            } else {
+                // Standard Farey sequence: only coprime fractions, sorted by value
+                const tempSeq = [];
+                for (let q = 1; q <= actualOrder; q++) {
+                    for (let p = 0; p <= q; p++) {
+                        if (gcd(p, q) === 1) {
+                            tempSeq.push({ num: p, den: q });
+                        }
                     }
                 }
+                // Sort by value for standard Farey
+                tempSeq.sort((a, b) => (a.num / a.den) - (b.num / b.den));
+                
+                // Remove duplicates by value
+                const seen = new Set();
+                tempSeq.forEach(f => {
+                    const val = f.num / f.den;
+                    if (!seen.has(val)) {
+                        seen.add(val);
+                        fareySeq.push(f);
+                    }
+                });
             }
             
-            // Sort by value
-            fareySeq.sort((a, b) => (a.num / a.den) - (b.num / b.den));
-            
-            // Remove duplicates (0/1 appears as both 0/1 and 0/any)
-            const uniqueFarey = [];
-            const seen = new Set();
-            fareySeq.forEach(f => {
-                const val = f.num / f.den;
-                if (!seen.has(val)) {
-                    seen.add(val);
-                    uniqueFarey.push(f);
-                }
-            });
-            
-            state.fareyPoints = uniqueFarey;
+            state.fareyPoints = fareySeq;
             updateFareyPointsList();
             updateAll();
         }
@@ -1987,10 +2308,11 @@
                 
                 // Update description
                 const descriptions = {
-                    'standard': 'Standard Cayley: w = i(1+z)/(1-z) maps disk to upper half-plane (correct for modular forms)',
-                    'alternate': 'Alternate: w = i(1-z)/(1+z) provides conjugate/reflected view of the transformation',
-                    'smith': 'Smith Chart mapping used in RF and microwave engineering for impedance analysis',
-                    'mobius': 'General Möbius transformation: linear fractional map of form w=(az+b)/(cz+d) with ad-bc nonzero'
+                    'standard': 'Standard Cayley: w = i(1+z)/(1-z) maps unit disk → upper half-plane (conformal bijection for hyperbolic geometry)',
+                    'alternate': 'Inverse Cayley: w = i(1-z)/(1+z) also maps disk → upper half-plane but with reversed orientation',
+                    'ftt': 'FTT Transform: w = (z-i)/(z+i) is the INVERSE of standard Cayley, maps upper half-plane → unit disk',
+                    'smith': 'Smith Chart: w = (z-1)/(z+1) maps unit disk → unit disk, used in RF/microwave impedance visualization',
+                    'mobius': 'Möbius: w = (az+b)/(cz+d) is the general linear fractional transformation (ad-bc≠0 required)'
                 };
                 document.getElementById('transformDescription').textContent = descriptions[e.target.value];
                 
@@ -2009,6 +2331,47 @@
             // Connection controls
             document.getElementById('connectionMode').addEventListener('change', e => {
                 state.connectionMode = e.target.value;
+                
+                // Show/hide gap controls based on mode
+                const singleGapControl = document.getElementById('singleGapControl');
+                const multiGapControl = document.getElementById('multiGapControl');
+                
+                if (e.target.value === 'gap2n') {
+                    singleGapControl.style.display = 'block';
+                    multiGapControl.style.display = 'none';
+                } else if (e.target.value === 'evengaps') {
+                    singleGapControl.style.display = 'none';
+                    multiGapControl.style.display = 'block';
+                } else {
+                    singleGapControl.style.display = 'none';
+                    multiGapControl.style.display = 'none';
+                }
+                
+                updateAll();
+            });
+
+            document.getElementById('gcdFilter').addEventListener('change', e => {
+                state.gcdFilter = e.target.value;
+                updateAll();
+            });
+
+            document.getElementById('gapSizeInput').addEventListener('change', e => {
+                const val = parseInt(e.target.value);
+                if (val > 0) {
+                    state.gapSize = val;
+                    document.getElementById('gapSizeDisplay').textContent = val;
+                    updateAll();
+                }
+            });
+
+            document.getElementById('maxGapInput').addEventListener('change', e => {
+                let val = parseInt(e.target.value);
+                if (val < 2) val = 2;
+                // Ensure even
+                if (val % 2 !== 0) val += 1;
+                state.maxGap = val;
+                document.getElementById('maxGapInput').value = val;
+                document.getElementById('maxGapDisplay').textContent = val;
                 updateAll();
             });
 
@@ -2028,6 +2391,17 @@
             document.getElementById('labelMode').addEventListener('change', e => {
                 state.labelMode = e.target.value;
                 updateAll();
+            });
+
+            document.getElementById('labelPosition').addEventListener('change', e => {
+                state.labelPosition = e.target.value;
+                updateAll();
+            });
+
+            document.getElementById('labelOffsetSlider').addEventListener('input', e => {
+                state.labelOffset = parseInt(e.target.value);
+                document.getElementById('labelOffsetValue').textContent = state.labelOffset;
+                if (!state.animationId) updateAll();
             });
 
             document.getElementById('labelSizeSlider').addEventListener('input', e => {
@@ -2058,8 +2432,18 @@
             ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels', 
              'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
              'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline', 
-             'toggleInvertRings', 'toggleInvertAll'].forEach(id => {
-                document.getElementById(id).addEventListener('change', updateAll);
+             'toggleInvertRings', 'toggleInvertAll', 'toggleFordCircles',
+             'toggleShowCoprimeOnly', 'toggleShowNonCoprimeOnly',
+             'toggleShowRtoR', 'toggleShowRtoRplus2n'].forEach(id => {
+                document.getElementById(id).addEventListener('change', e => {
+                    // Handle mutual exclusivity for coprime/non-coprime filters
+                    if (id === 'toggleShowCoprimeOnly' && e.target.checked) {
+                        document.getElementById('toggleShowNonCoprimeOnly').checked = false;
+                    } else if (id === 'toggleShowNonCoprimeOnly' && e.target.checked) {
+                        document.getElementById('toggleShowCoprimeOnly').checked = false;
+                    }
+                    updateAll();
+                });
             });
             
             // Full plane toggle - now checked by default
@@ -2088,6 +2472,507 @@
             document.getElementById('modulusInput').addEventListener('change', () => {
                 document.getElementById('maxFareyOrder').textContent = state.modulus;
             });
+        }
+
+        // ============================================================
+        // INTERACTIVE INSPECTION SYSTEM
+        // ============================================================
+
+        function setupInteractiveInspection() {
+            const canvasElements = [
+                { canvas: canvases.disk, type: 'disk' },
+                { canvas: canvases.cayley, type: 'cayley' },
+                { canvas: canvases.nested, type: 'nested' },
+                { canvas: canvases.fullPlane, type: 'fullPlane' }
+            ];
+
+            canvasElements.forEach(({ canvas, type }) => {
+                // Click handler
+                canvas.addEventListener('click', (e) => handleCanvasClick(e, canvas, type));
+                
+                // Hover handler
+                canvas.addEventListener('mousemove', (e) => handleCanvasHover(e, canvas, type));
+                
+                // Mouse leave handler
+                canvas.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                    canvas.style.cursor = 'default';
+                });
+            });
+        }
+
+        function handleCanvasClick(e, canvas, canvasType) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const point = findNearestPoint(canvas, x, y, canvasType);
+            
+            if (point && point.distance < 15) {
+                inspectionState.selectedPoint = point;
+                showPropertyPanel(point, e.clientX, e.clientY);
+                updateAll(); // Redraw with highlight
+            } else {
+                closePropertyPanel();
+            }
+        }
+
+        function handleCanvasHover(e, canvas, canvasType) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const point = findNearestPoint(canvas, x, y, canvasType);
+            
+            if (point && point.distance < 15) {
+                canvas.style.cursor = 'pointer';
+                inspectionState.hoveredPoint = point;
+                showTooltip(e.clientX, e.clientY, point);
+            } else {
+                canvas.style.cursor = 'default';
+                inspectionState.hoveredPoint = null;
+                hideTooltip();
+            }
+        }
+
+        function findNearestPoint(canvas, x, y, canvasType) {
+            const w = canvas.width / (window.devicePixelRatio || 1);
+            const h = canvas.height / (window.devicePixelRatio || 1);
+            
+            let nearestPoint = null;
+            let minDistance = Infinity;
+            
+            if (canvasType === 'disk') {
+                const cx = w / 2;
+                const cy = h / 2;
+                const r = Math.min(w, h) * CONFIG.diskRadius * state.diskZoom;
+                const phase = state.phase * Math.PI / 180;
+                
+                // Check Farey points
+                state.fareyPoints.forEach(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const px = cx + r * Math.cos(angle);
+                    const py = cy + r * Math.sin(angle);
+                    const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+                    
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        nearestPoint = {
+                            type: 'farey',
+                            canvasType: 'disk',
+                            num: fp.num,
+                            den: fp.den,
+                            frac: frac,
+                            angle: angle,
+                            x: px,
+                            y: py,
+                            distance: dist
+                        };
+                    }
+                });
+                
+                // Check primes
+                if (document.getElementById('togglePrimes').checked) {
+                    const displayPrimes = state.primes.slice(0, state.numPrimes);
+                    displayPrimes.forEach(p => {
+                        const angle = 2 * Math.PI * p / state.modulus + phase;
+                        const px = cx + r * Math.cos(angle);
+                        const py = cy + r * Math.sin(angle);
+                        const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+                        
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            nearestPoint = {
+                                type: 'prime',
+                                canvasType: 'disk',
+                                value: p,
+                                residue: p % state.modulus,
+                                gcd: gcd(p, state.modulus),
+                                angle: angle,
+                                x: px,
+                                y: py,
+                                distance: dist
+                            };
+                        }
+                    });
+                }
+            } else if (canvasType === 'cayley') {
+                const phase = state.phase * Math.PI / 180;
+                
+                function mathToScreen(wp) {
+                    const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                    const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
+                    const imMin = state.cayleyVOffset;
+                    const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
+                    
+                    const sx = ((wp.re - reMin) / (reMax - reMin)) * w;
+                    const sy = (1 - (wp.im - imMin) / (imMax - imMin)) * h;
+                    
+                    return { x: sx, y: sy };
+                }
+                
+                // Check transformed Farey points
+                state.fareyPoints.forEach(fp => {
+                    const frac = fp.num / fp.den;
+                    const angle = 2 * Math.PI * frac + phase;
+                    const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                    const wp = cayleyTransform(z, state.transformType);
+                    const p = mathToScreen(wp);
+                    const dist = Math.sqrt((x - p.x) ** 2 + (y - p.y) ** 2);
+                    
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        nearestPoint = {
+                            type: 'farey',
+                            canvasType: 'cayley',
+                            num: fp.num,
+                            den: fp.den,
+                            frac: frac,
+                            diskZ: z,
+                            cayleyW: wp,
+                            x: p.x,
+                            y: p.y,
+                            distance: dist
+                        };
+                    }
+                });
+                
+                // Check cusps (Farey points on real axis)
+                if (document.getElementById('toggleCusps').checked) {
+                    state.fareyPoints.forEach(fp => {
+                        const frac = fp.num / fp.den;
+                        const angle = 2 * Math.PI * frac + phase;
+                        const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                        const wp = cayleyTransform(z, state.transformType);
+                        const cuspP = mathToScreen({ re: wp.re, im: 0 });
+                        const dist = Math.sqrt((x - cuspP.x) ** 2 + (y - cuspP.y) ** 2);
+                        
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            nearestPoint = {
+                                type: 'cusp',
+                                canvasType: 'cayley',
+                                num: fp.num,
+                                den: fp.den,
+                                frac: frac,
+                                position: wp.re,
+                                x: cuspP.x,
+                                y: cuspP.y,
+                                distance: dist
+                            };
+                        }
+                    });
+                }
+            } else if (canvasType === 'nested') {
+                const cx = w / 2;
+                const cy = h / 2;
+                const maxRadius = Math.min(w, h) * 0.42 * state.nestedZoom;
+                const baseRadius = maxRadius * 0.15;
+                const numRings = state.maxRing - state.minRing + 1;
+                const phase = state.phase * Math.PI / 180;
+                const invertRings = document.getElementById('toggleInvertRings').checked;
+                
+                // Check all ring points
+                for (let m = state.minRing; m <= state.maxRing; m++) {
+                    let ringIndex;
+                    if (invertRings) {
+                        ringIndex = (state.maxRing - m);
+                    } else {
+                        ringIndex = m - state.minRing;
+                    }
+                    
+                    const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
+                    const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
+                    
+                    for (let k = 0; k < m; k++) {
+                        const g = gcd(k, m);
+                        const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
+                        const px = cx + ringRadius * Math.cos(angle);
+                        const py = cy + ringRadius * Math.sin(angle);
+                        const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+                        
+                        if (dist < minDistance) {
+                            minDistance = dist;
+                            nearestPoint = {
+                                type: 'ringPoint',
+                                canvasType: 'nested',
+                                k: k,
+                                m: m,
+                                frac: k / m,
+                                gcd: g,
+                                phi: eulerPhi(m),
+                                isCoprime: g === 1,
+                                ringIndex: ringIndex,
+                                x: px,
+                                y: py,
+                                distance: dist
+                            };
+                        }
+                    }
+                }
+            }
+            
+            return nearestPoint;
+        }
+
+        function showTooltip(x, y, point) {
+            const tooltip = document.getElementById('tooltip');
+            let content = '';
+            
+            if (point.type === 'farey') {
+                content = `<div class="tooltip-label">${point.num}/${point.den}</div>`;
+                content += `<div class="tooltip-value">${point.frac.toFixed(4)}</div>`;
+            } else if (point.type === 'prime') {
+                content = `<div class="tooltip-label">Prime: ${point.value}</div>`;
+                content += `<div class="tooltip-value">≡ ${point.residue} (mod ${state.modulus})</div>`;
+            } else if (point.type === 'ringPoint') {
+                content = `<div class="tooltip-label">${point.k}/${point.m}</div>`;
+                content += `<div class="tooltip-value">gcd = ${point.gcd}</div>`;
+            } else if (point.type === 'cusp') {
+                content = `<div class="tooltip-label">Cusp ${point.num}/${point.den}</div>`;
+                content += `<div class="tooltip-value">Re(w) = ${point.position.toFixed(4)}</div>`;
+            }
+            
+            tooltip.innerHTML = content;
+            tooltip.style.left = (x + 15) + 'px';
+            tooltip.style.top = (y - 10) + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('visible');
+        }
+
+        function showPropertyPanel(point, x, y) {
+            const panel = document.getElementById('propertyPanel');
+            const content = document.getElementById('propertyPanelContent');
+            const title = document.getElementById('propertyPanelTitle');
+            
+            let html = '';
+            
+            if (point.type === 'farey') {
+                title.textContent = `Farey Point: ${point.num}/${point.den}`;
+                
+                html += `<div class="property-item property-highlight">
+                    <div class="property-label">Fraction</div>
+                    <div class="property-value">${point.num}/${point.den} = ${point.frac.toFixed(8)}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">GCD</div>
+                    <div class="property-value">gcd(${point.num}, ${point.den}) = ${gcd(point.num, point.den)}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Angle (θ)</div>
+                    <div class="property-value">${((point.angle * 180 / Math.PI) % 360).toFixed(2)}°</div>
+                </div>`;
+                
+                if (point.canvasType === 'disk') {
+                    const z = { re: Math.cos(point.angle), im: Math.sin(point.angle) };
+                    html += `<div class="property-item">
+                        <div class="property-label">Unit Disk (z)</div>
+                        <div class="property-value">z = ${z.re.toFixed(6)} + ${z.im.toFixed(6)}i</div>
+                    </div>`;
+                    
+                    html += `<div class="property-item">
+                        <div class="property-label">Magnitude</div>
+                        <div class="property-value">|z| = ${Math.sqrt(z.re*z.re + z.im*z.im).toFixed(6)}</div>
+                    </div>`;
+                } else if (point.canvasType === 'cayley') {
+                    html += `<div class="property-item">
+                        <div class="property-label">Unit Disk (z)</div>
+                        <div class="property-value">z = ${point.diskZ.re.toFixed(6)} + ${point.diskZ.im.toFixed(6)}i</div>
+                    </div>`;
+                    
+                    html += `<div class="property-item property-highlight">
+                        <div class="property-label">Cayley Transform (w)</div>
+                        <div class="property-value">w = ${point.cayleyW.re.toFixed(6)} + ${point.cayleyW.im.toFixed(6)}i</div>
+                    </div>`;
+                    
+                    html += `<div class="property-item">
+                        <div class="property-label">Upper Half-Plane Check</div>
+                        <div class="property-value">Im(w) = ${point.cayleyW.im.toFixed(6)} ${point.cayleyW.im > 0 ? '✓ > 0' : '✗ ≤ 0'}</div>
+                    </div>`;
+                }
+                
+                // Mediant property for adjacent Farey fractions
+                html += `<div class="property-item">
+                    <div class="property-label">Mediant Property</div>
+                    <div class="property-value">Part of Farey sequence F<sub>${point.den}</sub></div>
+                </div>`;
+                
+            } else if (point.type === 'prime') {
+                title.textContent = `Prime: ${point.value}`;
+                
+                html += `<div class="property-item property-highlight">
+                    <div class="property-label">Prime Number</div>
+                    <div class="property-value">${point.value}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Residue Class (mod ${state.modulus})</div>
+                    <div class="property-value">${point.value} ≡ ${point.residue} (mod ${state.modulus})</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">GCD with Modulus</div>
+                    <div class="property-value">gcd(${point.value}, ${state.modulus}) = ${point.gcd}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Coprime Status</div>
+                    <div class="property-value">${point.gcd === 1 ? '✓ Coprime to ' + state.modulus : '✗ Not coprime to ' + state.modulus}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Position on Circle</div>
+                    <div class="property-value">θ = ${((point.angle * 180 / Math.PI) % 360).toFixed(2)}°</div>
+                </div>`;
+                
+                // Prime index
+                const primeIndex = state.primes.indexOf(point.value) + 1;
+                html += `<div class="property-item">
+                    <div class="property-label">Prime Index</div>
+                    <div class="property-value">π(${point.value}) = ${primeIndex}</div>
+                </div>`;
+                
+            } else if (point.type === 'ringPoint') {
+                title.textContent = `Ring Point: ${point.k}/${point.m}`;
+                
+                html += `<div class="property-item property-highlight">
+                    <div class="property-label">Residue Class</div>
+                    <div class="property-value">${point.k}/${point.m} = ${point.frac.toFixed(6)}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Modulus</div>
+                    <div class="property-value">m = ${point.m}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Residue</div>
+                    <div class="property-value">k = ${point.k}</div>
+                </div>`;
+                
+                html += `<div class="property-item property-highlight">
+                    <div class="property-label">GCD</div>
+                    <div class="property-value">gcd(${point.k}, ${point.m}) = ${point.gcd}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Coprime Status</div>
+                    <div class="property-value">${point.isCoprime ? '✓ Unit in (ℤ/' + point.m + 'ℤ)×' : '✗ Not a unit'}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Euler's Totient</div>
+                    <div class="property-value">φ(${point.m}) = ${point.phi}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Ring Index</div>
+                    <div class="property-value">Ring #${point.ringIndex + 1} of ${state.maxRing - state.minRing + 1}</div>
+                </div>`;
+                
+                // Count coprimes in this ring
+                let coprimeCount = 0;
+                for (let k = 0; k < point.m; k++) {
+                    if (gcd(k, point.m) === 1) coprimeCount++;
+                }
+                html += `<div class="property-item">
+                    <div class="property-label">Coprimes in Ring</div>
+                    <div class="property-value">${coprimeCount} / ${point.m}</div>
+                </div>`;
+                
+            } else if (point.type === 'cusp') {
+                title.textContent = `Cusp: ${point.num}/${point.den}`;
+                
+                html += `<div class="property-item property-highlight">
+                    <div class="property-label">Farey Fraction</div>
+                    <div class="property-value">${point.num}/${point.den} = ${point.frac.toFixed(8)}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Position on Real Axis</div>
+                    <div class="property-value">Re(w) = ${point.position.toFixed(6)}</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Type</div>
+                    <div class="property-value">Cusp of modular curve</div>
+                </div>`;
+                
+                html += `<div class="property-item">
+                    <div class="property-label">Boundary Point</div>
+                    <div class="property-value">Im(w) = 0 (on ∂ℍ)</div>
+                </div>`;
+            }
+            
+            content.innerHTML = html;
+            
+            // Position panel near click but keep it on screen
+            let panelX = x + 20;
+            let panelY = y + 20;
+            
+            // Adjust if would go off screen
+            if (panelX + 400 > window.innerWidth) {
+                panelX = x - 420;
+            }
+            if (panelY + 500 > window.innerHeight) {
+                panelY = window.innerHeight - 520;
+            }
+            if (panelX < 10) panelX = 10;
+            if (panelY < 10) panelY = 10;
+            
+            panel.style.left = panelX + 'px';
+            panel.style.top = panelY + 'px';
+            panel.classList.add('visible');
+            inspectionState.propertyPanelVisible = true;
+        }
+
+        function closePropertyPanel() {
+            const panel = document.getElementById('propertyPanel');
+            panel.classList.remove('visible');
+            inspectionState.propertyPanelVisible = false;
+            inspectionState.selectedPoint = null;
+            updateAll(); // Redraw without highlight
+        }
+
+        // Add highlight rendering for selected points
+        function drawSelectionHighlight(ctx, x, y, type = 'default') {
+            if (!inspectionState.selectedPoint) return;
+            
+            ctx.save();
+            
+            // Pulsing glow effect
+            const time = Date.now() / 1000;
+            const pulse = 0.7 + 0.3 * Math.sin(time * 3);
+            
+            // Outer glow
+            ctx.strokeStyle = type === 'farey' ? CONFIG.colors.farey : 
+                             type === 'prime' ? CONFIG.colors.prime :
+                             type === 'cusp' ? CONFIG.colors.cusp : 
+                             CONFIG.colors.farey;
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 20 * pulse;
+            ctx.shadowColor = ctx.strokeStyle;
+            ctx.globalAlpha = pulse;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 12, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Inner ring
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.globalAlpha = 1;
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            ctx.restore();
         }
 
         // ============================================================
@@ -2135,12 +3020,12 @@
 
         function cayleyTransform(z, transformType = 'standard') {
             if (transformType === 'alternate') {
-                // Alternative visualization: i(1-z)/(1+z) transform
-                // This is actually a different map that gives a rotated/reflected view
-                const numRe = 1 - z.re;
-                const numIm = -z.im;
-                const denRe = 1 + z.re;
-                const denIm = z.im;
+                // Alternate (inverse form): w = i(1-z)/(1+z)
+                // Maps unit disk to upper half-plane with different orientation
+                const numRe = 1 - z.re;   // Real part of (1-z)
+                const numIm = -z.im;      // Imaginary part of (1-z)
+                const denRe = 1 + z.re;   // Real part of (1+z)
+                const denIm = z.im;       // Imaginary part of (1+z)
                 
                 const denMagSq = denRe * denRe + denIm * denIm;
                 
@@ -2148,10 +3033,33 @@
                     return { re: 0, im: 1e10 };
                 }
                 
+                // Compute (1-z)/(1+z)
                 const quotRe = (numRe * denRe + numIm * denIm) / denMagSq;
                 const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
                 
+                // Multiply by i: i*(a+bi) = -b + ai
                 return { re: -quotIm, im: quotRe };
+            }
+            
+            if (transformType === 'ftt') {
+                // FTT Transform: w = (z-i)/(z+i)
+                // This is the INVERSE of the standard Cayley transform
+                // Maps upper half-plane → unit disk
+                const numRe = z.re;       // Real part of (z-i)
+                const numIm = z.im - 1;   // Imaginary part of (z-i)
+                const denRe = z.re;       // Real part of (z+i)
+                const denIm = z.im + 1;   // Imaginary part of (z+i)
+                
+                const denMagSq = denRe * denRe + denIm * denIm;
+                
+                if (denMagSq < 1e-10) {
+                    return { re: 1e10, im: 0 };
+                }
+                
+                const quotRe = (numRe * denRe + numIm * denIm) / denMagSq;
+                const quotIm = (numIm * denRe - numRe * denIm) / denMagSq;
+                
+                return { re: quotRe, im: quotIm };
             }
             
             if (transformType === 'smith') {
@@ -2249,6 +3157,76 @@
             return `hsla(${hue}, 70%, 60%, 0.85)`;
         }
 
+        function getNestedPointColor(k, m, g, angle) {
+            const scheme = state.nestedColorScheme;
+            
+            switch(scheme) {
+                case 'gcd':
+                    // Default: Color by GCD value
+                    return getGCDColor(g, m);
+                
+                case 'coprime':
+                    // Binary: Gold for coprime, Gray for non-coprime
+                    return g === 1 ? CONFIG.colors.farey : 'rgba(150, 150, 150, 0.7)';
+                
+                case 'rainbow':
+                    // Rainbow based on angle position
+                    const hue = (angle * 180 / Math.PI) % 360;
+                    return `hsla(${hue}, 85%, ${g === 1 ? '65%' : '45%'}, 0.9)`;
+                
+                case 'ring':
+                    // Color by which ring (modulus)
+                    const ringHue = (m * 137.508) % 360; // Golden angle for distribution
+                    return `hsla(${ringHue}, 75%, ${g === 1 ? '65%' : '50%'}, 0.85)`;
+                
+                case 'prime':
+                    // Color by prime factorization of k
+                    if (k === 0) return 'rgba(100, 100, 100, 0.7)';
+                    if (isPrime(k)) return '#3498db'; // Blue for primes
+                    
+                    // Color by smallest prime factor
+                    const smallestPrime = getSmallestPrimeFactor(k);
+                    const primeHue = (smallestPrime * 73) % 360;
+                    return `hsla(${primeHue}, 80%, 60%, 0.85)`;
+                
+                case 'totient':
+                    // Color by totient class - how many coprimes
+                    const phi = eulerPhi(m);
+                    const ratio = phi / m;
+                    const totientHue = ratio * 120; // 0-120 (red to green)
+                    return g === 1 ? 
+                        `hsla(${totientHue}, 80%, 65%, 0.9)` : 
+                        `hsla(${totientHue}, 40%, 40%, 0.6)`;
+                
+                case 'monochrome':
+                    // All gold with varying opacity
+                    const opacity = g === 1 ? 0.9 : 0.3;
+                    return `rgba(255, 215, 0, ${opacity})`;
+                
+                default:
+                    return getGCDColor(g, m);
+            }
+        }
+
+        function isPrime(n) {
+            if (n < 2) return false;
+            if (n === 2) return true;
+            if (n % 2 === 0) return false;
+            for (let i = 3; i * i <= n; i += 2) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        function getSmallestPrimeFactor(n) {
+            if (n < 2) return n;
+            if (n % 2 === 0) return 2;
+            for (let i = 3; i * i <= n; i += 2) {
+                if (n % i === 0) return i;
+            }
+            return n; // n is prime
+        }
+
         // ============================================================
         // DRAWING FUNCTIONS
         // ============================================================
@@ -2263,6 +3241,15 @@
             const r = Math.min(w, h) * CONFIG.diskRadius * state.diskZoom;
 
             ctx.clearRect(0, 0, w, h);
+
+            // Apply inversion if enabled
+            const invertAll = document.getElementById('toggleInvertAll').checked;
+            if (invertAll) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.scale(-1, -1);
+                ctx.translate(-cx, -cy);
+            }
 
             // Grid
             if (document.getElementById('toggleGrid').checked) {
@@ -2299,15 +3286,6 @@
             ctx.arc(cx, cy, r, 0, 2 * Math.PI);
             ctx.stroke();
             ctx.shadowBlur = 0;
-
-            // Apply inversion ONLY to content (not title/labels)
-            const invertAll = document.getElementById('toggleInvertAll').checked;
-            if (invertAll) {
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.scale(-1, -1);
-                ctx.translate(-cx, -cy);
-            }
 
             const phase = state.phase * Math.PI / 180;
             const showPrimes = document.getElementById('togglePrimes').checked;
@@ -2347,9 +3325,68 @@
                         x: cx + r * Math.cos(angle),
                         y: cy + r * Math.sin(angle),
                         frac: frac,
-                        label: `${fp.num}/${fp.den}`
+                        label: `${fp.num}/${fp.den}`,
+                        num: fp.num,
+                        den: fp.den,
+                        angle: angle
                     };
                 });
+
+                // Global r→r connections on unit disk (same denominator)
+                if (document.getElementById('toggleShowRtoR').checked) {
+                    ctx.globalAlpha = 0.4;
+                    ctx.strokeStyle = CONFIG.colors.cyan;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    
+                    // Group by denominator
+                    const denGroups = {};
+                    fareyPoints.forEach(p => {
+                        if (!denGroups[p.den]) denGroups[p.den] = [];
+                        denGroups[p.den].push(p);
+                    });
+                    
+                    // Connect points with same denominator
+                    Object.values(denGroups).forEach(group => {
+                        if (group.length >= 2) {
+                            for (let i = 0; i < group.length - 1; i++) {
+                                ctx.beginPath();
+                                ctx.moveTo(group[i].x, group[i].y);
+                                ctx.lineTo(group[i + 1].x, group[i + 1].y);
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                    
+                    ctx.setLineDash([]);
+                    ctx.globalAlpha = 1.0;
+                }
+
+                // Global r→r+2ⁿ connections on unit disk (mediant paths)
+                if (document.getElementById('toggleShowRtoRplus2n').checked) {
+                    ctx.globalAlpha = 0.35;
+                    ctx.strokeStyle = 'rgba(255, 100, 100, 0.7)';
+                    ctx.lineWidth = 1.2;
+                    ctx.setLineDash([2, 2]);
+                    
+                    // For each point, try to connect to its "lift" (mediant-related points)
+                    fareyPoints.forEach(p1 => {
+                        fareyPoints.forEach(p2 => {
+                            if (p1 === p2) return;
+                            
+                            // Check if p2.den = 2*p1.den (doubling relationship)
+                            if (p2.den === 2 * p1.den || p2.den === p1.den * 3) {
+                                ctx.beginPath();
+                                ctx.moveTo(p1.x, p1.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    ctx.setLineDash([]);
+                    ctx.globalAlpha = 1.0;
+                }
 
                 // Fill
                 if (fareyPoints.length >= 3) {
@@ -2389,34 +3426,26 @@
                     ctx.fill();
                     ctx.stroke();
                     ctx.shadowBlur = 0;
+
+                    // Labels
+                    if (state.labelMode !== 'none') {
+                        const angle = 2 * Math.PI * p.frac + phase;
+                        const labelR = r + 35;
+                        const lx = cx + labelR * Math.cos(angle);
+                        const ly = cy + labelR * Math.sin(angle);
+
+                        ctx.fillStyle = CONFIG.colors.farey;
+                        ctx.font = `bold ${state.labelSize + 6}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                        ctx.fillText(p.label, lx, ly);
+                        ctx.shadowBlur = 0;
+                    }
                 });
             }
 
-            // Restore context if inverted (before drawing labels)
-            if (invertAll) {
-                ctx.restore();
-            }
-
-            // Labels - drawn AFTER restoring context so they're not inverted
-            if (showFarey && state.fareyPoints.length >= 2 && state.labelMode !== 'none') {
-                state.fareyPoints.forEach(fp => {
-                    const frac = fp.num / fp.den;
-                    const angle = 2 * Math.PI * frac + phase;
-                    const labelR = r + 35;
-                    const lx = cx + labelR * Math.cos(angle);
-                    const ly = cy + labelR * Math.sin(angle);
-
-                    ctx.fillStyle = CONFIG.colors.farey;
-                    ctx.font = `bold ${state.labelSize + 6}px "Fira Code"`;
-                    ctx.textAlign = 'center';
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillText(`${fp.num}/${fp.den}`, lx, ly);
-                    ctx.shadowBlur = 0;
-                });
-            }
-
-            // Title - always upright
+            // Title
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             ctx.font = 'bold 20px "Fira Code"';
             ctx.textAlign = 'center';
@@ -2424,6 +3453,17 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Unit Disk 𝔻', cx, 35);
             ctx.shadowBlur = 0;
+
+            // Draw selection highlight if point is selected on this canvas
+            if (inspectionState.selectedPoint && inspectionState.selectedPoint.canvasType === 'disk') {
+                const sp = inspectionState.selectedPoint;
+                drawSelectionHighlight(ctx, sp.x, sp.y, sp.type);
+            }
+
+            // Restore context if inverted
+            if (invertAll) {
+                ctx.restore();
+            }
         }
 
         function drawCayley() {
@@ -2466,6 +3506,7 @@
             const showFundDomain = document.getElementById('toggleFundDomain').checked;
             const showVerticals = document.getElementById('toggleVerticals').checked;
             const showDiskOutline = document.getElementById('toggleDiskOutline').checked;
+            const showFordCircles = document.getElementById('toggleFordCircles').checked;
 
             // Draw grid
             if (showGrid) {
@@ -2684,6 +3725,79 @@
                         ctx.shadowBlur = 0;
                     }
                 }
+                
+                // Global r→r connections on Cayley plane (same denominator)
+                if (document.getElementById('toggleShowRtoR').checked) {
+                    ctx.globalAlpha = 0.4;
+                    ctx.strokeStyle = CONFIG.colors.cyan;
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 4]);
+                    
+                    // Group by denominator
+                    const denGroups = {};
+                    state.fareyPoints.forEach(fp => {
+                        if (!denGroups[fp.den]) denGroups[fp.den] = [];
+                        denGroups[fp.den].push(fp);
+                    });
+                    
+                    // Connect transformed points with same denominator
+                    Object.values(denGroups).forEach(group => {
+                        if (group.length >= 2) {
+                            const transformedGroup = group.map(fp => {
+                                const frac = fp.num / fp.den;
+                                const angle = 2 * Math.PI * frac + phase;
+                                const z = { re: Math.cos(angle), im: Math.sin(angle) };
+                                const wp = cayleyTransform(z, state.transformType);
+                                return mathToScreen(wp);
+                            });
+                            
+                            for (let i = 0; i < transformedGroup.length - 1; i++) {
+                                ctx.beginPath();
+                                ctx.moveTo(transformedGroup[i].x, transformedGroup[i].y);
+                                ctx.lineTo(transformedGroup[i + 1].x, transformedGroup[i + 1].y);
+                                ctx.stroke();
+                            }
+                        }
+                    });
+                    
+                    ctx.setLineDash([]);
+                    ctx.globalAlpha = 1.0;
+                }
+
+                // Global r→r+2ⁿ on Cayley plane
+                if (document.getElementById('toggleShowRtoRplus2n').checked) {
+                    ctx.globalAlpha = 0.35;
+                    ctx.strokeStyle = 'rgba(255, 100, 100, 0.7)';
+                    ctx.lineWidth = 1.2;
+                    ctx.setLineDash([2, 2]);
+                    
+                    state.fareyPoints.forEach(fp1 => {
+                        state.fareyPoints.forEach(fp2 => {
+                            if (fp1 === fp2) return;
+                            
+                            if (fp2.den === 2 * fp1.den || fp2.den === fp1.den * 3) {
+                                const frac1 = fp1.num / fp1.den;
+                                const frac2 = fp2.num / fp2.den;
+                                const angle1 = 2 * Math.PI * frac1 + phase;
+                                const angle2 = 2 * Math.PI * frac2 + phase;
+                                const z1 = { re: Math.cos(angle1), im: Math.sin(angle1) };
+                                const z2 = { re: Math.cos(angle2), im: Math.sin(angle2) };
+                                const w1 = cayleyTransform(z1, state.transformType);
+                                const w2 = cayleyTransform(z2, state.transformType);
+                                const p1 = mathToScreen(w1);
+                                const p2 = mathToScreen(w2);
+                                
+                                ctx.beginPath();
+                                ctx.moveTo(p1.x, p1.y);
+                                ctx.lineTo(p2.x, p2.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    ctx.setLineDash([]);
+                    ctx.globalAlpha = 1.0;
+                }
             }
 
             // Transformed primes
@@ -2744,6 +3858,51 @@
                         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
                         ctx.fillText(`${fp.num}/${fp.den}`, cuspP.x, cuspP.y + 22);
                         ctx.shadowBlur = 0;
+                    }
+                });
+            }
+
+            // Ford circles
+            if (showFordCircles && state.fareyPoints.length > 0) {
+                state.fareyPoints.forEach(fp => {
+                    const p = fp.num;
+                    const q = fp.den;
+                    if (q === 0) return;
+                    
+                    // Ford circle for p/q has center at (p/q, 1/(2q²)) and radius 1/(2q²)
+                    const centerRe = p / q;
+                    const radius = 1 / (2 * q * q);
+                    const centerIm = radius;
+                    
+                    // Check if visible
+                    const reMin = -state.cayleyHRange / (2 * state.cayleyZoom);
+                    const reMax = state.cayleyHRange / (2 * state.cayleyZoom);
+                    const imMin = state.cayleyVOffset;
+                    const imMax = (state.cayleyVRange / state.cayleyZoom) + state.cayleyVOffset;
+                    
+                    if (centerRe + radius >= reMin && centerRe - radius <= reMax && 
+                        centerIm + radius >= imMin && centerIm - radius <= imMax) {
+                        
+                        const centerP = mathToScreen({ re: centerRe, im: centerIm });
+                        const radiusP = mathToScreen({ re: centerRe + radius, im: centerIm });
+                        const radiusPixels = Math.abs(radiusP.x - centerP.x);
+                        
+                        ctx.strokeStyle = 'rgba(230, 126, 34, 0.6)';
+                        ctx.lineWidth = 2;
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(230, 126, 34, 0.4)';
+                        ctx.beginPath();
+                        ctx.arc(centerP.x, centerP.y, radiusPixels, 0, 2 * Math.PI);
+                        ctx.stroke();
+                        ctx.shadowBlur = 0;
+                        
+                        // Label
+                        if (state.labelMode !== 'none' && radiusPixels > 10) {
+                            ctx.fillStyle = CONFIG.colors.cusp;
+                            ctx.font = `${Math.max(8, state.labelSize - 2)}px "Fira Code"`;
+                            ctx.textAlign = 'center';
+                            ctx.fillText(`${p}/${q}`, centerP.x, centerP.y);
+                        }
                     }
                 });
             }
@@ -2811,6 +3970,12 @@
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
             ctx.fillText('Upper Half-Plane ℍ', w/2, 35);
             ctx.shadowBlur = 0;
+
+            // Draw selection highlight if point is selected on this canvas
+            if (inspectionState.selectedPoint && inspectionState.selectedPoint.canvasType === 'cayley') {
+                const sp = inspectionState.selectedPoint;
+                drawSelectionHighlight(ctx, sp.x, sp.y, sp.type);
+            }
 
             // Restore context if inverted
             if (invertAll) {
@@ -3112,6 +4277,8 @@
             const showRings = document.getElementById('toggleRings').checked;
             const showGCD = document.getElementById('toggleGCD').checked;
             const invertRings = document.getElementById('toggleInvertRings').checked;
+            const showCoprimeOnly = document.getElementById('toggleShowCoprimeOnly').checked;
+            const showNonCoprimeOnly = document.getElementById('toggleShowNonCoprimeOnly').checked;
 
             const allPoints = [];
             const numRings = state.maxRing - state.minRing + 1;
@@ -3150,6 +4317,11 @@
                 // Points for each k
                 for (let k = 0; k < m; k++) {
                     const g = gcd(k, m);
+                    
+                    // Apply GCD filter
+                    if (showCoprimeOnly && g !== 1) continue;
+                    if (showNonCoprimeOnly && g === 1) continue;
+                    
                     const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
@@ -3170,17 +4342,17 @@
                         ctx.shadowBlur = 0;
                     }
 
-                    // Labels
+                    // Labels with radial positioning
                     const shouldLabel = 
                         (state.labelMode === 'all') ||
+                        (state.labelMode === 'integers') ||
                         (state.labelMode === 'coprime' && g === 1) ||
                         (state.labelMode === 'everything');
 
                     if (shouldLabel && m % state.labelFreq === 0) {
-                        ctx.fillStyle = g === 1 ? CONFIG.colors.farey : 'rgba(255, 255, 255, 0.6)';
-                        ctx.font = `${state.labelSize - 2}px "Fira Code"`;
-                        ctx.textAlign = 'center';
-                        ctx.fillText(`${k}/${m}`, x, y + 15);
+                        // Store label info for later rendering (after all points and connections)
+                        allPoints[allPoints.length - 1].shouldLabel = true;
+                        allPoints[allPoints.length - 1].labelText = state.labelMode === 'integers' ? `${k}` : `${k}/${m}`;
                     }
                 }
             }
@@ -3190,10 +4362,21 @@
                 ctx.globalAlpha = state.connectionOpacity;
                 ctx.lineWidth = state.connectionThickness;
 
+                // Helper function to check if point passes GCD filter
+                const passesGCDFilter = (point) => {
+                    if (state.gcdFilter === 'both') return true;
+                    if (state.gcdFilter === 'coprime') return point.g === 1;
+                    if (state.gcdFilter === 'noncoprime') return point.g !== 1;
+                    return true;
+                };
+
+                // Filter points based on GCD selection
+                const filteredPoints = allPoints.filter(passesGCDFilter);
+
                 switch (state.connectionMode) {
                     case 'farey':
-                        // Connect all Farey points (gcd=1)
-                        const fareyPts = allPoints.filter(p => p.g === 1);
+                        // Connect all Farey points (gcd=1) - respect GCD filter
+                        const fareyPts = filteredPoints.filter(p => p.g === 1);
                         ctx.strokeStyle = CONFIG.colors.farey;
                         for (let i = 0; i < fareyPts.length - 1; i++) {
                             for (let j = i + 1; j < fareyPts.length; j++) {
@@ -3206,9 +4389,9 @@
                         break;
 
                     case 'mod':
-                        // Connect points on same ring
+                        // Connect points on same ring - respect GCD filter
                         for (let m = state.minRing; m <= state.maxRing; m++) {
-                            const ringPts = allPoints.filter(p => p.m === m);
+                            const ringPts = filteredPoints.filter(p => p.m === m);
                             ctx.strokeStyle = getGCDColor(2, m);
                             for (let i = 0; i < ringPts.length; i++) {
                                 const next = ringPts[(i + 1) % ringPts.length];
@@ -3221,9 +4404,9 @@
                         break;
 
                     case 'angle':
-                        // Connect points with similar angles
+                        // Connect points with similar angles - respect GCD filter
                         const angleGroups = {};
-                        allPoints.forEach(p => {
+                        filteredPoints.forEach(p => {
                             const key = Math.floor(p.angle * 100);
                             if (!angleGroups[key]) angleGroups[key] = [];
                             angleGroups[key].push(p);
@@ -3244,9 +4427,9 @@
                         break;
 
                     case 'gcd':
-                        // Connect points with same GCD
+                        // Connect points with same GCD - respect GCD filter
                         const gcdGroups = {};
-                        allPoints.forEach(p => {
+                        filteredPoints.forEach(p => {
                             if (!gcdGroups[p.g]) gcdGroups[p.g] = [];
                             gcdGroups[p.g].push(p);
                         });
@@ -3263,9 +4446,9 @@
                         break;
 
                     case 'fraction':
-                        // Connect points with same fraction value
+                        // Connect points with same fraction value - respect GCD filter
                         const fracGroups = {};
-                        allPoints.forEach(p => {
+                        filteredPoints.forEach(p => {
                             const key = Math.floor(p.frac * 10000);
                             if (!fracGroups[key]) fracGroups[key] = [];
                             fracGroups[key].push(p);
@@ -3283,8 +4466,161 @@
                             }
                         });
                         break;
+                    
+                    case 'gap2n':
+                        // Connect r to r+gap (gap-2n connections) - respect GCD filter
+                        // Group filtered points by modulus first
+                        const modGroups = {};
+                        filteredPoints.forEach(p => {
+                            if (!modGroups[p.m]) modGroups[p.m] = [];
+                            modGroups[p.m].push(p);
+                        });
+                        
+                        ctx.strokeStyle = '#e67e22';
+                        Object.entries(modGroups).forEach(([m, points]) => {
+                            const mod = parseInt(m);
+                            const gap = state.gapSize;
+                            
+                            // For each point r, find r+gap (mod m)
+                            points.forEach(p1 => {
+                                const targetK = (p1.k + gap) % mod;
+                                const p2 = points.find(p => p.k === targetK);
+                                
+                                if (p2) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(p1.x, p1.y);
+                                    ctx.lineTo(p2.x, p2.y);
+                                    ctx.stroke();
+                                }
+                            });
+                        });
+                        break;
+
+                    case 'evengaps':
+                        // Multiple even gaps - respect GCD filter
+                        const modGroupsMulti = {};
+                        filteredPoints.forEach(p => {
+                            if (!modGroupsMulti[p.m]) modGroupsMulti[p.m] = [];
+                            modGroupsMulti[p.m].push(p);
+                        });
+                        
+                        // Generate colors for different gaps
+                        const gapColors = [];
+                        for (let g = 2; g <= state.maxGap; g += 2) {
+                            const hue = (g / state.maxGap) * 360;
+                            gapColors.push(`hsla(${hue}, 85%, 65%, 0.7)`);
+                        }
+                        
+                        Object.entries(modGroupsMulti).forEach(([m, points]) => {
+                            const mod = parseInt(m);
+                            
+                            let gapIndex = 0;
+                            for (let gap = 2; gap <= state.maxGap; gap += 2) {
+                                ctx.strokeStyle = gapColors[gapIndex];
+                                
+                                points.forEach(p1 => {
+                                    const targetK = (p1.k + gap) % mod;
+                                    const p2 = points.find(p => p.k === targetK);
+                                    
+                                    if (p2) {
+                                        ctx.beginPath();
+                                        ctx.moveTo(p1.x, p1.y);
+                                        ctx.lineTo(p2.x, p2.y);
+                                        ctx.stroke();
+                                    }
+                                });
+                                
+                                gapIndex++;
+                            }
+                        });
+                        break;
                 }
 
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Global r→r connections (vertical self-similarity)
+            if (document.getElementById('toggleShowRtoR').checked) {
+                ctx.globalAlpha = 0.4;
+                ctx.lineWidth = 1.5;
+                
+                // Group all points by their residue value k (the integer)
+                const residueGroups = {};
+                allPoints.forEach(p => {
+                    if (!residueGroups[p.k]) residueGroups[p.k] = [];
+                    residueGroups[p.k].push(p);
+                });
+                
+                // For each residue k, connect all instances across rings
+                Object.values(residueGroups).forEach(group => {
+                    if (group.length < 2) return;
+                    
+                    // Sort by ring radius
+                    group.sort((a, b) => a.radius - b.radius);
+                    
+                    // Determine color based on coprimality
+                    const allCoprime = group.every(p => p.g === 1);
+                    ctx.strokeStyle = allCoprime ? CONFIG.colors.farey : 'rgba(100, 150, 255, 0.6)';
+                    
+                    // Draw connections between consecutive rings
+                    for (let i = 0; i < group.length - 1; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(group[i].x, group[i].y);
+                        ctx.lineTo(group[i + 1].x, group[i + 1].y);
+                        ctx.stroke();
+                    }
+                });
+                
+                ctx.globalAlpha = 1.0;
+            }
+
+            // Global r→r+m×2ⁿ connections (power-of-2 lifts)
+            if (document.getElementById('toggleShowRtoRplus2n').checked) {
+                ctx.globalAlpha = 0.35;
+                ctx.lineWidth = 1.2;
+                
+                // For each ring, connect r to r+m in the next ring
+                for (let m = state.minRing; m < state.maxRing; m++) {
+                    const currentRingPoints = allPoints.filter(p => p.m === m);
+                    const nextRingPoints = allPoints.filter(p => p.m === (m + 1));
+                    
+                    if (nextRingPoints.length === 0) continue;
+                    
+                    currentRingPoints.forEach(p1 => {
+                        // Find target in next ring: r + m (mod m+1)
+                        // Since m+1 contains all of {0,1,...,m}, we look for k values:
+                        // r, r+m, r+2m, ... that exist in the next ring
+                        
+                        // For power of 2 structure: connect r to r (same k value)
+                        const sameK = nextRingPoints.find(p2 => p2.k === p1.k);
+                        
+                        // And connect to r+m if it exists
+                        const shiftedK = nextRingPoints.find(p2 => p2.k === p1.k + m);
+                        
+                        // Color based on coprimality
+                        const isCoprime = p1.g === 1;
+                        ctx.strokeStyle = isCoprime ? 
+                            'rgba(255, 100, 100, 0.7)' : 
+                            'rgba(150, 150, 200, 0.5)';
+                        
+                        if (sameK) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(sameK.x, sameK.y);
+                            ctx.stroke();
+                        }
+                        
+                        if (shiftedK) {
+                            ctx.setLineDash([3, 3]);
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(shiftedK.x, shiftedK.y);
+                            ctx.stroke();
+                            ctx.setLineDash([]);
+                        }
+                    });
+                }
+                
                 ctx.globalAlpha = 1.0;
             }
 
@@ -3318,18 +4654,108 @@
                     ctx.fill();
                     ctx.stroke();
                     ctx.shadowBlur = 0;
-
-                    if (state.labelMode !== 'none') {
-                        ctx.fillStyle = '#ff6b6b';
-                        ctx.font = `bold ${state.labelSize + 2}px "Fira Code"`;
-                        ctx.textAlign = 'center';
-                        ctx.shadowBlur = 8;
-                        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-                        ctx.fillText(`${fp.num}/${fp.den}`, x, y - 18);
-                        ctx.shadowBlur = 0;
-                    }
                 }
             });
+
+            // Render all labels AFTER all points and connections (so labels are on top)
+            allPoints.forEach(point => {
+                if (point.shouldLabel) {
+                    const g = point.g;
+                    const angle = point.angle;
+                    const ringRadius = point.radius;
+                    
+                    ctx.fillStyle = g === 1 ? CONFIG.colors.farey : 'rgba(255, 255, 255, 0.6)';
+                    ctx.font = `${state.labelSize - 2}px "Fira Code"`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    const labelText = point.labelText;
+                    
+                    // Calculate label position
+                    let labelX, labelY;
+                    if (state.labelPosition === 'radial') {
+                        // Position label radially outward from center
+                        const labelRadius = ringRadius + state.labelOffset;
+                        labelX = cx + labelRadius * Math.cos(angle);
+                        labelY = cy + labelRadius * Math.sin(angle);
+                    } else {
+                        // Position on point
+                        labelX = point.x;
+                        labelY = point.y;
+                    }
+                    
+                    // Add background for better readability
+                    ctx.save();
+                    const textMetrics = ctx.measureText(labelText);
+                    const textWidth = textMetrics.width;
+                    const textHeight = state.labelSize - 2;
+                    
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillRect(labelX - textWidth/2 - 2, labelY - textHeight/2 - 1, textWidth + 4, textHeight + 2);
+                    
+                    ctx.fillStyle = g === 1 ? CONFIG.colors.farey : 'rgba(255, 255, 255, 0.9)';
+                    ctx.shadowBlur = 3;
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillText(labelText, labelX, labelY);
+                    ctx.shadowBlur = 0;
+                    ctx.restore();
+                }
+            });
+
+            // Render Farey point labels AFTER everything else (highest priority)
+            if (state.labelMode !== 'none') {
+                state.fareyPoints.forEach(fp => {
+                    if (fp.den >= state.minRing && fp.den <= state.maxRing) {
+                        const m = fp.den;
+                        const k = fp.num % m;
+                        
+                        // Calculate ring index with inversion
+                        let ringIndex;
+                        if (invertRings) {
+                            ringIndex = (state.maxRing - m);
+                        } else {
+                            ringIndex = m - state.minRing;
+                        }
+                        
+                        const ringRadius = baseRadius + ringIndex * (maxRadius - baseRadius) / Math.max(1, numRings - 1) * state.ringSpacing;
+                        const ringRotationOffset = (state.ringRotation * Math.PI / 180) * ringIndex;
+                        const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
+                        
+                        // Calculate label position
+                        let labelX, labelY;
+                        if (state.labelPosition === 'radial') {
+                            const labelRadius = ringRadius + state.labelOffset;
+                            labelX = cx + labelRadius * Math.cos(angle);
+                            labelY = cy + labelRadius * Math.sin(angle);
+                        } else {
+                            labelX = cx + ringRadius * Math.cos(angle);
+                            labelY = cy + ringRadius * Math.sin(angle);
+                        }
+                        
+                        // Farey label (in format matching the label mode)
+                        const labelText = state.labelMode === 'integers' ? `${k}` : `${fp.num}/${fp.den}`;
+                        
+                        ctx.font = `bold ${state.labelSize + 2}px "Fira Code"`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        
+                        // Background
+                        const textMetrics = ctx.measureText(labelText);
+                        const textWidth = textMetrics.width;
+                        const textHeight = state.labelSize + 2;
+                        
+                        ctx.fillStyle = 'rgba(255, 107, 107, 0.9)';
+                        ctx.fillRect(labelX - textWidth/2 - 3, labelY - textHeight/2 - 1, textWidth + 6, textHeight + 2);
+                        
+                        // Text
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+                        ctx.fillText(labelText, labelX, labelY);
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
 
             // Title
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
@@ -3342,6 +4768,12 @@
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
             ctx.fillText(`m = ${state.minRing} to ${state.maxRing}`, cx, 55);
             ctx.shadowBlur = 0;
+
+            // Draw selection highlight if point is selected on this canvas
+            if (inspectionState.selectedPoint && inspectionState.selectedPoint.canvasType === 'nested') {
+                const sp = inspectionState.selectedPoint;
+                drawSelectionHighlight(ctx, sp.x, sp.y, sp.type);
+            }
 
             // Restore context if inverted
             if (invertAll) {
@@ -3357,6 +4789,11 @@
             // Draw full plane if visible
             if (document.getElementById('toggleFullPlane').checked) {
                 drawFullPlane();
+            }
+            
+            // Continue animation if point is selected (for pulsing highlight)
+            if (inspectionState.selectedPoint && !state.animationId) {
+                requestAnimationFrame(updateAll);
             }
         }
 
@@ -3483,7 +4920,7 @@
 
         function resetDefaults() {
             state = {
-                phase: 0,
+                phase: 180,
                 modulus: 30,
                 numPrimes: 150,
                 primeLimit: 10000,
@@ -3510,16 +4947,28 @@
                 cayleyZoom: 1.0,
                 nestedZoom: 1.0,
                 fareyPoints: [
-                    {num: 1, den: 3},
+                    {num: 0, den: 1},
+                    {num: 1, den: 1},
+                    {num: 0, den: 2},
                     {num: 1, den: 2},
-                    {num: 2, den: 3}
+                    {num: 0, den: 3},
+                    {num: 1, den: 3},
+                    {num: 2, den: 3},
+                    {num: 0, den: 4},
+                    {num: 1, den: 4},
+                    {num: 3, den: 4},
+                    {num: 0, den: 5},
+                    {num: 1, den: 5},
+                    {num: 2, den: 5},
+                    {num: 3, den: 5},
+                    {num: 4, den: 5}
                 ],
                 primes: state.primes,
                 animationId: null
             };
 
             // Reset UI
-            document.getElementById('phaseSlider').value = 0;
+            document.getElementById('phaseSlider').value = 180;
             document.getElementById('modulusInput').value = 30;
             document.getElementById('primesInput').value = 150;
             document.getElementById('primeLimitInput').value = 10000;
@@ -3555,6 +5004,8 @@
             document.getElementById('toggleVerticals').checked = false;
             document.getElementById('toggleDiskOutline').checked = false;
             document.getElementById('toggleFullPlane').checked = false;
+            document.getElementById('toggleShowCoprimeOnly').checked = false;
+            document.getElementById('toggleShowNonCoprimeOnly').checked = false;
             document.getElementById('cayleyTransformType').value = 'standard';
             document.getElementById('mobiusA').value = 1;
             document.getElementById('mobiusB').value = 0;
@@ -3566,7 +5017,7 @@
             document.getElementById('mobiusParamsD').style.display = 'none';
             document.getElementById('transformDescription').textContent = 'Standard: Maps unit disk to upper half-plane (modular forms)';
 
-            document.getElementById('phaseValue').textContent = '0 degrees';
+            document.getElementById('phaseValue').textContent = '180 degrees';
             document.getElementById('modulusDisplay').textContent = '30';
             document.getElementById('primesDisplay').textContent = '150';
             document.getElementById('primeLimitDisplay').textContent = '10000';
@@ -3583,6 +5034,9 @@
             document.getElementById('connectionOpacityValue').textContent = '0.30';
             document.getElementById('labelSizeValue').textContent = '10';
             document.getElementById('labelFreqValue').textContent = '1';
+            document.getElementById('labelPosition').value = 'radial';
+            document.getElementById('labelOffsetSlider').value = 18;
+            document.getElementById('labelOffsetValue').textContent = '18';
             document.getElementById('diskZoomValue').textContent = '1.00×';
             document.getElementById('cayleyZoomValue').textContent = '1.00×';
             document.getElementById('nestedZoomValue').textContent = '1.00×';
@@ -3667,7 +5121,7 @@
                         </div>
                         
                         <div class="export-section">
-                            <h4>Options</h4>
+                            <h4>Export Options</h4>
                             <label class="export-checkbox">
                                 <input type="checkbox" id="includeLegend" checked>
                                 <span>Include Detailed Legend</span>
@@ -3675,6 +5129,14 @@
                             <label class="export-checkbox">
                                 <input type="checkbox" id="includeWatermark" checked>
                                 <span>Include Watermark (Wessen Getachew)</span>
+                            </label>
+                            <label class="export-checkbox">
+                                <input type="checkbox" id="includeParameters" checked>
+                                <span>Include Current Parameters Info</span>
+                            </label>
+                            <label class="export-checkbox">
+                                <input type="checkbox" id="includeConnections" checked>
+                                <span>Include Global Connections (r→r, r→r+m×2ⁿ)</span>
                             </label>
                         </div>
                         
@@ -3706,6 +5168,8 @@
             const resolution = document.querySelector('input[name="resolution"]:checked').value;
             const includeLegend = document.getElementById('includeLegend').checked;
             const includeWatermark = document.getElementById('includeWatermark').checked;
+            const includeParameters = document.getElementById('includeParameters').checked;
+            const includeConnections = document.getElementById('includeConnections').checked;
 
             let width, height;
             switch(resolution) {
@@ -3731,35 +5195,35 @@
             const tempCtx = tempCanvas.getContext('2d');
 
             if (canvasSelection === 'all') {
-                // For all four canvases, use 2x2 grid with SQUARE canvases
-                const size = Math.min(width, height);
-                tempCanvas.width = size;
-                tempCanvas.height = size;
+                // For all four canvases, use 2x2 grid
+                tempCanvas.width = width;
+                tempCanvas.height = height;
                 
                 // Background
                 tempCtx.fillStyle = '#0a0e27';
-                tempCtx.fillRect(0, 0, size, size);
+                tempCtx.fillRect(0, 0, width, height);
 
-                // Calculate dimensions for 2x2 grid - each canvas is square
-                const canvasSize = size / 2;
+                // Calculate dimensions for 2x2 grid
+                const canvasWidth = width / 2;
+                const canvasHeight = height / 2;
                 const sourceCanvases = [
                     { canvas: canvases.disk, title: 'Unit Disk 𝔻', x: 0, y: 0 },
-                    { canvas: canvases.cayley, title: 'Upper Half-Plane ℍ', x: canvasSize, y: 0 },
-                    { canvas: canvases.nested, title: 'Nested Rings ⊚', x: 0, y: canvasSize },
-                    { canvas: canvases.fullPlane, title: 'Full Complex Plane ℂ', x: canvasSize, y: canvasSize }
+                    { canvas: canvases.cayley, title: 'Upper Half-Plane ℍ', x: canvasWidth, y: 0 },
+                    { canvas: canvases.nested, title: 'Nested Rings ⊚', x: 0, y: canvasHeight },
+                    { canvas: canvases.fullPlane, title: 'Full Complex Plane ℂ', x: canvasWidth, y: canvasHeight }
                 ];
                 
                 sourceCanvases.forEach((item) => {
-                    // Draw canvas maintaining square aspect ratio - no stretching!
+                    // Draw canvas
                     tempCtx.drawImage(item.canvas, 
                         0, 0, item.canvas.width, item.canvas.height,
-                        item.x, item.y, canvasSize, canvasSize);
+                        item.x, item.y, canvasWidth, canvasHeight);
                     
                     // Draw title for each canvas
-                    const scale = size / 1920;
+                    const scale = Math.min(width, height) / 1920;
                     const fontSize = 18 * scale;
                     const titleY = item.y + 30 * scale;
-                    const titleX = item.x + canvasSize / 2;
+                    const titleX = item.x + canvasWidth / 2;
                     
                     tempCtx.fillStyle = '#ffd700';
                     tempCtx.font = `bold ${fontSize}px "Fira Code"`;
@@ -3771,46 +5235,24 @@
                     tempCtx.shadowBlur = 0;
                 });
 
-                // Add main title at top center
-                const scale = size / 1920;
+                // Add main title at top
+                const scale = Math.min(width, height) / 1920;
                 const mainTitleSize = 32 * scale;
                 const padding = 40 * scale;
                 
-                // Title background
-                const titleBgWidth = 800 * scale;
-                const titleBgHeight = 60 * scale;
-                const titleBgX = (size - titleBgWidth) / 2;
-                const titleBgY = padding / 2;
-                
                 tempCtx.fillStyle = 'rgba(10, 14, 39, 0.9)';
-                tempCtx.strokeStyle = 'rgba(255, 215, 0, 0.8)';
-                tempCtx.lineWidth = 2 * scale;
-                
-                const radius = 8 * scale;
-                tempCtx.beginPath();
-                tempCtx.moveTo(titleBgX + radius, titleBgY);
-                tempCtx.lineTo(titleBgX + titleBgWidth - radius, titleBgY);
-                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY, titleBgX + titleBgWidth, titleBgY + radius);
-                tempCtx.lineTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight - radius);
-                tempCtx.quadraticCurveTo(titleBgX + titleBgWidth, titleBgY + titleBgHeight, titleBgX + titleBgWidth - radius, titleBgY + titleBgHeight);
-                tempCtx.lineTo(titleBgX + radius, titleBgY + titleBgHeight);
-                tempCtx.quadraticCurveTo(titleBgX, titleBgY + titleBgHeight, titleBgX, titleBgY + titleBgHeight - radius);
-                tempCtx.lineTo(titleBgX, titleBgY + radius);
-                tempCtx.quadraticCurveTo(titleBgX, titleBgY, titleBgX + radius, titleBgY);
-                tempCtx.closePath();
-                tempCtx.fill();
-                tempCtx.stroke();
+                tempCtx.fillRect(width / 2 - 400 * scale, padding / 2, 800 * scale, 60 * scale);
                 
                 tempCtx.fillStyle = '#ffd700';
                 tempCtx.font = `bold ${mainTitleSize}px "Fira Code"`;
                 tempCtx.textAlign = 'center';
                 tempCtx.shadowBlur = 12 * scale;
                 tempCtx.shadowColor = 'rgba(255, 215, 0, 0.5)';
-                tempCtx.fillText('Farey Triangle & Cayley Transform', size / 2, titleBgY + titleBgHeight / 2 + 5 * scale);
+                tempCtx.fillText('Farey Triangle & Cayley Transform', width / 2, padding);
                 tempCtx.shadowBlur = 0;
 
                 if (includeLegend) {
-                    drawLegend(tempCtx, size, size, 'all');
+                    drawLegend(tempCtx, width, height, 'all');
                 }
             } else {
                 // For single canvas, make it square to maintain aspect ratio
@@ -3852,6 +5294,10 @@
                 if (includeLegend) {
                     drawLegend(tempCtx, size, size, canvasSelection);
                 }
+                
+                if (includeParameters) {
+                    drawParametersInfo(tempCtx, size, size, canvasSelection);
+                }
             }
 
             // Add watermark if requested
@@ -3865,6 +5311,65 @@
             link.click();
 
             closeExportDialog();
+        }
+
+        function drawParametersInfo(ctx, width, height, canvasType) {
+            const scale = Math.min(width, height) / 1920;
+            const fontSize = 11 * scale;
+            const padding = 20 * scale;
+            
+            // Position in bottom-left corner
+            const boxWidth = 380 * scale;
+            const lineHeight = 16 * scale;
+            
+            // Build parameter text
+            const params = [
+                `Modulus: m = ${state.modulus}`,
+                `Phase: θ = ${state.phase.toFixed(1)}°`,
+                `Rings: ${state.minRing}–${state.maxRing}`,
+                `Primes: ${state.numPrimes}`,
+                `Transform: ${state.transformType}`,
+                `Color Scheme: ${state.nestedColorScheme}`,
+                `Label Mode: ${state.labelMode}`,
+                `Connection: ${state.connectionMode}`,
+            ];
+            
+            // Add connection status
+            const rToR = document.getElementById('toggleShowRtoR').checked;
+            const rToR2n = document.getElementById('toggleShowRtoRplus2n').checked;
+            if (rToR || rToR2n) {
+                const connections = [];
+                if (rToR) connections.push('r→r');
+                if (rToR2n) connections.push('r→r+m×2ⁿ');
+                params.push(`Global: ${connections.join(', ')}`);
+            }
+            
+            const boxHeight = (params.length + 1) * lineHeight + padding * 2;
+            const boxX = padding;
+            const boxY = height - boxHeight - padding;
+            
+            // Background
+            ctx.save();
+            ctx.fillStyle = 'rgba(10, 14, 39, 0.92)';
+            ctx.strokeStyle = 'rgba(0, 255, 255, 0.6)';
+            ctx.lineWidth = 2 * scale;
+            ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+            ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+            
+            // Title
+            ctx.fillStyle = '#00ffff';
+            ctx.font = `bold ${fontSize + 2}px "Fira Code"`;
+            ctx.textAlign = 'left';
+            ctx.fillText('PARAMETERS', boxX + padding, boxY + padding + fontSize);
+            
+            // Parameters
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = `${fontSize}px "Fira Code"`;
+            params.forEach((param, idx) => {
+                ctx.fillText(param, boxX + padding, boxY + padding + (idx + 2) * lineHeight);
+            });
+            
+            ctx.restore();
         }
 
         function drawMainTitle(ctx, size, titleText) {
@@ -4060,7 +5565,7 @@
                     `Count: ${state.maxRing - state.minRing + 1}`,
                     `Mode: ${state.connectionMode}`
                 ];
-            } else if (canvasType === 'all') {
+            } else             if (canvasType === 'all') {
                 items = [
                     { type: 'section', text: 'Elements' },
                     { color: CONFIG.colors.farey, text: 'Farey/Coprime' },
@@ -4068,12 +5573,23 @@
                     { color: CONFIG.colors.prime, text: 'Primes' },
                     { type: 'section', text: 'GCD' },
                     { color: CONFIG.colors.farey, text: 'GCD=1' },
-                    { color: '#e74c3c', text: 'GCD=m' }
+                    { color: '#e74c3c', text: 'GCD=m' },
+                    { type: 'section', text: 'Connections' }
                 ];
+                
+                // Add connection legend items
+                if (document.getElementById('toggleShowRtoR').checked) {
+                    items.push({ color: '#00ffff', text: 'r→r (Self-similar)' });
+                }
+                if (document.getElementById('toggleShowRtoRplus2n').checked) {
+                    items.push({ color: 'rgba(255,100,100,0.9)', text: 'r→r+m×2ⁿ (Binary)' });
+                }
+                
                 parameters = [
                     `m=${state.modulus}`,
                     `Primes: ${Math.min(state.numPrimes, state.primes.length)}`,
-                    `Rings: ${state.minRing}–${state.maxRing}`
+                    `Rings: ${state.minRing}–${state.maxRing}`,
+                    `Scheme: ${state.nestedColorScheme}`
                 ];
             }
 
