@@ -1027,58 +1027,79 @@
                     
                     <div style="background: rgba(52, 152, 219, 0.15); padding: 20px; border-left: 4px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
                         <h3 style="color: #3498db; margin-bottom: 15px;">Transform Types Available</h3>
-                        <p style="margin-bottom: 10px;"><strong>Standard Cayley:</strong> w = i(1+z)/(1-z) - Classic form mapping unit disk interior to upper half-plane. This is THE fundamental conformal bijection in hyperbolic geometry.</p>
-                        <p style="margin-bottom: 10px;"><strong>Inverse Cayley:</strong> w = i(1-z)/(1+z) - Alternative form also mapping disk to upper half-plane but with reversed orientation along the real axis.</p>
-                        <p style="margin-bottom: 10px;"><strong>FTT Transform:</strong> w = (z-i)/(z+i) - This is the INVERSE of the standard Cayley transform. It maps the upper half-plane BACK to the unit disk. Useful for reversing the conformal mapping.</p>
-                        <p style="margin-bottom: 10px;"><strong>Smith Chart:</strong> w = (z-1)/(z+1) - Maps unit disk to itself (disk → disk). Standard in RF engineering for impedance analysis. Different fixed points than Cayley.</p>
-                        <p style="margin-bottom: 10px;"><strong>Möbius:</strong> w = (az+b)/(cz+d) - Fully customizable linear fractional transformation with parameters a, b, c, d. Constraint: ad-bc ≠ 0 for invertibility.</p>
                         
-                        <p style="margin-top: 15px;"><strong>Key Mappings (Standard Cayley):</strong></p>
+                        <p style="margin-bottom: 10px;"><strong>Standard Cayley:</strong> w = i(1+z)/(1-z)</p>
+                        <p style="margin-left: 20px; margin-bottom: 15px; color: rgba(255,255,255,0.85);">
+                            The canonical conformal bijection mapping the Poincaré disk model |z| &lt; 1 to the upper half-plane Im(w) &gt; 0. This is the standard form used in hyperbolic geometry and modular forms theory.
+                            <br><strong>Key mappings:</strong> z=0 → w=i, z=1 → w=∞, z=-1 → w=0, unit circle → real axis.
+                        </p>
+                        
+                        <p style="margin-bottom: 10px;"><strong>Inverse Cayley:</strong> w = i(1-z)/(1+z)</p>
+                        <p style="margin-left: 20px; margin-bottom: 15px; color: rgba(255,255,255,0.85);">
+                            An alternative conformal map also taking disk to upper half-plane, but with reversed orientation along the real axis. Still preserves the hyperbolic metric but maps z=0 → w=i, z=1 → w=0, z=-1 → w=∞.
+                        </p>
+                        
+                        <p style="margin-bottom: 10px;"><strong>FTT Transform:</strong> w = (z-i)/(z+i)</p>
+                        <p style="margin-left: 20px; margin-bottom: 15px; color: rgba(255,255,255,0.85);">
+                            This is the <em>inverse</em> of the standard Cayley transform. It maps the upper half-plane <em>back to</em> the unit disk. Specifically: upper half-plane Im(z) &gt; 0 → unit disk interior |w| &lt; 1, real axis Im(z) = 0 → unit circle |w| = 1.
+                        </p>
+                        
+                        <p style="margin-bottom: 10px;"><strong>Smith Chart:</strong> w = (z-1)/(z+1)</p>
+                        <p style="margin-left: 20px; margin-bottom: 15px; color: rgba(255,255,255,0.85);">
+                            A disk-to-disk transformation (|z| &lt; 1 → |w| &lt; 1) widely used in RF/microwave engineering for impedance visualization. Maps the right half-plane to the unit disk, with the real axis mapping to the unit circle. Different fixed points than Cayley transforms.
+                        </p>
+                        
+                        <p style="margin-bottom: 10px;"><strong>Möbius (General):</strong> w = (az+b)/(cz+d) where ad-bc ≠ 0</p>
+                        <p style="margin-left: 20px; margin-bottom: 15px; color: rgba(255,255,255,0.85);">
+                            The most general linear fractional transformation. These form a group under composition and represent all conformal automorphisms of the Riemann sphere. The constraint ad-bc ≠ 0 ensures invertibility. All other transforms above are special cases with specific (a,b,c,d) values.
+                        </p>
+                        
+                        <p style="margin-top: 20px;"><strong>Key Properties (Standard Cayley):</strong></p>
                         <ul style="margin-left: 25px; margin-bottom: 10px;">
-                            <li>z = 0 (center) → w = i (upper half-plane interior)</li>
-                            <li>z = 1 (right edge) → w = ∞ (point at infinity)</li>
-                            <li>z = -1 (left edge) → w = 0 (origin on real axis)</li>
-                            <li>z = i (top) → w = -1 (real axis)</li>
-                            <li>z = -i (bottom) → w = 1 (real axis)</li>
-                            <li>|z| &lt; 1 (disk interior) → Im(w) &gt; 0 (upper half-plane)</li>
-                            <li>|z| = 1 (unit circle) → Im(w) = 0 (real axis)</li>
+                            <li><strong>Conformal:</strong> Preserves angles locally at every point</li>
+                            <li><strong>Bijective:</strong> One-to-one correspondence between disk and upper half-plane</li>
+                            <li><strong>Isometry:</strong> Maps hyperbolic geodesics to hyperbolic geodesics</li>
+                            <li><strong>Boundary behavior:</strong> Unit circle |z|=1 maps to real axis Im(w)=0</li>
+                            <li><strong>Interior/exterior:</strong> |z| &lt; 1 → Im(w) &gt; 0, |z| &gt; 1 → Im(w) &lt; 0</li>
+                            <li><strong>Inverse formula:</strong> z = (w-i)/(w+i) or equivalently z = (i-w)/(i+w)</li>
                         </ul>
                         
-                        <p style="margin-top: 15px;"><strong>Relationship between transforms:</strong></p>
+                        <p style="margin-top: 15px;"><strong>Relationships:</strong></p>
                         <ul style="margin-left: 25px;">
-                            <li>Standard Cayley and FTT are inverses: If w = Standard(z), then z = FTT(w)</li>
-                            <li>All these transforms are special cases of Möbius transformations</li>
-                            <li>They preserve angles (conformal) and map circles/lines to circles/lines</li>
+                            <li>Standard Cayley and FTT are functional inverses: Cayley(FTT(z)) = z</li>
+                            <li>All transforms preserve circles and lines (map them to circles or lines)</li>
+                            <li>Composition of Möbius transformations is a Möbius transformation</li>
+                            <li>The set of all Möbius transformations forms the group PSL(2,ℂ) ≅ Aut(ℂ̂)</li>
                         </ul>
                     </div>
                     
                     <h3 style="color: var(--gold); margin-bottom: 15px;">Mathematical Overview</h3>
                     
-                    <p style="margin-bottom: 15px;">This visualization tool explores the deep connections between <strong>number theory</strong> and <strong>hyperbolic geometry</strong> through the lens of conformal mappings and modular arithmetic. Three complementary perspectives reveal how rational numbers, prime distributions, and hyperbolic structures interrelate.</p>
+                    <p style="margin-bottom: 15px;">This visualization tool explores the profound connections between <strong>number theory</strong>, <strong>hyperbolic geometry</strong>, and <strong>complex analysis</strong> through conformal mappings and modular arithmetic. Four complementary perspectives reveal how rational numbers, prime distributions, and hyperbolic structures interrelate through the lens of the modular group PSL(2,ℤ).</p>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--gold);">
-                            <h4 style="color: var(--gold); margin-bottom: 8px;">Unit Disk Model</h4>
-                            <p style="font-size: 0.9em;">Points from the <strong>Farey sequence</strong> F_n (reduced fractions p/q with q ≤ n) are mapped to the unit circle at angles 2πp/q. Prime numbers are positioned according to their residue classes modulo m, revealing patterns in prime distribution. The Farey triangle formed by connecting these points has remarkable properties: adjacent Farey fractions p/q and r/s satisfy the mediant property |ps - qr| = 1.</p>
+                            <h4 style="color: var(--gold); margin-bottom: 8px;">Unit Disk Model (𝔻)</h4>
+                            <p style="font-size: 0.9em;">The Poincaré disk model of hyperbolic geometry: {z ∈ ℂ : |z| &lt; 1}. Points from the <strong>Farey sequence</strong> F_n—the set of all reduced fractions p/q with 0 ≤ p ≤ q ≤ n ordered by value—are mapped to angles 2πp/q on the unit circle ∂𝔻. The Farey triangle connecting these boundary points has the mediant property: for adjacent fractions p/q and r/s in F_n, we have |ps - qr| = 1 (the determinant condition). Prime numbers are positioned at angles 2πp/m where p is prime and m is the modulus, revealing <strong>Dirichlet's theorem</strong>: primes are equidistributed among residue classes coprime to m, each with asymptotic density 1/φ(m).</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--cyan);">
-                            <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley Transform</h4>
-                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1+z)/(1-z) is a biholomorphic (conformal and bijective) mapping from the unit disk to the upper half-plane. This is the inverse of the transform f(z)=(z-i)/(z+i) that maps the upper half-plane to the disk. Geodesics in hyperbolic geometry appear as semicircles orthogonal to the real axis. The <strong>modular group PSL(2,Z)</strong> = SL(2,Z)/{±I} acts naturally on this space via Möbius transformations, preserving the hyperbolic metric ds² = (dx² + dy²)/y².</p>
+                            <h4 style="color: var(--cyan); margin-bottom: 8px;">Upper Half-Plane via Cayley (ℍ)</h4>
+                            <p style="font-size: 0.9em;">The <strong>Cayley transform</strong> w = i(1+z)/(1-z) provides a conformal equivalence between 𝔻 and the upper half-plane ℍ = {w ∈ ℂ : Im(w) &gt; 0}. This is one of the fundamental isometries of hyperbolic geometry, preserving the hyperbolic metric ds² = |dz|²/(1-|z|²) on 𝔻 and ds² = |dw|²/Im(w)² on ℍ. <strong>Geodesics</strong> in ℍ appear as semicircles orthogonal to the real axis (or vertical lines). The <strong>modular group</strong> PSL(2,ℤ) = SL(2,ℤ)/{±I} acts on ℍ via Möbius transformations z → (az+b)/(cz+d) where a,b,c,d ∈ ℤ and ad-bc = 1. This group is generated by S(z) = -1/z and T(z) = z+1, and its quotient ℍ/PSL(2,ℤ) is the modular curve, fundamental to the theory of modular forms and elliptic curves.</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--prime);">
-                            <h4 style="color: var(--prime); margin-bottom: 8px;">Full Complex Plane View</h4>
-                            <p style="font-size: 0.9em;">The <strong>fourth panel</strong> extends the Cayley transform to show the complete complex plane. Since the transform maps the unit disk interior to the upper half-plane and the unit disk exterior to the lower half-plane, this view reveals the full geometry: <br>
-                            • |z| &lt; 1 (disk interior) → Im(w) &gt; 0 (upper half-plane)<br>
-                            • |z| = 1 (unit circle) → Im(w) = 0 (real axis)<br>
-                            • |z| &gt; 1 (disk exterior) → Im(w) &lt; 0 (lower half-plane)<br>
-                            This complete picture shows how the Cayley transform partitions the entire complex plane.</p>
+                            <h4 style="color: var(--prime); margin-bottom: 8px;">Full Complex Plane (ℂ)</h4>
+                            <p style="font-size: 0.9em;">The fourth panel extends the Cayley transform to visualize the entire Riemann sphere ℂ̂ = ℂ ∪ {∞}. Since the transform is defined everywhere except at z = -1, we see the complete partition:
+                            <br>• <strong>Interior |z| &lt; 1</strong> → Upper half-plane Im(w) &gt; 0
+                            <br>• <strong>Unit circle |z| = 1</strong> → Real axis Im(w) = 0 
+                            <br>• <strong>Exterior |z| &gt; 1</strong> → Lower half-plane Im(w) &lt; 0
+                            <br>The point z = 1 maps to ∞, z = -1 is the pole (undefined), and z = ±i map to the real axis at w = -1 and w = 1 respectively. This complete picture shows how Möbius transformations act as conformal automorphisms of ℂ̂, forming the group PSL(2,ℂ).</p>
                         </div>
                         
                         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-left: 3px solid var(--geodesic);">
-                            <h4 style="color: var(--geodesic); margin-bottom: 8px;">Nested Rings Structure</h4>
-                            <p style="font-size: 0.9em;">Concentric rings represent residue classes modulo m for successive values of m. Points at angle 2πk/m are colored by gcd(k,m), revealing the multiplicative structure of (Z/mZ)×. The Euler totient function φ(m) counts coprime residues (colored gold). This visualization makes visible the Chinese Remainder Theorem and properties of the group of units modulo m.</p>
+                            <h4 style="color: var(--geodesic); margin-bottom: 8px;">Nested Rings Structure (⊚)</h4>
+                            <p style="font-size: 0.9em;">Concentric rings represent the structure of (ℤ/mℤ)× for moduli m from min to max. Each ring m displays all residue classes k ∈ {0,1,...,m-1} at angles 2πk/m. Points are colored by gcd(k,m), revealing the multiplicative structure. <strong>Gold points</strong> (gcd = 1) form the group of units (ℤ/mℤ)×, whose order is given by <strong>Euler's totient</strong> φ(m). The Chinese Remainder Theorem states that if gcd(m₁,m₂) = 1, then ℤ/(m₁m₂)ℤ ≅ ℤ/m₁ℤ × ℤ/m₂ℤ, visible in the coprime point patterns. Connection modes visualize lifts and transitions: in a modular sequence Mₙ = M₀·bⁿ, a residue r at level n lifts to {r, r+Mₙ, r+2Mₙ, ..., r+(b-1)Mₙ} at level n+1. If gcd(r,M₀) = gcd(r,b) = 1, then coprimality is preserved: gcd(r,Mₙ₊₁) = 1.</p>
                         </div>
                     </div>
                     
@@ -1086,7 +1107,38 @@
                     
                     <ul style="list-style: none; padding: 0;">
                         <li style="margin-bottom: 12px;">
-                            <strong style="color: var(--cyan);">Farey Sequence F_n:</strong> The set of all irreducible fractions p/q with 0 ≤ p ≤ q ≤ n, ordered by size. Adjacent fractions satisfy |ps - qr| = 1 (mediant property). The sequence has ∑_{k=1}^n φ(k) terms, where φ is Euler's totient function.
+                            <strong style="color: var(--cyan);">Farey Sequence F_n:</strong> The ordered set {p/q : 0 ≤ p ≤ q ≤ n, gcd(p,q) = 1} of all irreducible fractions with denominator at most n. The sequence has exactly 1 + Σ_{k=1}^n φ(k) elements. <strong>Mediant property:</strong> If p/q and r/s are adjacent in F_n, then |ps - qr| = 1, and their mediant (p+r)/(q+s) first appears in F_{q+s}. The Farey sequence provides a natural parameterization of ℚ ∩ [0,1] and of rational points on the unit circle.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Cayley Transform:</strong> The map w = i(1+z)/(1-z) is a biholomorphic (holomorphic bijection with holomorphic inverse) equivalence 𝔻 → ℍ. It's an isometry of hyperbolic spaces: the Poincaré disk metric ds² = 4|dz|²/(1-|z|²)² corresponds to the upper half-plane metric ds² = |dw|²/Im(w)². The inverse is z = (w-i)/(w+i). Under this map, straight lines in 𝔻 through the origin become vertical lines in ℍ, and circles in 𝔻 orthogonal to ∂𝔻 become semicircles in ℍ orthogonal to ℝ—these are the geodesics of hyperbolic geometry.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Modular Group PSL(2,ℤ):</strong> The quotient SL(2,ℤ)/{±I} where SL(2,ℤ) = {[[a,b],[c,d]] : a,b,c,d ∈ ℤ, ad-bc = 1}. Acts on ℍ by fractional linear transformations γ·z = (az+b)/(cz+d). Generated by S: z ↦ -1/z (order 2) and T: z ↦ z+1 (infinite order), with the single relation (ST)³ = I. The fundamental domain is 𝒟 = {z ∈ ℍ : |z| ≥ 1, |Re(z)| ≤ 1/2}, and ℍ/PSL(2,ℤ) ≅ ℂ, with the quotient map being the j-invariant. This group is central to the theory of <strong>modular forms</strong>: functions f : ℍ → ℂ satisfying f((az+b)/(cz+d)) = (cz+d)^k f(z) for all [[a,b],[c,d]] ∈ SL(2,ℤ).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Hyperbolic Geodesics:</strong> In the upper half-plane model ℍ, geodesics (paths of shortest hyperbolic distance) are semicircles perpendicular to ℝ, together with vertical rays. The hyperbolic distance between z₁, z₂ ∈ ℍ is d(z₁,z₂) = arccosh(1 + |z₁-z₂|²/(2·Im(z₁)·Im(z₂))). PSL(2,ℤ) acts by isometries, preserving this distance. In the disk model, geodesics are arcs of circles orthogonal to ∂𝔻 (and diameters).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Dirichlet's Theorem on Primes in Arithmetic Progressions:</strong> If gcd(a,m) = 1, the arithmetic progression {a + km : k ≥ 0} contains infinitely many primes, with density 1/φ(m) among all primes. More precisely, π(x; m, a) ~ x/(φ(m) log x) as x → ∞, where π(x; m, a) counts primes p ≤ x with p ≡ a (mod m). This equidistribution is visible in the visualization: primes distribute uniformly among the φ(m) residue classes coprime to m.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Euler's Totient Function:</strong> φ(n) = |{k : 1 ≤ k ≤ n, gcd(k,n) = 1}| counts integers up to n coprime to n. This is multiplicative: if gcd(m,n) = 1, then φ(mn) = φ(m)φ(n). For prime power p^k, we have φ(p^k) = p^k - p^{k-1} = p^{k-1}(p-1). The formula φ(n) = n·∏_{p|n}(1 - 1/p) expresses φ in terms of the prime factorization. The units (ℤ/nℤ)× form a group of order φ(n), and by <strong>Euler's theorem</strong>, if gcd(a,n) = 1, then a^{φ(n)} ≡ 1 (mod n).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Möbius Transformations:</strong> Functions f(z) = (az+b)/(cz+d) where a,b,c,d ∈ ℂ and ad-bc ≠ 0. These are precisely the conformal automorphisms of the Riemann sphere ℂ̂. They form a group under composition: if f(z) = (az+b)/(cz+d) and g(z) = (ez+f)/(gz+h), then (f∘g)(z) = ((ae+bg)z + (af+bh))/((ce+dg)z + (cf+dh)). The group of Möbius transformations is isomorphic to PSL(2,ℂ) = SL(2,ℂ)/{±I}. Key property: Möbius transformations map circles and lines to circles and lines (where lines are considered circles through ∞).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Ford Circles:</strong> For each rational p/q in lowest terms, the Ford circle C_{p/q} has center (p/q, 1/(2q²)) and radius 1/(2q²) in the upper half-plane. These circles are tangent to the real axis at p/q and are pairwise tangent or disjoint: C_{p/q} and C_{r/s} are tangent iff |ps - qr| = 1 (i.e., they're Farey neighbors). Ford circles provide a beautiful geometric illustration of the Farey sequence and the Stern-Brocot tree structure of rational numbers.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong style="color: var(--cyan);">Residue Lifts in Modular Sequences:</strong> Given a geometric sequence of moduli Mₙ = M₀·bⁿ where b ≥ 2, a residue r ∈ ℤ/Mₙℤ lifts to the set {r + kMₙ mod Mₙ₊₁ : k = 0, 1, ..., b-1} in ℤ/Mₙ₊₁ℤ. If gcd(r, M₀) = gcd(r, b) = 1, then coprimality is preserved under lifting: all b lifts satisfy gcd(r + kMₙ, Mₙ₊₁) = 1. This creates a self-similar fractal structure of coprime residues across scales. Gap-g transitions (k, k+g) lift to {(k+jMₙ, k+g+jMₙ) : j = 0,...,b-1}, preserving the gap structure. When combined with prime distribution (Dirichlet), this reveals how primes populate the modular tower.
+                        </li>
+                    </ul>
+                    
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; margin-top: 20px; border-radius: 4px;">
+                        <strong style="color: var(--gold);">Getting Started:</strong> Use the preset buttons in the controls to load common configurations (F₃, F₅, F₇, etc.). Hover over controls for detailed tooltips explaining each parameter. Click any point on the visualizations to see its mathematical properties in a detailed panel. Enable the Interactive Guide below for a step-by-step tutorial. Experiment with different transform types to see how various conformal mappings affect the geometry.
+                    </div>
+                </div>r| = 1 (mediant property). The sequence has ∑_{k=1}^n φ(k) terms, where φ is Euler's totient function.
                         </li>
                         <li style="margin-bottom: 12px;">
                             <strong style="color: var(--cyan);">Cayley Transform:</strong> The Möbius transformation w = i(1-z)/(1+z) providing a conformal equivalence between the Poincaré disk model (|z| < 1) and the upper half-plane model (Im(w) > 0) of hyperbolic geometry. Its inverse is z = (i-w)/(i+w).
@@ -1443,6 +1495,21 @@
                 <!-- Nested Rings Parameters -->
                 <div class="section-header">Nested Rings Configuration</div>
                 <div class="control-row">
+                    <div class="control-item" style="grid-column: 1 / -1;" data-tooltip="Choose how ring moduli are generated">
+                        <div class="control-label">
+                            <span>Ring Generation Mode</span>
+                        </div>
+                        <select id="ringGenerationMode">
+                            <option value="manual">Manual Range (m_min to m_max)</option>
+                            <option value="dyadic">Dyadic Family (M₀ × 2ⁿ) - WITH APPLY BUTTON</option>
+                            <option value="padic">p-adic Family (M₀ × pⁿ) - WITH APPLY BUTTON</option>
+                            <option value="custom">Custom Scaling (M₀ × bⁿ) - WITH APPLY BUTTON</option>
+                        </select>
+                        <div class="help-text">⚠️ For dyadic/p-adic families: Select mode above to see APPLY button</div>
+                    </div>
+                </div>
+
+                <div id="manualRingControls" class="control-row">
                     <div class="control-item" data-tooltip="Starting modulus for the innermost ring. Usually 1 or 2.">
                         <div class="control-label">
                             <span>Min Ring (m_start)</span>
@@ -1477,6 +1544,86 @@
                         <input type="number" id="ringRotationInput" value="0" min="0" max="360" step="1" style="margin-top: 8px;" placeholder="Degrees per ring">
                     </div>
                 </div>
+
+                <div id="dyadicRingControls" class="control-row" style="display: none;">
+                    <div class="control-item" data-tooltip="Base modulus M₀ for the sequence">
+                        <div class="control-label">
+                            <span>Base Modulus (M₀)</span>
+                            <span class="control-value" id="baseModDisplay">30</span>
+                        </div>
+                        <input type="number" id="baseModInput" value="30" min="1" step="1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Scaling factor b (typically 2, 3, 5 for dyadic/p-adic)">
+                        <div class="control-label">
+                            <span>Scale Factor (b)</span>
+                            <span class="control-value" id="scaleFactorDisplay">2</span>
+                        </div>
+                        <input type="number" id="scaleFactorInput" value="2" min="2" step="1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Starting exponent n₀">
+                        <div class="control-label">
+                            <span>Start Exponent (n₀)</span>
+                            <span class="control-value" id="startExpDisplay">0</span>
+                        </div>
+                        <input type="number" id="startExpInput" value="0" min="0" step="1">
+                    </div>
+
+                    <div class="control-item" data-tooltip="Ending exponent n_max">
+                        <div class="control-label">
+                            <span>End Exponent (n_max)</span>
+                            <span class="control-value" id="endExpDisplay">10</span>
+                        </div>
+                        <input type="number" id="endExpInput" value="10" min="0" step="1">
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Sequence Preview</span>
+                        </div>
+                        <div id="ringSequencePreview" style="font-family: 'Fira Code', monospace; font-size: 0.85em; color: var(--cyan); padding: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; margin-top: 8px;">
+                            Will show: M₀ × b^n₀, M₀ × b^(n₀+1), ..., M₀ × b^n_max
+                        </div>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <button class="btn btn-primary" onclick="applyDyadicFamily()" style="width: 100%; padding: 12px; font-size: 1em; margin-top: 10px;">
+                            <span>✓ APPLY DYADIC FAMILY</span>
+                        </button>
+                        <div class="help-text" style="text-align: center; margin-top: 8px;">
+                            Configure parameters above, then click APPLY to update visualization
+                        </div>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Quick Dyadic Presets</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+                            <button class="btn btn-accent" onclick="setDyadicPreset(2, 2, 0, 10)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>2×2ⁿ</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="setDyadicPreset(3, 2, 0, 10)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>3×2ⁿ</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="setDyadicPreset(6, 2, 0, 10)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>6×2ⁿ</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="setDyadicPreset(30, 2, 0, 10)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>30×2ⁿ</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="setDyadicPreset(5, 5, 0, 8)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>5×5ⁿ</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="setDyadicPreset(3, 3, 0, 9)" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>3×3ⁿ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <!-- Custom Farey Points -->
                 <div class="section-header">Farey Sequence & Custom Points</div>
@@ -1888,6 +2035,16 @@
             diskZoom: 1.0,
             cayleyZoom: 1.0,
             nestedZoom: 1.0,
+            ringGenerationMode: 'manual',
+            baseMod: 30,
+            scaleFactor: 2,
+            startExp: 0,
+            endExp: 10,
+            ringSequence: null,
+            advancedFilterEnabled: false,
+            filterGCDValue: 1,
+            filterModulusRange: [1, 100],
+            filterResidueClass: null,
             fareyPoints: [
                 {num: 1, den: 1},
                 {num: 0, den: 1},
@@ -2120,8 +2277,8 @@
         }
 
         function clearAllFareyPoints() {
-            if (confirm('Clear all Farey points? This will remove all current points.')) {
-                state.fareyPoints = [];
+            if (confirm('Clear all Farey points except 0/1?')) {
+                state.fareyPoints = [{num: 0, den: 1}];
                 updateFareyPointsList();
                 updateAll();
             }
@@ -2227,6 +2384,46 @@
             });
 
             // Ring inputs
+            document.getElementById('ringGenerationMode').addEventListener('change', e => {
+                state.ringGenerationMode = e.target.value;
+                
+                if (e.target.value === 'manual') {
+                    document.getElementById('manualRingControls').style.display = 'grid';
+                    document.getElementById('dyadicRingControls').style.display = 'none';
+                    state.ringSequence = null;
+                } else {
+                    document.getElementById('manualRingControls').style.display = 'none';
+                    document.getElementById('dyadicRingControls').style.display = 'grid';
+                    updateRingSequence();
+                }
+                updateAll();
+            });
+
+            // Dyadic family inputs - UPDATE PREVIEW ONLY, don't apply yet
+            document.getElementById('baseModInput').addEventListener('input', e => {
+                const val = parseInt(e.target.value) || 1;
+                document.getElementById('baseModDisplay').textContent = val;
+                updateRingSequencePreview();
+            });
+
+            document.getElementById('scaleFactorInput').addEventListener('input', e => {
+                const val = parseInt(e.target.value) || 2;
+                document.getElementById('scaleFactorDisplay').textContent = val;
+                updateRingSequencePreview();
+            });
+
+            document.getElementById('startExpInput').addEventListener('input', e => {
+                const val = parseInt(e.target.value) || 0;
+                document.getElementById('startExpDisplay').textContent = val;
+                updateRingSequencePreview();
+            });
+
+            document.getElementById('endExpInput').addEventListener('input', e => {
+                const val = parseInt(e.target.value) || 0;
+                document.getElementById('endExpDisplay').textContent = val;
+                updateRingSequencePreview();
+            });
+
             document.getElementById('minRingInput').addEventListener('change', e => {
                 const val = parseInt(e.target.value);
                 if (val > 0) {
@@ -2352,6 +2549,11 @@
 
             document.getElementById('gcdFilter').addEventListener('change', e => {
                 state.gcdFilter = e.target.value;
+                updateAll();
+            });
+
+            document.getElementById('nestedColorScheme').addEventListener('change', e => {
+                state.nestedColorScheme = e.target.value;
                 updateAll();
             });
 
@@ -2973,6 +3175,552 @@
             ctx.stroke();
             
             ctx.restore();
+        }
+
+        // ============================================================
+        // SAVE/LOAD CONFIGURATION SYSTEM
+        // ============================================================
+
+        function exportConfiguration() {
+            const toggleStates = {};
+            ['toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
+             'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
+             'toggleFundDomain', 'toggleVerticals', 'toggleDiskOutline', 
+             'toggleFordCircles', 'toggleFullPlane', 'toggleAnimate',
+             'toggleInvertRings', 'toggleInvertAll', 'toggleShowCoprimeOnly',
+             'toggleShowNonCoprimeOnly', 'toggleShowRtoR', 'toggleShowRtoRplus2n'].forEach(id => {
+                const elem = document.getElementById(id);
+                if (elem) toggleStates[id] = elem.checked;
+            });
+
+            const config = {
+                version: '21.0',
+                timestamp: new Date().toISOString(),
+                state: {
+                    phase: state.phase,
+                    modulus: state.modulus,
+                    numPrimes: state.numPrimes,
+                    primeLimit: state.primeLimit,
+                    animSpeed: state.animSpeed,
+                    minRing: state.minRing,
+                    maxRing: state.maxRing,
+                    ringSpacing: state.ringSpacing,
+                    ringRotation: state.ringRotation,
+                    connectionMode: state.connectionMode,
+                    gcdFilter: state.gcdFilter,
+                    gapSize: state.gapSize,
+                    maxGap: state.maxGap,
+                    connectionThickness: state.connectionThickness,
+                    connectionOpacity: state.connectionOpacity,
+                    labelMode: state.labelMode,
+                    labelSize: state.labelSize,
+                    labelFreq: state.labelFreq,
+                    labelPosition: state.labelPosition,
+                    labelOffset: state.labelOffset,
+                    nestedColorScheme: state.nestedColorScheme,
+                    cayleyHRange: state.cayleyHRange,
+                    cayleyVRange: state.cayleyVRange,
+                    cayleyVOffset: state.cayleyVOffset,
+                    cayleyGridDensity: state.cayleyGridDensity,
+                    transformType: state.transformType,
+                    mobiusA: state.mobiusA,
+                    mobiusB: state.mobiusB,
+                    mobiusC: state.mobiusC,
+                    mobiusD: state.mobiusD,
+                    diskZoom: state.diskZoom,
+                    cayleyZoom: state.cayleyZoom,
+                    nestedZoom: state.nestedZoom,
+                    ringGenerationMode: state.ringGenerationMode,
+                    baseMod: state.baseMod,
+                    scaleFactor: state.scaleFactor,
+                    startExp: state.startExp,
+                    endExp: state.endExp,
+                    advancedFilterEnabled: state.advancedFilterEnabled,
+                    filterGCDValue: state.filterGCDValue,
+                    filterModulusRange: state.filterModulusRange,
+                    filterResidueClass: state.filterResidueClass
+                },
+                fareyPoints: state.fareyPoints,
+                toggleStates: toggleStates
+            };
+
+            const dataStr = JSON.stringify(config, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `farey-config-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            console.log('✓ Configuration exported successfully');
+        }
+
+        function importConfiguration(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    // Restore state
+                    Object.keys(config.state).forEach(key => {
+                        if (state.hasOwnProperty(key)) {
+                            state[key] = config.state[key];
+                        }
+                    });
+
+                    // Restore Farey points
+                    if (config.fareyPoints) {
+                        state.fareyPoints = config.fareyPoints;
+                    }
+
+                    // Restore toggle states
+                    if (config.toggleStates) {
+                        Object.keys(config.toggleStates).forEach(id => {
+                            const elem = document.getElementById(id);
+                            if (elem) elem.checked = config.toggleStates[id];
+                        });
+                    }
+
+                    // Update all UI elements
+                    syncUIWithState();
+                    updateFareyPointsList();
+                    regeneratePrimes();
+                    updateAll();
+                    
+                    console.log('✓ Configuration imported successfully');
+                    alert('Configuration loaded successfully!');
+                } catch (error) {
+                    console.error('Error importing configuration:', error);
+                    alert('Error loading configuration file. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function syncUIWithState() {
+            document.getElementById('phaseSlider').value = state.phase;
+            document.getElementById('phaseInput').value = state.phase;
+            document.getElementById('phaseValue').textContent = state.phase.toFixed(1) + '°';
+            
+            document.getElementById('modulusInput').value = state.modulus;
+            document.getElementById('modulusDisplay').textContent = state.modulus;
+            
+            document.getElementById('primesInput').value = state.numPrimes;
+            document.getElementById('primesDisplay').textContent = state.numPrimes;
+            
+            document.getElementById('primeLimitInput').value = state.primeLimit;
+            document.getElementById('primeLimitDisplay').textContent = state.primeLimit;
+            
+            document.getElementById('speedSlider').value = state.animSpeed;
+            document.getElementById('speedValue').textContent = state.animSpeed.toFixed(1) + '×';
+            
+            document.getElementById('minRingInput').value = state.minRing;
+            document.getElementById('minRingDisplay').textContent = state.minRing;
+            
+            document.getElementById('maxRingInput').value = state.maxRing;
+            document.getElementById('maxRingDisplay').textContent = state.maxRing;
+            
+            document.getElementById('spacingSlider').value = state.ringSpacing;
+            document.getElementById('spacingValue').textContent = state.ringSpacing.toFixed(1);
+            
+            document.getElementById('ringRotationSlider').value = state.ringRotation;
+            document.getElementById('ringRotationInput').value = state.ringRotation;
+            document.getElementById('ringRotationValue').textContent = state.ringRotation.toFixed(0) + '°';
+            
+            document.getElementById('connectionMode').value = state.connectionMode;
+            document.getElementById('gcdFilter').value = state.gcdFilter;
+            document.getElementById('nestedColorScheme').value = state.nestedColorScheme;
+            
+            document.getElementById('gapSizeInput').value = state.gapSize;
+            document.getElementById('gapSizeDisplay').textContent = state.gapSize;
+            
+            document.getElementById('maxGapInput').value = state.maxGap;
+            document.getElementById('maxGapDisplay').textContent = state.maxGap;
+            
+            document.getElementById('connectionThicknessSlider').value = state.connectionThickness;
+            document.getElementById('connectionThicknessValue').textContent = state.connectionThickness.toFixed(1);
+            
+            document.getElementById('connectionOpacitySlider').value = state.connectionOpacity;
+            document.getElementById('connectionOpacityValue').textContent = state.connectionOpacity.toFixed(2);
+            
+            document.getElementById('labelMode').value = state.labelMode;
+            document.getElementById('labelSizeSlider').value = state.labelSize;
+            document.getElementById('labelSizeValue').textContent = state.labelSize;
+            
+            document.getElementById('labelFreqInput').value = state.labelFreq;
+            document.getElementById('labelFreqValue').textContent = state.labelFreq;
+            
+            document.getElementById('labelPosition').value = state.labelPosition;
+            document.getElementById('labelOffsetSlider').value = state.labelOffset;
+            document.getElementById('labelOffsetValue').textContent = state.labelOffset;
+            
+            document.getElementById('cayleyHRangeSlider').value = state.cayleyHRange;
+            document.getElementById('cayleyHRangeValue').textContent = state.cayleyHRange.toFixed(1);
+            
+            document.getElementById('cayleyVRangeSlider').value = state.cayleyVRange;
+            document.getElementById('cayleyVRangeValue').textContent = state.cayleyVRange.toFixed(1);
+            
+            document.getElementById('cayleyVOffsetSlider').value = state.cayleyVOffset;
+            document.getElementById('cayleyVOffsetValue').textContent = state.cayleyVOffset.toFixed(1);
+            
+            document.getElementById('cayleyGridDensitySlider').value = state.cayleyGridDensity;
+            document.getElementById('cayleyGridDensityValue').textContent = state.cayleyGridDensity.toFixed(1);
+            
+            document.getElementById('cayleyTransformType').value = state.transformType;
+            
+            document.getElementById('mobiusA').value = state.mobiusA;
+            document.getElementById('mobiusB').value = state.mobiusB;
+            document.getElementById('mobiusC').value = state.mobiusC;
+            document.getElementById('mobiusD').value = state.mobiusD;
+            
+            document.getElementById('diskZoomSlider').value = state.diskZoom;
+            document.getElementById('diskZoomValue').textContent = state.diskZoom.toFixed(2) + '×';
+            
+            document.getElementById('cayleyZoomSlider').value = state.cayleyZoom;
+            document.getElementById('cayleyZoomValue').textContent = state.cayleyZoom.toFixed(2) + '×';
+            
+            document.getElementById('nestedZoomSlider').value = state.nestedZoom;
+            document.getElementById('nestedZoomValue').textContent = state.nestedZoom.toFixed(2) + '×';
+            
+            // Ring generation mode
+            document.getElementById('ringGenerationMode').value = state.ringGenerationMode;
+            if (state.ringGenerationMode === 'manual') {
+                document.getElementById('manualRingControls').style.display = 'grid';
+                document.getElementById('dyadicRingControls').style.display = 'none';
+            } else {
+                document.getElementById('manualRingControls').style.display = 'none';
+                document.getElementById('dyadicRingControls').style.display = 'grid';
+                
+                document.getElementById('baseModInput').value = state.baseMod;
+                document.getElementById('baseModDisplay').textContent = state.baseMod;
+                document.getElementById('scaleFactorInput').value = state.scaleFactor;
+                document.getElementById('scaleFactorDisplay').textContent = state.scaleFactor;
+                document.getElementById('startExpInput').value = state.startExp;
+                document.getElementById('startExpDisplay').textContent = state.startExp;
+                document.getElementById('endExpInput').value = state.endExp;
+                document.getElementById('endExpDisplay').textContent = state.endExp;
+                
+                updateRingSequence();
+            }
+        }
+
+        function generateShareableURL() {
+            const config = {
+                p: state.phase,
+                m: state.modulus,
+                r: [state.minRing, state.maxRing],
+                t: state.transformType,
+                c: state.nestedColorScheme,
+                f: state.fareyPoints.map(fp => `${fp.num}/${fp.den}`).join(',')
+            };
+            
+            const encoded = btoa(JSON.stringify(config));
+            const url = window.location.origin + window.location.pathname + '?config=' + encoded;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Shareable URL copied to clipboard!\n\nAnyone can use this link to view your exact configuration.');
+                console.log('Shareable URL:', url);
+            }).catch(() => {
+                prompt('Copy this shareable URL:', url);
+            });
+        }
+
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const configParam = params.get('config');
+            
+            if (configParam) {
+                try {
+                    const config = JSON.parse(atob(configParam));
+                    
+                    if (config.p !== undefined) state.phase = config.p;
+                    if (config.m !== undefined) state.modulus = config.m;
+                    if (config.r !== undefined) {
+                        state.minRing = config.r[0];
+                        state.maxRing = config.r[1];
+                    }
+                    if (config.t !== undefined) state.transformType = config.t;
+                    if (config.c !== undefined) state.nestedColorScheme = config.c;
+                    if (config.f !== undefined) {
+                        state.fareyPoints = config.f.split(',').map(f => {
+                            const [num, den] = f.split('/').map(Number);
+                            return { num, den };
+                        });
+                    }
+                    
+                    syncUIWithState();
+                    updateFareyPointsList();
+                    console.log('✓ Configuration loaded from URL');
+                } catch (error) {
+                    console.error('Error loading configuration from URL:', error);
+                }
+            }
+        }
+
+        // ============================================================
+        // MATHEMATICAL ANALYSIS PANEL
+        // ============================================================
+
+        function updateAnalysisPanel() {
+            const panel = document.getElementById('analysisPanel');
+            if (!panel || !document.getElementById('toggleAnalysis').checked) return;
+
+            const rings = getRingSequence();
+            let totalPoints = 0;
+            let coprimePoints = 0;
+            let gcdDistribution = {};
+            
+            rings.forEach(m => {
+                totalPoints += m;
+                const phi = eulerPhi(m);
+                coprimePoints += phi;
+                
+                for (let k = 0; k < m; k++) {
+                    const g = gcd(k, m);
+                    gcdDistribution[g] = (gcdDistribution[g] || 0) + 1;
+                }
+            });
+
+            // Prime statistics
+            const displayedPrimes = Math.min(state.numPrimes, state.primes.length);
+            let primesInClasses = 0;
+            if (state.primes.length > 0) {
+                primesInClasses = state.primes.slice(0, displayedPrimes)
+                    .filter(p => gcd(p, state.modulus) === 1).length;
+            }
+
+            // Farey statistics
+            const fareyInRange = state.fareyPoints.filter(fp => 
+                fp.den >= state.minRing && fp.den <= state.maxRing
+            ).length;
+
+            const html = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="analysis-stat">
+                        <div class="stat-label">Total Points</div>
+                        <div class="stat-value">${totalPoints.toLocaleString()}</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Coprime (GCD=1)</div>
+                        <div class="stat-value">${coprimePoints.toLocaleString()}</div>
+                        <div class="stat-percent">${((coprimePoints/totalPoints)*100).toFixed(1)}%</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Total Rings</div>
+                        <div class="stat-value">${rings.length}</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Primes Shown</div>
+                        <div class="stat-value">${displayedPrimes.toLocaleString()}</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Primes Coprime to m</div>
+                        <div class="stat-value">${primesInClasses}</div>
+                        <div class="stat-percent">${displayedPrimes > 0 ? ((primesInClasses/displayedPrimes)*100).toFixed(1) : 0}%</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Farey Points in Range</div>
+                        <div class="stat-value">${fareyInRange}</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">φ(${state.modulus})</div>
+                        <div class="stat-value">${eulerPhi(state.modulus)}</div>
+                    </div>
+                    <div class="analysis-stat">
+                        <div class="stat-label">Unique GCD Values</div>
+                        <div class="stat-value">${Object.keys(gcdDistribution).length}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--cyan); border-radius: 4px;">
+                    <div style="font-weight: bold; color: var(--cyan); margin-bottom: 10px;">GCD Distribution</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85em;">
+                        ${Object.entries(gcdDistribution)
+                            .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                            .slice(0, 10)
+                            .map(([g, count]) => `
+                                <span style="background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 3px;">
+                                    GCD=${g}: ${count}
+                                </span>
+                            `).join('')}
+                        ${Object.keys(gcdDistribution).length > 10 ? '<span>...</span>' : ''}
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-left: 3px solid var(--gold); border-radius: 4px;">
+                    <div style="font-weight: bold; color: var(--gold); margin-bottom: 10px;">Ring Sequence</div>
+                    <div style="font-size: 0.85em; font-family: 'Fira Code', monospace; color: rgba(255,255,255,0.8);">
+                        ${rings.slice(0, 20).join(', ')}${rings.length > 20 ? `, ... (${rings.length} total)` : ''}
+                    </div>
+                </div>
+            `;
+
+            panel.innerHTML = html;
+        }
+
+        // ============================================================
+        // ADVANCED FILTER SYSTEM
+        // ============================================================
+
+        function applyAdvancedFilters(points) {
+            if (!state.advancedFilterEnabled) return points;
+
+            return points.filter(p => {
+                // GCD filter
+                if (state.filterGCDValue !== null && p.g !== state.filterGCDValue) {
+                    return false;
+                }
+
+                // Modulus range filter
+                if (p.m < state.filterModulusRange[0] || p.m > state.filterModulusRange[1]) {
+                    return false;
+                }
+
+                // Residue class filter (k ≡ r mod d)
+                if (state.filterResidueClass !== null) {
+                    const [r, d] = state.filterResidueClass;
+                    if (p.k % d !== r % d) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+        }
+
+        function toggleAdvancedFilters() {
+            state.advancedFilterEnabled = document.getElementById('toggleAdvancedFilters').checked;
+            document.getElementById('advancedFilterPanel').style.display = 
+                state.advancedFilterEnabled ? 'block' : 'none';
+            updateAll();
+        }
+
+        function setFilterGCD(value) {
+            state.filterGCDValue = value === '' ? null : parseInt(value);
+            updateAll();
+        }
+
+        function setFilterModulusRange(min, max) {
+            state.filterModulusRange = [parseInt(min), parseInt(max)];
+            updateAll();
+        }
+
+        function setFilterResidueClass(r, d) {
+            if (r === '' || d === '') {
+                state.filterResidueClass = null;
+            } else {
+                state.filterResidueClass = [parseInt(r), parseInt(d)];
+            }
+            updateAll();
+        }
+
+        // ============================================================
+        // RING SEQUENCE MANAGEMENT (DYADIC/P-ADIC FAMILIES)
+        // ============================================================
+
+        function updateRingSequencePreview() {
+            const M0 = parseInt(document.getElementById('baseModInput').value) || 1;
+            const b = parseInt(document.getElementById('scaleFactorInput').value) || 2;
+            const n0 = parseInt(document.getElementById('startExpInput').value) || 0;
+            const nMax = parseInt(document.getElementById('endExpInput').value) || 0;
+            
+            const sequence = [];
+            for (let n = n0; n <= nMax; n++) {
+                const modulus = M0 * Math.pow(b, n);
+                sequence.push(modulus);
+            }
+            
+            const preview = document.getElementById('ringSequencePreview');
+            if (preview) {
+                const displaySeq = sequence.slice(0, 15);
+                const moreText = sequence.length > 15 ? `, ... (${sequence.length} total)` : '';
+                const modeName = b === 2 ? 'Dyadic' : 
+                               (b === 3 || b === 5) ? `${b}-adic` : 'Custom';
+                preview.textContent = `${modeName}: M₀=${M0}, b=${b}, n=${n0}→${nMax}: [${displaySeq.join(', ')}${moreText}]`;
+            }
+        }
+
+        function applyDyadicFamily() {
+            // Get values from inputs
+            const M0 = parseInt(document.getElementById('baseModInput').value) || 1;
+            const b = parseInt(document.getElementById('scaleFactorInput').value) || 2;
+            const n0 = parseInt(document.getElementById('startExpInput').value) || 0;
+            const nMax = parseInt(document.getElementById('endExpInput').value) || 0;
+            
+            // Update state
+            state.baseMod = M0;
+            state.scaleFactor = b;
+            state.startExp = n0;
+            state.endExp = nMax;
+            
+            // Generate sequence
+            updateRingSequence();
+            
+            // NOW update the visualization (only when button clicked)
+            console.log('Applying dyadic family:', {M0, b, n0, nMax, sequence: state.ringSequence});
+            updateAll();
+        }
+
+        function setDyadicPreset(M0, b, n0, nMax) {
+            // Set the input values
+            document.getElementById('baseModInput').value = M0;
+            document.getElementById('baseModDisplay').textContent = M0;
+            document.getElementById('scaleFactorInput').value = b;
+            document.getElementById('scaleFactorDisplay').textContent = b;
+            document.getElementById('startExpInput').value = n0;
+            document.getElementById('startExpDisplay').textContent = n0;
+            document.getElementById('endExpInput').value = nMax;
+            document.getElementById('endExpDisplay').textContent = nMax;
+            
+            // Update preview
+            updateRingSequencePreview();
+            
+            // DON'T apply yet - let user click the APPLY button
+        }
+
+        function getRingSequence() {
+            if (state.ringGenerationMode === 'manual' || !state.ringSequence) {
+                const rings = [];
+                for (let m = state.minRing; m <= state.maxRing; m++) {
+                    rings.push(m);
+                }
+                return rings;
+            } else {
+                return state.ringSequence;
+            }
+        }
+
+        function updateRingSequence() {
+            if (state.ringGenerationMode === 'manual') {
+                state.ringSequence = null;
+                return;
+            }
+            
+            const M0 = state.baseMod;
+            const b = state.scaleFactor;
+            const n0 = state.startExp;
+            const nMax = state.endExp;
+            
+            const sequence = [];
+            for (let n = n0; n <= nMax; n++) {
+                const modulus = M0 * Math.pow(b, n);
+                sequence.push(modulus);
+            }
+            
+            state.ringSequence = sequence;
+            
+            // Update min and max ring to match sequence
+            if (sequence.length > 0) {
+                state.minRing = Math.min(...sequence);
+                state.maxRing = Math.max(...sequence);
+                document.getElementById('minRingDisplay').textContent = state.minRing;
+                document.getElementById('maxRingDisplay').textContent = state.maxRing;
+            }
         }
 
         // ============================================================
@@ -4330,7 +5078,7 @@
 
                     // Draw point
                     if (showGCD) {
-                        const color = getGCDColor(g, m);
+                        const color = getNestedPointColor(k, m, g, angle);
                         const size = g === 1 ? 4 : 3;
                         
                         ctx.fillStyle = color;
