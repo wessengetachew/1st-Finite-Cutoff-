@@ -1212,6 +1212,125 @@
             </div>
         </div>
 
+        <!-- Statistical Analysis Panel -->
+        <div class="controls-section">
+            <div class="controls-header" style="cursor: pointer;" onclick="toggleStats()">
+                <span id="statsToggle">▼</span> Live Statistical Analysis
+            </div>
+            <div class="controls-body" id="statsPanel">
+                <div id="statsContent" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Advanced Filtering -->
+        <div class="controls-section">
+            <div class="controls-header" style="cursor: pointer;" onclick="toggleAdvancedFilter()">
+                <span id="filterToggle">▶</span> Advanced Point Filtering
+            </div>
+            <div class="controls-body" id="filterPanel" style="display: none;">
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Filter by GCD Value</span>
+                        </div>
+                        <select id="filterGCD">
+                            <option value="">All GCD Values</option>
+                            <option value="1">Only GCD = 1 (Coprime)</option>
+                            <option value="2">Only GCD = 2</option>
+                            <option value="3">Only GCD = 3</option>
+                            <option value="5">Only GCD = 5</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Modulus Range Filter</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="filterModMin" placeholder="Min" value="" style="width: 80px;">
+                            <span style="color: var(--text-dim);">to</span>
+                            <input type="number" id="filterModMax" placeholder="Max" value="" style="width: 80px;">
+                        </div>
+                        <div class="help-text">Leave empty for no filter</div>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Residue Class Filter</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="filterResClass" placeholder="r" style="width: 80px;">
+                            <span style="color: var(--text-dim);">mod</span>
+                            <input type="number" id="filterResMod" placeholder="d" style="width: 80px;">
+                        </div>
+                        <div class="help-text">Show only k ≡ r (mod d)</div>
+                    </div>
+
+                    <div class="control-item">
+                        <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%;">
+                            <span>Apply Filters</span>
+                        </button>
+                    </div>
+
+                    <div class="control-item">
+                        <button class="btn btn-secondary" onclick="clearFilters()" style="width: 100%;">
+                            <span>Clear All Filters</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animation Controls -->
+        <div class="controls-section">
+            <div class="controls-header" style="cursor: pointer;" onclick="toggleAnimationPanel()">
+                <span id="animToggle">▶</span> Animation & Recording
+            </div>
+            <div class="controls-body" id="animationPanel" style="display: none;">
+                <div class="control-row">
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Animation Mode</span>
+                        </div>
+                        <select id="animationMode">
+                            <option value="rotate">Continuous Rotation</option>
+                            <option value="zoom">Zoom In/Out</option>
+                            <option value="pulse">Pulsing Rings</option>
+                            <option value="spiral">Spiral Rotation</option>
+                        </select>
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Frame Rate</span>
+                            <span class="control-value" id="fpsValue">30 fps</span>
+                        </div>
+                        <input type="range" id="fpsSlider" min="10" max="60" value="30" step="5">
+                    </div>
+
+                    <div class="control-item">
+                        <div class="control-label">
+                            <span>Recording Duration (seconds)</span>
+                            <span class="control-value" id="durationValue">5</span>
+                        </div>
+                        <input type="range" id="durationSlider" min="1" max="30" value="5" step="1">
+                    </div>
+
+                    <div class="control-item">
+                        <button class="btn btn-primary" onclick="startRecording()" id="recordBtn" style="width: 100%;">
+                            <span>Start Recording Frames</span>
+                        </button>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div id="recordingStatus" style="font-family: 'Fira Code', monospace; font-size: 0.9em; color: var(--cyan); padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; display: none;">
+                            Recording: <span id="frameCount">0</span> frames captured
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Interactive Guide -->
         <div class="controls-section">
             <div class="controls-header" style="cursor: pointer; user-select: none;" onclick="toggleGuide()">
@@ -1500,12 +1619,13 @@
                             <span>Ring Generation Mode</span>
                         </div>
                         <select id="ringGenerationMode">
-                            <option value="manual">Manual Range (m_min to m_max)</option>
-                            <option value="dyadic">Dyadic Family (M₀ × 2ⁿ) - WITH APPLY BUTTON</option>
-                            <option value="padic">p-adic Family (M₀ × pⁿ) - WITH APPLY BUTTON</option>
-                            <option value="custom">Custom Scaling (M₀ × bⁿ) - WITH APPLY BUTTON</option>
+                            <option value="manual">Manual Range</option>
+                            <option value="dyadic">Dyadic (M₀×2ⁿ)</option>
+                            <option value="padic">p-adic (M₀×pⁿ)</option>
+                            <option value="custom">Custom (M₀×bⁿ)</option>
+                            <option value="customlist">Custom Moduli List</option>
                         </select>
-                        <div class="help-text">⚠️ For dyadic/p-adic families: Select mode above to see APPLY button</div>
+                        <div class="help-text">Choose "Custom Moduli List" to specify any arbitrary sequence</div>
                     </div>
                 </div>
 
@@ -1588,12 +1708,9 @@
                     </div>
 
                     <div class="control-item" style="grid-column: 1 / -1;">
-                        <button class="btn btn-primary" onclick="applyDyadicFamily()" style="width: 100%; padding: 12px; font-size: 1em; margin-top: 10px;">
-                            <span>✓ APPLY DYADIC FAMILY</span>
+                        <button class="btn btn-primary" onclick="applyDyadicFamily()" style="width: 100%; padding: 15px; font-size: 1.1em; margin-top: 15px; box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);">
+                            <span>APPLY</span>
                         </button>
-                        <div class="help-text" style="text-align: center; margin-top: 8px;">
-                            Configure parameters above, then click APPLY to update visualization
-                        </div>
                     </div>
 
                     <div class="control-item" style="grid-column: 1 / -1;">
@@ -1618,6 +1735,74 @@
                             </button>
                             <button class="btn btn-accent" onclick="setDyadicPreset(3, 3, 0, 9)" style="padding: 6px 10px; font-size: 0.8em;">
                                 <span>3×3ⁿ</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Moduli List Controls -->
+                <div id="customModuliControls" class="control-row" style="display: none;">
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Custom Moduli Sequence (Click ✕ to remove)</span>
+                            <span class="control-value" id="customCountDisplay">0 moduli</span>
+                        </div>
+                        <div id="customModuliList" class="farey-point-list" style="max-height: 250px;"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="add-btn" onclick="addCustomModulus()">+ Add Modulus</button>
+                            <button class="btn btn-secondary" onclick="clearAllCustomModuli()" style="padding: 8px 20px; background: #e74c3c;">
+                                <span>Clear All</span>
+                            </button>
+                        </div>
+                        <div class="help-text">Enter moduli as integers (e.g., 30, 60, 120, 240, or any custom sequence)</div>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Sequence Preview</span>
+                        </div>
+                        <div id="customModuliPreview" style="font-family: 'Fira Code', monospace; font-size: 0.85em; color: var(--cyan); padding: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; margin-top: 8px;">
+                            No moduli added yet
+                        </div>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <button class="btn btn-primary" onclick="applyCustomModuli()" style="width: 100%; padding: 15px; font-size: 1.1em; margin-top: 15px; box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);">
+                            <span>✓ APPLY CUSTOM SEQUENCE</span>
+                        </button>
+                    </div>
+
+                    <div class="control-item" style="grid-column: 1 / -1;">
+                        <div class="control-label">
+                            <span>Quick Custom Presets</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px;">
+                            <button class="btn btn-accent" onclick="loadCustomPreset('2x2n')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>2×2ⁿ (n=0→10)</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('3x2n')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>3×2ⁿ (n=0→10)</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('6x2n')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>6×2ⁿ (n=0→10)</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('30x2n')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>30×2ⁿ (n=0→10)</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('5x5n')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>5×5ⁿ (n=0→8)</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('fibonacci')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>Fibonacci</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('primes')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>First 15 Primes</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('squares')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>Perfect Squares</span>
+                            </button>
+                            <button class="btn btn-accent" onclick="loadCustomPreset('factorials')" style="padding: 6px 10px; font-size: 0.8em;">
+                                <span>Factorials</span>
                             </button>
                         </div>
                     </div>
@@ -1967,6 +2152,13 @@
                     <button class="btn btn-secondary" onclick="regeneratePrimes()">
                         <span>Regenerate Primes</span>
                     </button>
+                    <button class="btn btn-secondary" onclick="exportConfig()">
+                        <span>Save Config</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                        <span>Load Config</span>
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importConfig(event)">
                     <button class="btn btn-accent" onclick="resetDefaults()">
                         <span>Reset to Defaults</span>
                     </button>
@@ -2041,6 +2233,20 @@
             startExp: 0,
             endExp: 10,
             ringSequence: null,
+            customModuli: [],
+            filters: {
+                enabled: false,
+                gcdValue: null,
+                modRange: [null, null],
+                residueClass: null
+            },
+            animation: {
+                mode: 'rotate',
+                fps: 30,
+                duration: 5,
+                recording: false,
+                frames: []
+            },
             advancedFilterEnabled: false,
             filterGCDValue: 1,
             filterModulusRange: [1, 100],
@@ -2390,13 +2596,21 @@
                 if (e.target.value === 'manual') {
                     document.getElementById('manualRingControls').style.display = 'grid';
                     document.getElementById('dyadicRingControls').style.display = 'none';
+                    document.getElementById('customModuliControls').style.display = 'none';
                     state.ringSequence = null;
+                    updateAll(); // Safe to update for manual mode
+                } else if (e.target.value === 'customlist') {
+                    document.getElementById('manualRingControls').style.display = 'none';
+                    document.getElementById('dyadicRingControls').style.display = 'none';
+                    document.getElementById('customModuliControls').style.display = 'grid';
+                    updateCustomModuliList();
                 } else {
                     document.getElementById('manualRingControls').style.display = 'none';
                     document.getElementById('dyadicRingControls').style.display = 'grid';
-                    updateRingSequence();
+                    document.getElementById('customModuliControls').style.display = 'none';
+                    updateRingSequencePreview(); // ONLY update preview, don't render!
+                    // DON'T call updateAll() - wait for user to click APPLY button
                 }
-                updateAll();
             });
 
             // Dyadic family inputs - UPDATE PREVIEW ONLY, don't apply yet
@@ -3620,6 +3834,118 @@
         }
 
         // ============================================================
+        // CUSTOM MODULI LIST FUNCTIONS
+        // ============================================================
+
+        function updateCustomModuliList() {
+            const list = document.getElementById('customModuliList');
+            list.innerHTML = '';
+            
+            state.customModuli.forEach((modulus, index) => {
+                const item = document.createElement('div');
+                item.className = 'farey-point-item';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = modulus;
+                input.onchange = (e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val) && val > 0) {
+                        state.customModuli[index] = val;
+                        updateCustomModuliPreview();
+                    }
+                };
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-btn';
+                removeBtn.textContent = '✕';
+                removeBtn.onclick = () => {
+                    state.customModuli.splice(index, 1);
+                    updateCustomModuliList();
+                };
+                
+                item.appendChild(input);
+                item.appendChild(removeBtn);
+                list.appendChild(item);
+            });
+            
+            document.getElementById('customCountDisplay').textContent = `${state.customModuli.length} moduli`;
+            updateCustomModuliPreview();
+        }
+
+        function updateCustomModuliPreview() {
+            const preview = document.getElementById('customModuliPreview');
+            if (state.customModuli.length === 0) {
+                preview.textContent = 'No moduli added yet';
+                return;
+            }
+            
+            const sorted = [...state.customModuli].sort((a, b) => a - b);
+            const display = sorted.slice(0, 15);
+            const more = sorted.length > 15 ? `, ... (${sorted.length} total)` : '';
+            preview.textContent = `Sequence: [${display.join(', ')}${more}]`;
+        }
+
+        function addCustomModulus() {
+            let newMod = 30;
+            if (state.customModuli.length > 0) {
+                const sorted = [...state.customModuli].sort((a, b) => a - b);
+                newMod = sorted[sorted.length - 1] * 2;
+            }
+            state.customModuli.push(newMod);
+            updateCustomModuliList();
+        }
+
+        function clearAllCustomModuli() {
+            if (confirm('Clear all moduli?')) {
+                state.customModuli = [];
+                updateCustomModuliList();
+            }
+        }
+
+        function loadCustomPreset(name) {
+            const presets = {
+                '2x2n': [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048],
+                '3x2n': [3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072],
+                '6x2n': [6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144],
+                '30x2n': [30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360, 30720],
+                '5x5n': [5, 25, 125, 625, 3125, 15625, 78125, 390625, 1953125],
+                'fibonacci': [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610],
+                'primes': [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47],
+                'squares': [1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225],
+                'factorials': [1, 2, 6, 24, 120, 720, 5040]
+            };
+            
+            if (presets[name]) {
+                state.customModuli = [...presets[name]];
+                updateCustomModuliList();
+            }
+        }
+
+        function applyCustomModuli() {
+            if (state.customModuli.length === 0) {
+                alert('Please add at least one modulus');
+                return;
+            }
+            
+            // Sort and apply the custom sequence
+            state.ringSequence = [...state.customModuli].sort((a, b) => a - b);
+            state.minRing = Math.min(...state.ringSequence);
+            state.maxRing = Math.max(...state.ringSequence);
+            
+            // Precompute GCDs for all moduli
+            console.log('Applying custom moduli sequence:', state.ringSequence);
+            state.ringSequence.forEach(m => {
+                eulerPhi(m);
+                for (let k = 0; k < m; k++) {
+                    gcd(k, m);
+                }
+            });
+            
+            updateAll();
+        }
+
+        // ============================================================
         // RING SEQUENCE MANAGEMENT (DYADIC/P-ADIC FAMILIES)
         // ============================================================
 
@@ -3661,7 +3987,10 @@
             // Generate sequence
             updateRingSequence();
             
-            // NOW update the visualization (only when button clicked)
+            // PRECOMPUTE all GCDs and totients for this family (FAST!)
+            precomputeDyadicFamily(M0, b, n0, nMax);
+            
+            // NOW update the visualization (using cached values)
             console.log('Applying dyadic family:', {M0, b, n0, nMax, sequence: state.ringSequence});
             updateAll();
         }
@@ -3690,6 +4019,9 @@
                     rings.push(m);
                 }
                 return rings;
+            } else if (state.ringGenerationMode === 'customlist') {
+                // Return sorted custom moduli
+                return state.ringSequence || [];
             } else {
                 return state.ringSequence;
             }
@@ -3724,8 +4056,451 @@
         }
 
         // ============================================================
-        // MATHEMATICAL FUNCTIONS
+        // ADVANCED FILTERING SYSTEM
         // ============================================================
+
+        function toggleAdvancedFilter() {
+            const panel = document.getElementById('filterPanel');
+            const toggle = document.getElementById('filterToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                panel.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        function applyFilters() {
+            state.filters.enabled = true;
+            updateAll();
+        }
+
+        function clearFilters() {
+            state.filters = {
+                enabled: false,
+                gcdValue: null,
+                modRange: [null, null],
+                residueClass: null
+            };
+            
+            document.getElementById('filterGCD').value = '';
+            document.getElementById('filterModMin').value = '';
+            document.getElementById('filterModMax').value = '';
+            document.getElementById('filterResClass').value = '';
+            document.getElementById('filterResMod').value = '';
+            
+            updateAll();
+        }
+
+        function passesFilter(k, m, g) {
+            if (!state.filters.enabled) return true;
+            
+            // GCD filter
+            if (state.filters.gcdValue !== null && g !== state.filters.gcdValue) {
+                return false;
+            }
+            
+            // Modulus range filter
+            const [minMod, maxMod] = state.filters.modRange;
+            if (minMod !== null && m < minMod) return false;
+            if (maxMod !== null && m > maxMod) return false;
+            
+            // Residue class filter
+            if (state.filters.residueClass) {
+                const [r, d] = state.filters.residueClass;
+                if (r !== null && d !== null && d > 0) {
+                    if (k % d !== r % d) return false;
+                }
+            }
+            
+            return true;
+        }
+
+        // ============================================================
+        // ANIMATION & RECORDING SYSTEM
+        // ============================================================
+
+        function toggleAnimationPanel() {
+            const panel = document.getElementById('animationPanel');
+            const toggle = document.getElementById('animToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.textContent = '▼';
+            } else {
+                panel.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        function startRecording() {
+            if (state.animation.recording) {
+                stopRecording();
+                return;
+            }
+            
+            state.animation.recording = true;
+            state.animation.frames = [];
+            
+            const btn = document.getElementById('recordBtn');
+            btn.querySelector('span').textContent = 'Stop Recording';
+            btn.classList.add('btn-accent');
+            
+            const status = document.getElementById('recordingStatus');
+            status.style.display = 'block';
+            
+            const totalFrames = state.animation.fps * state.animation.duration;
+            let currentFrame = 0;
+            
+            const recordFrame = () => {
+                if (!state.animation.recording || currentFrame >= totalFrames) {
+                    stopRecording();
+                    return;
+                }
+                
+                // Apply animation transformation
+                switch(state.animation.mode) {
+                    case 'rotate':
+                        state.phase = (state.phase + 360 / totalFrames) % 360;
+                        break;
+                    case 'zoom':
+                        const zoomPhase = currentFrame / totalFrames;
+                        state.nestedZoom = 1 + Math.sin(zoomPhase * Math.PI * 2) * 0.5;
+                        break;
+                    case 'pulse':
+                        const pulsePhase = currentFrame / totalFrames;
+                        state.ringSpacing = 1 + Math.sin(pulsePhase * Math.PI * 4) * 0.3;
+                        break;
+                    case 'spiral':
+                        state.phase = (state.phase + 360 / totalFrames) % 360;
+                        state.ringRotation = (state.ringRotation + 10) % 360;
+                        break;
+                }
+                
+                updateAll();
+                
+                // Capture frame from nested canvas (main visualization)
+                const canvas = canvases.nested;
+                const dataURL = canvas.toDataURL('image/png');
+                state.animation.frames.push(dataURL);
+                
+                currentFrame++;
+                document.getElementById('frameCount').textContent = currentFrame;
+                
+                setTimeout(recordFrame, 1000 / state.animation.fps);
+            };
+            
+            recordFrame();
+        }
+
+        function stopRecording() {
+            state.animation.recording = false;
+            
+            const btn = document.getElementById('recordBtn');
+            btn.querySelector('span').textContent = 'Start Recording Frames';
+            btn.classList.remove('btn-accent');
+            
+            if (state.animation.frames.length > 0) {
+                downloadFrames();
+            }
+        }
+
+        function downloadFrames() {
+            const zip = {
+                frames: state.animation.frames,
+                fps: state.animation.fps,
+                totalFrames: state.animation.frames.length,
+                mode: state.animation.mode
+            };
+            
+            // Create a simple manifest
+            const manifest = {
+                frameCount: state.animation.frames.length,
+                fps: state.animation.fps,
+                duration: state.animation.duration,
+                mode: state.animation.mode,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Download manifest
+            const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `animation-manifest-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            // Download first and last frames as samples
+            if (state.animation.frames.length > 0) {
+                downloadFrame(state.animation.frames[0], 'frame-first.png');
+                downloadFrame(state.animation.frames[state.animation.frames.length - 1], 'frame-last.png');
+            }
+            
+            alert(`Recorded ${state.animation.frames.length} frames. Manifest and sample frames downloaded.`);
+            
+            // Reset
+            state.animation.frames = [];
+            document.getElementById('recordingStatus').style.display = 'none';
+        }
+
+        function downloadFrame(dataURL, filename) {
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = filename;
+            a.click();
+        }
+
+        // ============================================================
+        // STATISTICAL ANALYSIS
+        // ============================================================
+
+        function toggleStats() {
+            const panel = document.getElementById('statsPanel');
+            const toggle = document.getElementById('statsToggle');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                toggle.textContent = '▼';
+                updateStats();
+            } else {
+                panel.style.display = 'none';
+                toggle.textContent = '▶';
+            }
+        }
+
+        function updateStats() {
+            const rings = getRingSequence();
+            let totalPoints = 0;
+            let coprimePoints = 0;
+            const gcdDist = {};
+            
+            rings.forEach(m => {
+                totalPoints += m;
+                const phi = eulerPhi(m);
+                coprimePoints += phi;
+                
+                for (let k = 0; k < m; k++) {
+                    const g = gcd(k, m);
+                    gcdDist[g] = (gcdDist[g] || 0) + 1;
+                }
+            });
+
+            const primeCount = Math.min(state.numPrimes, state.primes.length);
+            const coprimePrimes = state.primes.slice(0, primeCount).filter(p => gcd(p, state.modulus) === 1).length;
+            const fareyInRange = state.fareyPoints.filter(fp => fp.den >= state.minRing && fp.den <= state.maxRing).length;
+
+            const html = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Points</div>
+                    <div class="stat-value">${totalPoints.toLocaleString()}</div>
+                    <div class="stat-subtext">${rings.length} rings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Coprime (GCD=1)</div>
+                    <div class="stat-value">${coprimePoints.toLocaleString()}</div>
+                    <div class="stat-subtext">${((coprimePoints/totalPoints)*100).toFixed(1)}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Primes Shown</div>
+                    <div class="stat-value">${primeCount}</div>
+                    <div class="stat-subtext">${coprimePrimes} coprime to m</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">φ(${state.modulus})</div>
+                    <div class="stat-value">${eulerPhi(state.modulus)}</div>
+                    <div class="stat-subtext">Euler totient</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Farey Points</div>
+                    <div class="stat-value">${state.fareyPoints.length}</div>
+                    <div class="stat-subtext">${fareyInRange} in range</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">GCD Values</div>
+                    <div class="stat-value">${Object.keys(gcdDist).length}</div>
+                    <div class="stat-subtext">unique divisors</div>
+                </div>
+            `;
+            
+            document.getElementById('statsContent').innerHTML = html;
+        }
+
+        // ============================================================
+        // SAVE/LOAD CONFIGURATION
+        // ============================================================
+
+        function exportConfig() {
+            const config = {
+                version: '3.0',
+                timestamp: new Date().toISOString(),
+                metadata: {
+                    totalPoints: 0,
+                    coprimePoints: 0,
+                    ringCount: 0,
+                    fareyCount: state.fareyPoints.length,
+                    primeCount: Math.min(state.numPrimes, state.primes.length)
+                },
+                state: {
+                    phase: state.phase,
+                    modulus: state.modulus,
+                    numPrimes: state.numPrimes,
+                    primeLimit: state.primeLimit,
+                    minRing: state.minRing,
+                    maxRing: state.maxRing,
+                    ringSpacing: state.ringSpacing,
+                    ringRotation: state.ringRotation,
+                    connectionMode: state.connectionMode,
+                    gcdFilter: state.gcdFilter,
+                    gapSize: state.gapSize,
+                    connectionThickness: state.connectionThickness,
+                    connectionOpacity: state.connectionOpacity,
+                    labelMode: state.labelMode,
+                    labelSize: state.labelSize,
+                    labelFreq: state.labelFreq,
+                    labelPosition: state.labelPosition,
+                    labelOffset: state.labelOffset,
+                    nestedColorScheme: state.nestedColorScheme,
+                    cayleyHRange: state.cayleyHRange,
+                    cayleyVRange: state.cayleyVRange,
+                    cayleyVOffset: state.cayleyVOffset,
+                    cayleyGridDensity: state.cayleyGridDensity,
+                    transformType: state.transformType,
+                    diskZoom: state.diskZoom,
+                    cayleyZoom: state.cayleyZoom,
+                    nestedZoom: state.nestedZoom,
+                    ringGenerationMode: state.ringGenerationMode,
+                    baseMod: state.baseMod,
+                    scaleFactor: state.scaleFactor,
+                    startExp: state.startExp,
+                    endExp: state.endExp,
+                    customModuli: state.customModuli
+                },
+                filters: state.filters,
+                animation: {
+                    mode: state.animation.mode,
+                    fps: state.animation.fps,
+                    duration: state.animation.duration
+                },
+                fareyPoints: state.fareyPoints,
+                toggles: {
+                    farey: document.getElementById('toggleFarey').checked,
+                    geodesic: document.getElementById('toggleGeodesic').checked,
+                    primes: document.getElementById('togglePrimes').checked,
+                    channels: document.getElementById('toggleChannels').checked,
+                    cusps: document.getElementById('toggleCusps').checked,
+                    rings: document.getElementById('toggleRings').checked,
+                    gcd: document.getElementById('toggleGCD').checked,
+                    grid: document.getElementById('toggleGrid').checked,
+                    fundDomain: document.getElementById('toggleFundDomain').checked,
+                    verticals: document.getElementById('toggleVerticals').checked,
+                    diskOutline: document.getElementById('toggleDiskOutline').checked,
+                    fordCircles: document.getElementById('toggleFordCircles').checked,
+                    fullPlane: document.getElementById('toggleFullPlane').checked,
+                    invertRings: document.getElementById('toggleInvertRings').checked,
+                    invertAll: document.getElementById('toggleInvertAll').checked,
+                    showCoprimeOnly: document.getElementById('toggleShowCoprimeOnly').checked,
+                    showNonCoprimeOnly: document.getElementById('toggleShowNonCoprimeOnly').checked,
+                    showRtoR: document.getElementById('toggleShowRtoR').checked,
+                    showRtoRplus2n: document.getElementById('toggleShowRtoRplus2n').checked
+                }
+            };
+
+            // Calculate metadata
+            const rings = getRingSequence();
+            rings.forEach(m => {
+                config.metadata.totalPoints += m;
+                config.metadata.coprimePoints += eulerPhi(m);
+            });
+            config.metadata.ringCount = rings.length;
+
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `farey-config-v3-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    // Import state
+                    if (config.state) {
+                        Object.assign(state, config.state);
+                    }
+                    
+                    // Import filters
+                    if (config.filters) {
+                        state.filters = config.filters;
+                    }
+                    
+                    // Import animation settings
+                    if (config.animation) {
+                        Object.assign(state.animation, config.animation);
+                    }
+                    
+                    // Import Farey points
+                    if (config.fareyPoints) {
+                        state.fareyPoints = config.fareyPoints;
+                    }
+                    
+                    // Import toggles
+                    if (config.toggles) {
+                        Object.entries(config.toggles).forEach(([key, val]) => {
+                            const el = document.getElementById('toggle' + key.charAt(0).toUpperCase() + key.slice(1));
+                            if (el) el.checked = val;
+                        });
+                    }
+                    
+                    syncUIFromState();
+                    regeneratePrimes();
+                    updateAll();
+                    
+                    // Show metadata if available
+                    if (config.metadata) {
+                        console.log('Loaded configuration metadata:', config.metadata);
+                    }
+                    
+                    alert('Configuration loaded successfully!');
+                } catch (err) {
+                    alert('Error loading config: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function syncUIFromState() {
+            document.getElementById('phaseSlider').value = state.phase;
+            document.getElementById('phaseInput').value = state.phase;
+            document.getElementById('modulusInput').value = state.modulus;
+            document.getElementById('minRingInput').value = state.minRing;
+            document.getElementById('maxRingInput').value = state.maxRing;
+            document.getElementById('connectionMode').value = state.connectionMode;
+            document.getElementById('labelMode').value = state.labelMode;
+            document.getElementById('nestedColorScheme').value = state.nestedColorScheme;
+            document.getElementById('cayleyTransformType').value = state.transformType;
+            document.getElementById('ringGenerationMode').value = state.ringGenerationMode;
+            
+            updateFareyPointsList();
+            if (state.customModuli.length > 0) {
+                updateCustomModuliList();
+            }
+        }
+
+        // ============================================================
+        // MATHEMATICAL FUNCTIONS WITH CACHING
+        // ============================================================
+
+        // Cache for GCD computations
+        const gcdCache = new Map();
+        const phiCache = new Map();
 
         function sieve(limit) {
             const isPrime = new Array(limit + 1).fill(true);
@@ -3750,20 +4525,64 @@
         function gcd(a, b) {
             a = Math.abs(a);
             b = Math.abs(b);
+            
+            // Use cache for repeated computations
+            const key = `${a},${b}`;
+            if (gcdCache.has(key)) {
+                return gcdCache.get(key);
+            }
+            
+            let origA = a, origB = b;
             while (b) [a, b] = [b, a % b];
+            
+            gcdCache.set(key, a);
+            gcdCache.set(`${origB},${origA}`, a); // Symmetric cache
+            
             return a;
         }
 
         function eulerPhi(n) {
+            // Check cache first
+            if (phiCache.has(n)) {
+                return phiCache.get(n);
+            }
+            
             let result = n;
-            for (let p = 2; p * p <= n; p++) {
-                if (n % p === 0) {
-                    while (n % p === 0) n /= p;
+            let temp = n;
+            for (let p = 2; p * p <= temp; p++) {
+                if (temp % p === 0) {
+                    while (temp % p === 0) temp /= p;
                     result -= result / p;
                 }
             }
-            if (n > 1) result -= result / n;
-            return Math.round(result);
+            if (temp > 1) result -= result / temp;
+            
+            const phi = Math.round(result);
+            phiCache.set(n, phi);
+            
+            return phi;
+        }
+
+        // Pre-compute GCDs and Phi for dyadic families
+        function precomputeDyadicFamily(M0, b, n0, nMax) {
+            console.log('Precomputing GCDs and totients for dyadic family...');
+            const startTime = performance.now();
+            
+            for (let n = n0; n <= nMax; n++) {
+                const m = M0 * Math.pow(b, n);
+                
+                // Precompute phi(m)
+                eulerPhi(m);
+                
+                // Precompute gcd(k, m) for all k in [0, m)
+                for (let k = 0; k < m; k++) {
+                    gcd(k, m);
+                }
+            }
+            
+            const endTime = performance.now();
+            console.log(`Precomputation complete in ${(endTime - startTime).toFixed(2)}ms`);
+            console.log(`Cache size - GCD: ${gcdCache.size}, Phi: ${phiCache.size}`);
         }
 
         function cayleyTransform(z, transformType = 'standard') {
@@ -5070,6 +5889,9 @@
                     if (showCoprimeOnly && g !== 1) continue;
                     if (showNonCoprimeOnly && g === 1) continue;
                     
+                    // Apply advanced filters
+                    if (!passesFilter(k, m, g)) continue;
+                    
                     const angle = 2 * Math.PI * k / m + phase + ringRotationOffset;
                     const x = cx + ringRadius * Math.cos(angle);
                     const y = cy + ringRadius * Math.sin(angle);
@@ -5537,6 +6359,11 @@
             // Draw full plane if visible
             if (document.getElementById('toggleFullPlane').checked) {
                 drawFullPlane();
+            }
+            
+            // Update stats if panel is visible
+            if (document.getElementById('statsPanel').style.display !== 'none') {
+                updateStats();
             }
             
             // Continue animation if point is selected (for pulsing highlight)
@@ -6537,23 +7364,23 @@
 
         function printDiagnostics() {
             console.log('=== FAREY TRIANGLE & CAYLEY TRANSFORM DIAGNOSTICS ===');
-            console.log('\n BASIC PARAMETERS:');
+            console.log('\n[BASIC PARAMETERS]:');
             console.log('  Modulus m:', state.modulus);
             console.log('  Phase rotation:', state.phase, 'degrees');
-            console.log('  Animation speed:', state.animSpeed + '×');
+            console.log('  Animation speed:', state.animSpeed + 'x');
             
-            console.log('\n CAYLEY PLANE VIEW:');
+            console.log('\n[CAYLEY PLANE VIEW]:');
             console.log('  Horizontal range (Re):', -state.cayleyHRange / 2, 'to', state.cayleyHRange / 2);
             console.log('  Vertical range (Im):', state.cayleyVOffset, 'to', state.cayleyVRange + state.cayleyVOffset);
             console.log('  Vertical offset:', state.cayleyVOffset);
             console.log('  Grid density:', state.cayleyGridDensity);
             
-            console.log('\n⊚ NESTED RINGS:');
+            console.log('\n[NESTED RINGS]:');
             console.log('  Ring range: m =', state.minRing, 'to', state.maxRing);
             console.log('  Ring spacing factor:', state.ringSpacing);
             console.log('  Total rings:', state.maxRing - state.minRing + 1);
             
-            console.log('\n FAREY POINTS:');
+            console.log('\n[FAREY POINTS]:');
             state.fareyPoints.forEach((fp, idx) => {
                 const frac = fp.num / fp.den;
                 const angle = 2 * Math.PI * frac + phase;
@@ -6566,7 +7393,7 @@
                 console.log(`     Im(w) = ${w.im.toFixed(6)}`);
             });
             
-            console.log('\n PRIME DISTRIBUTION:');
+            console.log('\n[PRIME DISTRIBUTION]:');
             console.log('  Total primes available:', state.primes.length);
             console.log('  Displaying:', Math.min(state.numPrimes, state.primes.length));
             console.log('  Prime limit:', state.primeLimit);
@@ -6575,15 +7402,15 @@
                 console.log('  Last 10 primes:', state.primes.slice(-10).join(', '));
             }
             
-            console.log('\n CONNECTION MODE:', state.connectionMode);
+            console.log('\n[CONNECTION MODE]:', state.connectionMode);
             console.log('  Thickness:', state.connectionThickness);
             console.log('  Opacity:', state.connectionOpacity);
             
-            console.log('\n LABEL MODE:', state.labelMode);
+            console.log('\n[LABEL MODE]:', state.labelMode);
             console.log('  Size:', state.labelSize + 'px');
             console.log('  Frequency: every', state.labelFreq, 'ring(s)');
             
-            console.log('\n DISPLAY TOGGLES:');
+            console.log('\n[DISPLAY TOGGLES]:');
             const toggles = [
                 'toggleFarey', 'toggleGeodesic', 'togglePrimes', 'toggleChannels',
                 'toggleCusps', 'toggleRings', 'toggleGCD', 'toggleGrid',
@@ -6592,14 +7419,14 @@
             toggles.forEach(id => {
                 const elem = document.getElementById(id);
                 if (elem) {
-                    console.log('  ' + id.replace('toggle', '') + ':', elem.checked ? '✓' : '✗');
+                    console.log('  ' + id.replace('toggle', '') + ':', elem.checked ? '[ON]' : '[OFF]');
                 }
             });
             
-            console.log('\n CAYLEY TRANSFORM VERIFICATION:');
-            console.log('  Current Formula: w = i(1+z)/(1-z) ✓ CORRECT');
-            console.log('  Maps unit disk 𝔻 to upper half-plane ℍ');
-            console.log('  Inverse of: f(z) = (z-i)/(z+i) which maps ℍ → 𝔻');
+            console.log('\n[CAYLEY TRANSFORM VERIFICATION]:');
+            console.log('  Current Formula: w = i(1+z)/(1-z) [CORRECT]');
+            console.log('  Maps unit disk D to upper half-plane H');
+            console.log('  Inverse of: f(z) = (z-i)/(z+i) which maps H to D');
             console.log('  Preserves angles (conformal)');
 
             
